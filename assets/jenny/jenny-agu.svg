@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#B22222"/>
+      <stop offset="100%" style="stop-color:#8B1A1A"/>
+    </linearGradient>
+    <linearGradient id="skin" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8B88A"/>
+      <stop offset="100%" style="stop-color:#C9956C"/>
+    </linearGradient>
+  </defs>
+  <!-- background circle -->
+  <circle cx="64" cy="64" r="64" fill="url(#bg)"/>
+  <!-- hair back -->
+  <ellipse cx="64" cy="52" rx="42" ry="38" fill="#2A1810"/>
+  <!-- face -->
+  <ellipse cx="64" cy="58" rx="32" ry="34" fill="url(#skin)"/>
+  <!-- hair front / bangs -->
+  <path d="M32 48 Q48 28 64 32 Q80 28 96 48 Q90 40 64 38 Q38 40 32 48Z" fill="#1A0F0A"/>
+  <!-- eyes -->
+  <ellipse cx="52" cy="56" rx="5" ry="6" fill="#1A1A1A"/>
+  <ellipse cx="76" cy="56" rx="5" ry="6" fill="#1A1A1A"/>
+  <circle cx="53.5" cy="54.5" r="1.8" fill="#FFF"/>
+  <circle cx="77.5" cy="54.5" r="1.8" fill="#FFF"/>
+  <!-- brows -->
+  <path d="M44 48 Q52 45 58 48" stroke="#2A1810" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M70 48 Q76 45 84 48" stroke="#2A1810" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- smile -->
+  <path d="M54 70 Q64 78 74 70" stroke="#8B4513" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <!-- lab coat collar hint -->
+  <path d="M30 100 Q48 88 64 90 Q80 88 98 100 L98 128 L30 128Z" fill="#F5F5F5"/>
+  <path d="M58 90 L64 110 L70 90" fill="none" stroke="#CCC" stroke-width="1.5"/>
+</svg>

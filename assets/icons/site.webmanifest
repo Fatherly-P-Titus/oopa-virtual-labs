@@ -1,0 +1,21 @@
+{
+  "name": "OOPA Virtual Labs",
+  "short_name": "OOPA Labs",
+  "description": "Explore, Experiment, Discover — interactive virtual science laboratories.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080808",
+  "theme_color": "#b22222",
+  "icons": [
+    {
+      "src": "/assets/icons/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
