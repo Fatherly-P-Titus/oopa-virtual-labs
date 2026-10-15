@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="assets/icons/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Explore, experiment, and discover with OOPA Virtual Labs.">
+  <title>OOPA Virtual Labs | Main Menu</title>
+  <link rel="stylesheet" href="styles/main-menu.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script defer src="scripts/main-menu.js"></script>
+  <script defer src="scripts/jenny/jenny-loader.js" data-page="main-menu" data-splash></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="wordmark" href="main-menu.html" aria-label="OOPA Virtual Labs home">
+      <span class="wordmark-mark">O</span>
+      <span>OOPA <strong>VIRTUAL LABS</strong></span>
+    </a>
+    <nav class="topnav" aria-label="Main navigation">
+      <a href="#explore">Explore Labs</a>
+      <a href="#about">About</a>
+      <a href="jenny-agu.html">Jenny Agu</a>
+      <a class="admin-link" href="admin-login.html">Admin Login <span aria-hidden="true">↗</span></a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="status-dot"></span> YOUR INTERACTIVE SCIENCE SPACE</p>
+        <h1 id="hero-title">Science is better<br><span>when you explore it.</span></h1>
+        <p class="hero-description">Step into interactive virtual laboratories. Test ideas, change variables, observe outcomes, and learn by doing.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#explore">Explore the Labs <span aria-hidden="true">→</span></a>
+          <a class="button button-secondary" href="#about">Discover OOPA</a>
+        </div>
+        <div class="hero-proof">
+          <span class="proof-icon">✳</span>
+          <span>Explore <b>•</b> Experiment <b>•</b> Discover</span>
+        </div>
+      </div>
+      <div class="hero-art" role="img" aria-label="Science illustrations featuring laboratory equipment, atoms, DNA, planets, and mathematics">
+        <div class="art-glow"></div>
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="floating-symbol symbol-atom">⚛</div>
+        <div class="floating-symbol symbol-flask">⚗</div>
+        <div class="floating-symbol symbol-pi">π</div>
+        <div class="floating-symbol symbol-dna">⌁</div>
+        <div class="hero-card">
+          <span class="card-label">VIRTUAL LAB / 001</span>
+          <div class="mini-lab-graphic">
+            <div class="mini-flask"><span></span></div>
+            <div class="mini-wave"></div>
+            <div class="mini-particle p1"></div><div class="mini-particle p2"></div><div class="mini-particle p3"></div>
+          </div>
+          <div class="hero-card-bottom"><span>Curiosity in action</span><span class="live-pill">READY</span></div>
+        </div>
+        <p class="art-caption">A universe of experiments<br>at your fingertips.</p>
+      </div>
+    </section>
+
+    <section class="explore-section section-wrap" id="explore">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">CHOOSE YOUR NEXT DISCOVERY</p>
+          <h2>Explore the <span>laboratories.</span></h2>
+        </div>
+        <p class="section-intro">Start with a field that interests you. More labs can be added as the platform grows.</p>
+      </div>
+
+      <div class="lab-grid">
+        <a class="lab-card" href="labs/physics/index.html">
+          <span class="lab-icon">⚛</span><span class="lab-number">LAB 01</span>
+          <h3>Physics</h3><p>Explore motion, forces, energy, heat, and the laws that shape our world.</p>
+          <span class="card-cta">Enter laboratory <b>↗</b></span>
+        </a>
+        <a class="lab-card" href="labs/chemistry/index.html">
+          <span class="lab-icon">⚗</span><span class="lab-number">LAB 02</span>
+          <h3>Chemistry</h3><p>Investigate reactions, matter, equilibrium, and the behaviour of materials.</p>
+          <span class="card-cta">Enter laboratory <b>↗</b></span>
+        </a>
+        <a class="lab-card" href="labs/biology/index.html">
+          <span class="lab-icon">⌬</span><span class="lab-number">LAB 03</span>
+          <h3>Biology</h3><p>Discover cells, organisms, ecosystems, and the systems that sustain life.</p>
+          <span class="card-cta">Enter laboratory <b>↗</b></span>
+        </a>
+        <a class="lab-card" href="labs/mathematics/index.html">
+          <span class="lab-icon">∑</span><span class="lab-number">LAB 04</span>
+          <h3>Mathematics</h3><p>Make equations, statistics, geometry, and abstract ideas interactive.</p>
+          <span class="card-cta">Enter laboratory <b>↗</b></span>
+        </a>
+        <a class="lab-card" href="labs/engineering/index.html">
+          <span class="lab-icon">⚙</span><span class="lab-number">LAB 05</span>
+          <h3>Engineering</h3><p>Model systems, equipment, processes, and practical design challenges.</p>
+          <span class="card-cta">Enter laboratory <b>↗</b></span>
+        </a>
+        <a class="lab-card lab-card-featured" href="labs/coming-soon.html">
+          <span class="lab-icon">＋</span><span class="lab-number">MORE TO COME</span>
+          <h3>Your next discovery</h3><p>New virtual labs and interactive experiments will be added here.</p>
+          <span class="card-cta">See what's planned <b>↗</b></span>
+        </a>
+      </div>
+    </section>
+
+    <section class="about-section" id="about">
+      <div class="about-inner section-wrap">
+        <div class="about-symbol">O<span>+</span></div>
+        <div>
+          <p class="eyebrow">ABOUT OOPA VIRTUAL LABS</p>
+          <h2>Learn by <span>doing.</span></h2>
+          <p>OOPA Virtual Labs is a growing space for interactive science and engineering experiences. Our goal is to make complex ideas easier to explore through models, experiments, and visual learning.</p>
+        </div>
+        <a class="button button-light" href="admin-login.html">Administration <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>© <span id="current-year"></span> OOPA Virtual Labs</span>
+    <span>Explore <b>•</b> Experiment <b>•</b> Discover</span>
+    <button type="button" class="footer-link" data-jenny-action="replay-intro">Meet Jenny, your guide</button>
+  </footer>
+</body>
+</html>

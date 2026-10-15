@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <title>Admin Login | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="styles/admin-login.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script defer src="scripts/admin-login.js"></script>
+  <script defer src="scripts/jenny/jenny-loader.js" data-page="admin-login" data-autoshow="false"></script>
+</head>
+<body>
+  <main class="login-layout">
+    <section class="login-visual">
+      <a class="brand" href="main-menu.html"><span class="brand-mark">O</span><span>OOPA <b>VIRTUAL LABS</b></span></a>
+      <div class="visual-copy">
+        <p class="eyebrow">ADMINISTRATION PORTAL</p>
+        <h1>Keep discovery<br>moving forward.</h1>
+        <p>Manage the virtual lab experience from one central workspace.</p>
+      </div>
+      <div class="visual-equation">∑ &nbsp; ∫ &nbsp; π &nbsp; ⚛ &nbsp; Δ</div>
+      <span class="visual-footer">EXPLORE · EXPERIMENT · DISCOVER</span>
+    </section>
+    <section class="login-panel">
+      <a class="back-link" href="main-menu.html">← Back to main menu</a>
+      <div class="login-card">
+        <div class="login-icon">⌑</div>
+        <p class="eyebrow">RESTRICTED ACCESS</p>
+        <h2>Admin sign in</h2>
+        <p class="login-intro">Enter the administrator passcode to continue.</p>
+        <form id="login-form" novalidate>
+          <label for="passcode">Administrator passcode</label>
+          <div class="passcode-wrap">
+            <input id="passcode" name="passcode" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Enter passcode" required>
+            <button type="button" id="toggle-passcode" aria-label="Show passcode">Show</button>
+          </div>
+          <p class="form-message" id="form-message" role="alert" aria-live="polite"></p>
+          <button class="submit-button" type="submit">Unlock dashboard <span>→</span></button>
+        </form>
+        <p class="security-note"><span>●</span> Demo access screen</p>
+      </div>
+      <p class="panel-footer">© <span id="current-year"></span> OOPA Virtual Labs</p>
+    </section>
+  </main>
+</body>
+</html>

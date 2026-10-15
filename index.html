@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080808">
+  <meta name="description" content="OOPA Virtual Labs — interactive chemistry, biology, physics and engineering simulations. Explore, Experiment, Discover.">
+  <title>OOPA Virtual Labs | Welcome</title>
+
+  <!-- Favicons -->
+  <link rel="icon" href="assets/icons/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="assets/icons/site.webmanifest">
+
+  <!-- Open Graph (Facebook, WhatsApp, LinkedIn, etc.) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="OOPA Virtual Labs">
+  <meta property="og:title" content="OOPA Virtual Labs">
+  <meta property="og:description" content="Explore, Experiment, Discover — interactive virtual laboratories for chemistry, biology, physics and engineering.">
+  <meta property="og:image" content="https://YOUR_DOMAIN.vercel.app/assets/og-image.png">
+  <meta property="og:image:secure_url" content="https://YOUR_DOMAIN.vercel.app/assets/og-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="OOPA Virtual Labs — Explore, Experiment, Discover">
+  <meta property="og:url" content="https://YOUR_DOMAIN.vercel.app/">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="OOPA Virtual Labs">
+  <meta name="twitter:description" content="Explore, Experiment, Discover — interactive virtual laboratories for chemistry, biology, physics and engineering.">
+  <meta name="twitter:image" content="https://YOUR_DOMAIN.vercel.app/assets/og-image.png">
+  <meta name="twitter:image:alt" content="OOPA Virtual Labs — Explore, Experiment, Discover">
+
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; }
+    body { background: #080808; color: #fff; font-family: Arial, Helvetica, sans-serif; overflow: hidden; }
+    .splash { width: 100%; height: 100vh; height: 100svh; min-height: 100%; display: grid; place-items: center; position: relative; isolation: isolate; background: #080808; }
+    .splash::before { content: ""; position: absolute; inset: 0; z-index: -1; background-image: url("assets/oopa-virtual-labs-splash.png"); background-position: center center; background-size: contain; background-repeat: no-repeat; }
+    .splash::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(0,0,0,.04) 45%, rgba(0,0,0,.65) 100%); pointer-events: none; }
+    .status { position: absolute; bottom: max(24px, env(safe-area-inset-bottom)); left: 20px; right: 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+    .message { margin: 0; font-size: clamp(.75rem, 2.5vw, .95rem); letter-spacing: .18em; text-transform: uppercase; }
+    .track { width: min(220px, 65vw); height: 3px; background: rgba(255,255,255,.22); border-radius: 99px; overflow: hidden; }
+    .progress { width: 0; height: 100%; background: #d52b2b; animation: load 10s linear forwards; }
+    .skip { color: rgba(255,255,255,.8); font-size: .8rem; text-decoration: underline; text-underline-offset: 3px; }
+    @keyframes load { to { width: 100%; } }
+    @media (max-width: 600px) { .splash::before { background-size: contain; background-position: center center; } .splash::after { background: linear-gradient(180deg, rgba(0,0,0,.02) 40%, rgba(0,0,0,.72) 100%); } }
+    @media (prefers-reduced-motion: reduce) { .progress { animation-duration: 10s; } }
+  </style>
+  <script>
+    window.setTimeout(function () {
+      window.location.replace('main-menu.html');
+    }, 10000);
+  </script>
+</head>
+<body>
+  <main class="splash" aria-label="OOPA Virtual Labs splash screen">
+    <div class="status" aria-live="polite">
+      <p class="message">Explore · Experiment · Discover</p>
+      <div class="track" role="progressbar" aria-label="Loading OOPA Virtual Labs" aria-valuemin="0" aria-valuemax="100"><div class="progress"></div></div>
+      <a class="skip" href="main-menu.html">Continue to main menu</a>
+    </div>
+  </main>
+</body>
+</html>

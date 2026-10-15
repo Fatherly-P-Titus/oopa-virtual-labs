@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <title>Admin Dashboard | OOPA Virtual Labs</title>
+  <script>
+    /* Demo-only guard, run before first paint so the dashboard never flashes. Not real security. */
+    try { if (sessionStorage.getItem("oopa_admin_demo_access") !== "granted") location.replace("admin-login.html"); }
+    catch (e) { location.replace("admin-login.html"); }
+  </script>
+  <link rel="stylesheet" href="styles/admin-page.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script defer src="scripts/admin-page.js"></script>
+  <script defer src="scripts/jenny/jenny-loader.js" data-page="admin-dashboard"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="main-menu.html"><span class="brand-mark">O</span><span>OOPA <b>VIRTUAL LABS</b></span></a>
+    <p class="nav-label">WORKSPACE</p>
+    <a class="side-link active" href="#overview"><span>▦</span> Overview</a>
+    <a class="side-link" href="#labs"><span>⚗</span> Laboratories</a>
+    <a class="side-link" href="#activity"><span>◷</span> Recent activity</a>
+    <div class="sidebar-bottom"><div class="admin-avatar">A</div><div><b>Administrator</b><small>Demo account</small></div><button id="logout-button" title="Log out" aria-label="Log out">↗</button></div>
+  </aside>
+
+  <main class="dashboard">
+    <header class="dashboard-header">
+      <div><p class="eyebrow">OOPA / ADMINISTRATION</p><h1>Dashboard overview</h1><p class="subheading">Manage your virtual learning space.</p></div>
+      <a class="view-site" href="main-menu.html" target="_blank" rel="noopener">View main menu <span>↗</span></a>
+    </header>
+
+    <section class="welcome-banner" id="overview">
+      <div><p class="banner-eyebrow">WELCOME BACK</p><h2>Make room for the next discovery.</h2><p>This is your starting point for managing OOPA Virtual Labs.</p></div>
+      <div class="banner-symbol">⚛</div>
+    </section>
+
+    <section class="stats-grid" aria-label="Platform summary">
+      <article class="stat-card"><span class="stat-icon red">⚗</span><span class="stat-label">LAB CATEGORIES</span><strong>5</strong><small>Initial categories</small></article>
+      <article class="stat-card"><span class="stat-icon black">▣</span><span class="stat-label">LIVE PROJECTS</span><strong>27</strong><small>Physics: 2, Chemistry: 10, Biology: 4, Engineering: 11</small></article>
+      <article class="stat-card"><span class="stat-icon pale">✳</span><span class="stat-label">PLATFORM STATUS</span><strong class="status-text"><i></i> In development</strong><small>Starter project</small></article>
+    </section>
+
+    <section class="content-panel" id="labs">
+      <div class="panel-heading"><div><p class="eyebrow">CONTENT MANAGEMENT</p><h2>Laboratories</h2></div><span class="badge">STARTER SETUP</span></div>
+      <p class="panel-description">These are placeholder destinations for the first lab categories. Their simulation content can be implemented next.</p>
+      <div class="lab-list">
+        <div class="lab-row"><span class="row-icon">⚛</span><div><b>Physics</b><small>Motion, forces, energy, and heat</small></div><span class="row-status">Available</span><a href="labs/physics/index.html">Open ↗</a></div>
+        <div class="lab-row"><span class="row-icon">⚗</span><div><b>Chemistry</b><small>Matter, reactions, and equilibrium</small></div><span class="row-status">Available</span><a href="labs/chemistry/index.html">Open ↗</a></div>
+        <div class="lab-row"><span class="row-icon">⌬</span><div><b>Biology</b><small>Cells, organisms, and ecosystems</small></div><span class="row-status">Available</span><a href="labs/biology/index.html">Open ↗</a></div>
+        <div class="lab-row"><span class="row-icon">∑</span><div><b>Mathematics</b><small>Equations, statistics, and geometry</small></div><span class="row-status">Placeholder</span><a href="labs/mathematics/index.html">Open ↗</a></div>
+        <div class="lab-row"><span class="row-icon">⚙</span><div><b>Engineering</b><small>Systems, equipment, and processes</small></div><span class="row-status">Available</span><a href="labs/engineering/index.html">Open ↗</a></div>
+      </div>
+    </section>
+
+    <section class="content-panel activity-panel" id="activity">
+      <div class="panel-heading"><div><p class="eyebrow">SYSTEM NOTES</p><h2>Recent activity</h2></div></div>
+      <div class="activity-item"><span class="activity-dot"></span><div><b>Starter dashboard initialized</b><p>Base navigation and admin interface are ready for development.</p></div><time>Just now</time></div>
+      <div class="activity-item"><span class="activity-dot"></span><div><b>Laboratory placeholders created</b><p>Five category pages are available as starting points.</p></div><time>Initial setup</time></div>
+    </section>
+    <footer class="dashboard-footer">© <span id="current-year"></span> OOPA Virtual Labs <span>DEMO ADMIN INTERFACE</span></footer>
+  </main>
+</body>
+</html>

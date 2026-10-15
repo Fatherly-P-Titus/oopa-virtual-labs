@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Meet Jenny Agu, your on-screen guide across OOPA Virtual Labs.">
+  <title>Jenny Agu | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="styles/main-menu.css">
+  <link rel="stylesheet" href="styles/jenny-page.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script defer src="scripts/main-menu.js"></script>
+  <script defer src="scripts/jenny/jenny-loader.js" data-page="welcome" data-autoshow="false"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="wordmark" href="main-menu.html" aria-label="OOPA Virtual Labs home">
+      <span class="wordmark-mark">O</span>
+      <span>OOPA <strong>VIRTUAL LABS</strong></span>
+    </a>
+    <nav class="topnav" aria-label="Main navigation">
+      <a href="main-menu.html#explore">Explore Labs</a>
+      <a href="main-menu.html#about">About</a>
+      <a class="admin-link" href="admin-login.html">Admin Login <span aria-hidden="true">↗</span></a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+  </header>
+
+  <main>
+    <section class="jenny-hero" aria-labelledby="jenny-title-h1">
+      <div class="jenny-portrait">
+        <img src="assets/jenny/jenny-lab.jpg" alt="Jenny Agu, in a lab coat and glasses, in a laboratory" width="384" height="384">
+      </div>
+      <div class="jenny-copy">
+        <p class="eyebrow"><span class="status-dot"></span> YOUR ON-SCREEN GUIDE</p>
+        <h1 id="jenny-title-h1">Meet <span>Jenny Agu.</span></h1>
+        <p class="hero-description">Jenny is your guide across OOPA Virtual Labs. She offers short, contextual tips on every page, and you can open or close her at any time with the round button in the lower-right corner.</p>
+        <div class="hero-actions">
+          <button class="button button-primary" type="button" data-jenny-action="toggle">Talk to Jenny</button>
+          <button class="button button-secondary" type="button" data-jenny-action="replay-intro">Replay welcome intro</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-wrap jenny-points" aria-label="What Jenny does">
+      <div class="lab-grid">
+        <article class="lab-card"><span class="lab-icon">✦</span><span class="lab-number">01</span><h3>Finds your way</h3><p>Jenny explains each page and points you to the laboratory that fits your interest.</p></article>
+        <article class="lab-card"><span class="lab-icon">⚠</span><span class="lab-number">02</span><h3>Flags what matters</h3><p>Tips are marked as information, caution or warning, so important notes stand out.</p></article>
+        <article class="lab-card"><span class="lab-icon">✓</span><span class="lab-number">03</span><h3>Respects your time</h3><p>Tick &ldquo;Don&rsquo;t show again&rdquo; on any tip and Jenny will stop repeating it.</p></article>
+      </div>
+      <p class="jenny-back"><a class="button button-primary" href="main-menu.html#explore">Explore the laboratories <span aria-hidden="true">→</span></a></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>© <span id="current-year"></span> OOPA Virtual Labs</span>
+    <span>Explore <b>•</b> Experiment <b>•</b> Discover</span>
+  </footer>
+</body>
+</html>
