@@ -1,0 +1,346 @@
+/* =========================================================
+   OOPA Virtual Labs – Welcome Splash Window
+   Full-viewport intro overlay introducing the system + Jenny
+   ========================================================= */
+
+:root {
+  --splash-bg:            #0A0A0A;
+  --splash-surface:       #141414;
+  --splash-firebrick:     #B22222;
+  --splash-firebrick-soft:#E57373;
+  --splash-text:          #FFFFFF;
+  --splash-muted:         #9E9E9E;
+  --splash-border:        #333333;
+  --splash-radius:        12px;
+}
+
+/* ---------- Overlay ---------- */
+#jenny-splash {
+  font-family: "DM Sans", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  visibility: hidden;
+  pointer-events: none;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, #1a0a0a 0%, #0A0A0A 70%);
+  padding: 1.25rem;
+  box-sizing: border-box;
+  opacity: 0;
+  transition: opacity 0.35s ease, visibility 0s linear 0.35s;
+}
+
+#jenny-splash.visible {
+  visibility: visible;
+  pointer-events: auto;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+#jenny-splash.closing {
+  opacity: 0;
+}
+
+/* Subtle particle feel (CSS only) */
+#jenny-splash::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 20% 30%, rgba(178, 34, 34, 0.3) 50%, transparent 50%),
+    radial-gradient(1px 1px at 70% 60%, rgba(178, 34, 34, 0.22) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 40% 80%, rgba(255, 255, 255, 0.06) 50%, transparent 50%),
+    radial-gradient(1px 1px at 85% 20%, rgba(178, 34, 34, 0.25) 50%, transparent 50%);
+  background-size: 100% 100%;
+  pointer-events: none;
+}
+
+/* ---------- Card ---------- */
+.splash-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  background: var(--splash-surface);
+  border: 1px solid var(--splash-border);
+  border-radius: var(--splash-radius);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.55), 0 0 40px rgba(178, 34, 34, 0.12);
+  padding: 2rem 1.75rem 1.5rem;
+  max-height: 96vh;
+  overflow-y: auto;
+  text-align: center;
+  transform: translateY(12px);
+  transition: transform 0.35s ease;
+}
+
+#jenny-splash.visible .splash-card {
+  transform: translateY(0);
+}
+
+/* Platform banner (OOPA artwork) */
+.splash-banner {
+  margin: -0.5rem -0.5rem 1rem;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.splash-banner img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+
+body.splash-open { overflow: hidden; }
+
+/* Brand / logo area */
+.splash-brand {
+  margin-bottom: 1.25rem;
+}
+
+.splash-brand .splash-icon {
+  display: inline-flex;
+  width: 64px;
+  height: 64px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--splash-firebrick) 0%, #8B1A1A 100%);
+  box-shadow: 0 0 22px rgba(178, 34, 34, 0.5);
+  margin-bottom: 0.85rem;
+  font-size: 1.75rem;
+  color: #fff;
+  overflow: hidden;
+}
+
+.splash-brand .splash-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.splash-brand h1 {
+  font-family: "Space Grotesk", "Segoe UI", system-ui, Arial, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--splash-text);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.splash-brand .splash-icon img { object-position: 50% 20%; }
+
+.splash-brand h1 span {
+  color: var(--splash-firebrick);
+}
+
+.splash-brand .splash-tagline {
+  margin-top: 0.3rem;
+  font-size: 0.88rem;
+  color: var(--splash-muted);
+}
+
+/* Body copy */
+.splash-body {
+  text-align: left;
+  margin: 1.15rem 0 1.35rem;
+}
+
+.splash-body p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #ddd;
+  margin: 0 0 0.75rem;
+}
+
+.splash-body p:last-child {
+  margin-bottom: 0;
+}
+
+.splash-body .splash-jenny-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.7rem 0.8rem;
+  background: rgba(178, 34, 34, 0.08);
+  border: 1px solid rgba(178, 34, 34, 0.25);
+  border-radius: 8px;
+  margin-top: 0.85rem;
+}
+
+.splash-body .splash-jenny-line .mini-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--splash-firebrick) 0%, #8B1A1A 100%);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  overflow: hidden;
+}
+
+.splash-body .splash-jenny-line .mini-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.splash-body .splash-jenny-line p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #ccc;
+  line-height: 1.4;
+}
+
+/* Actions */
+.splash-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.splash-actions .btn-splash-primary {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  background: var(--splash-firebrick);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.splash-actions .btn-splash-primary:hover {
+  background: #D32F2F;
+  box-shadow: 0 0 14px rgba(178, 34, 34, 0.4);
+}
+
+.splash-actions .btn-splash-primary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.45);
+}
+
+.splash-actions .btn-splash-skip {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: var(--splash-muted);
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.splash-actions .btn-splash-skip:hover {
+  color: var(--splash-firebrick-soft);
+}
+
+.splash-actions .btn-splash-skip:focus-visible {
+  outline: none;
+  color: var(--splash-firebrick-soft);
+}
+
+/* Checkbox row for "Don't show this intro again" */
+.splash-remember {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 0.85rem;
+  font-size: 0.78rem;
+  color: var(--splash-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.splash-remember input {
+  accent-color: var(--splash-firebrick);
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Mobile */
+@media (max-width: 400px) {
+  .splash-card {
+    padding: 1.5rem 1.15rem 1.25rem;
+  }
+
+  .splash-brand h1 {
+    font-size: 1.15rem;
+  }
+
+  .splash-body p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #jenny-splash,
+  .splash-card {
+    transition: none;
+  }
+
+  #jenny-splash.visible .splash-card {
+    transform: none;
+  }
+}
+
+/* Phase 6 – Splash mobile / landscape polish */
+@media (max-height: 520px) {
+  .splash-card {
+    padding: 1.15rem 1.25rem 1rem;
+    max-height: 94vh;
+    overflow-y: auto;
+  }
+
+  .splash-brand {
+    margin-bottom: 0.75rem;
+  }
+
+  .splash-brand .splash-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 1.3rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .splash-brand h1 {
+    font-size: 1.25rem;
+  }
+
+  .splash-body {
+    margin: 0.65rem 0 0.9rem;
+  }
+
+  .splash-body p {
+    font-size: 0.82rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .splash-body .splash-jenny-line {
+    padding: 0.5rem 0.65rem;
+    margin-top: 0.5rem;
+  }
+}
+
+@supports (padding: env(safe-area-inset-bottom)) {
+  #jenny-splash {
+    padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
+    padding-top: calc(1.25rem + env(safe-area-inset-top));
+  }
+}

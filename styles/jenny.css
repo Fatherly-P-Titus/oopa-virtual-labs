@@ -1,0 +1,464 @@
+/* =========================================================
+   OOPA Virtual Labs – Jenny Agu Dialog & Floating Button
+   Phase 1: Foundation styles
+   Phase 2: Type accents, icons, progress, typing cursor, transitions
+   Theme: Fire-brick Red + Black + White (matches main.css)
+   ========================================================= */
+
+/* ---------- CSS Variables (fallback if main.css not loaded) ---------- */
+:root {
+  --jenny-firebrick:        #B22222;
+  --jenny-firebrick-dark:   #8B1A1A;
+  --jenny-firebrick-light:  #D32F2F;
+  --jenny-firebrick-soft:   #E57373;
+  --jenny-surface:          #1A1A1A;
+  --jenny-surface-2:        #2A2A2A;
+  --jenny-border:           #333333;
+  --jenny-text:             #FFFFFF;
+  --jenny-text-muted:       #9E9E9E;
+  --jenny-radius:           6px;
+  --jenny-radius-lg:        10px;
+  --jenny-shadow:           0 4px 20px rgba(0, 0, 0, 0.45);
+  --jenny-dialog-h:         200px;   /* strip height; FAB + page padding follow it */
+  --jenny-info:             #43A047;
+  --jenny-caution:          #FB8C00;
+  --jenny-warning:          #B22222;
+}
+
+/* ---------- Dialog Box (bottom strip) ---------- */
+#dialog-box {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: var(--jenny-dialog-h);
+  display: flex;
+  visibility: hidden;
+  pointer-events: none;
+  font-family: "DM Sans", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  align-items: stretch;
+  background: rgba(20, 20, 20, 0.96);
+  border-top: 3px solid var(--jenny-border);
+  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.5);
+  z-index: 1100; /* above start-modal (.modal-overlay is 1000) */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  overflow: hidden;
+  box-sizing: border-box;
+  /* slide-up entrance */
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.28s ease, opacity 0.22s ease, visibility 0s linear 0.28s;
+}
+
+#dialog-box.visible {
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+/* Keep the page footer reachable while the strip is open */
+html.jenny-open {
+  padding-bottom: var(--jenny-dialog-h);
+}
+
+/* Left accent bar via border-top colour (set per type) */
+#dialog-box.type-info    { border-top-color: var(--jenny-info); }
+#dialog-box.type-caution { border-top-color: var(--jenny-caution); }
+#dialog-box.type-warning { border-top-color: var(--jenny-warning); }
+
+/* ---------- Avatar ---------- */
+#dialog-box #avatar-box {
+  width: 20%;
+  min-width: 72px;
+  max-width: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: linear-gradient(160deg, var(--jenny-firebrick-dark) 0%, #1a0a0a 100%);
+  border-right: 1px solid var(--jenny-border);
+  flex-shrink: 0;
+}
+
+#dialog-box #avatar-box img#avatar {
+  width: 100%;
+  max-width: 72px;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: 50% 20%;
+  border-radius: 50%;
+  border: 2px solid var(--jenny-firebrick);
+  box-shadow: 0 0 12px rgba(178, 34, 34, 0.45);
+  background: var(--jenny-surface-2);
+}
+
+/* ---------- Text area ---------- */
+#dialog-box #text-box {
+  width: 80%;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0; /* allow flex child to scroll */
+  padding: 10px 14px 10px 12px; /* bottom-padding 10px */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 3px;
+  overflow-x: hidden;
+  overflow-y: auto; /* y-scrollable text area */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Header row: icon + title + progress */
+#dialog-box .jenny-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 1.2em;
+}
+
+#dialog-box .jenny-type-icon {
+  font-size: 0.85rem;
+  line-height: 1;
+  flex-shrink: 0;
+  width: 1.1em;
+  text-align: center;
+}
+
+#dialog-box .jenny-type-icon.icon-info    { color: #81C784; }
+#dialog-box .jenny-type-icon.icon-caution { color: #FFB74D; }
+#dialog-box .jenny-type-icon.icon-warning { color: var(--jenny-firebrick-soft); }
+
+#dialog-box .jenny-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--jenny-firebrick-soft);
+  margin: 0;
+  line-height: 1.2;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+#dialog-box.type-info    .jenny-title { color: #81C784; }
+#dialog-box.type-caution .jenny-title { color: #FFB74D; }
+#dialog-box.type-warning .jenny-title { color: var(--jenny-firebrick-soft); }
+
+#dialog-box .jenny-progress {
+  font-size: 0.68rem;
+  font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  color: var(--jenny-text-muted);
+  flex-shrink: 0;
+  background: var(--jenny-surface-2);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+/* Body text */
+#dialog-box .jenny-text {
+  font-size: 0.84rem;
+  line-height: 1.35;
+  color: var(--jenny-text);
+  margin: 0;
+  overflow: visible;
+  flex: 0 0 auto;
+}
+
+/* Typing cursor */
+#dialog-box .jenny-text.typing::after {
+  content: "▍";
+  display: inline-block;
+  margin-left: 1px;
+  color: var(--jenny-firebrick-soft);
+  animation: jenny-blink 0.7s step-end infinite;
+}
+
+@keyframes jenny-blink {
+  50% { opacity: 0; }
+}
+
+/* ---------- Controls ---------- */
+#dialog-box .jenny-controls {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+#dialog-box .jenny-controls button {
+  padding: 3px 11px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid var(--jenny-border);
+  border-radius: var(--jenny-radius);
+  background: var(--jenny-surface-2);
+  color: var(--jenny-text);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+#dialog-box .jenny-controls button:hover,
+#dialog-box .jenny-controls button:focus {
+  border-color: var(--jenny-firebrick);
+  background: var(--jenny-firebrick-dark);
+  outline: none;
+}
+
+#dialog-box .jenny-controls button:focus-visible {
+  box-shadow: 0 0 0 2px rgba(178, 34, 34, 0.55);
+}
+
+#dialog-box .jenny-controls button[hidden] {
+  display: none !important;
+}
+
+/* ---------- Floating (sticky) Button – lower right ---------- */
+#jenny-fab {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--jenny-firebrick);
+  background: var(--jenny-surface);
+  box-shadow: var(--jenny-shadow);
+  opacity: 0.5;
+  cursor: pointer;
+  z-index: 1110; /* above dialog-box */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease, bottom 0.28s ease;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  padding: 0;
+}
+
+#jenny-fab:hover,
+#jenny-fab:focus {
+  opacity: 1;
+  transform: scale(1.06);
+  box-shadow: 0 0 18px rgba(178, 34, 34, 0.55);
+  outline: none;
+}
+
+#jenny-fab:focus-visible {
+  box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.6);
+}
+
+#jenny-fab.active {
+  opacity: 1;
+  border-color: var(--jenny-firebrick-light);
+  box-shadow: 0 0 16px rgba(178, 34, 34, 0.6);
+}
+
+#jenny-fab { font-family: inherit; }
+
+#jenny-fab img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 20%;
+  border-radius: 50%;
+}
+
+#jenny-fab .fab-fallback {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--jenny-firebrick-soft);
+  line-height: 1;
+}
+
+/* When dialog is open, lift the FAB above it */
+body.jenny-open #jenny-fab {
+  bottom: calc(var(--jenny-dialog-h) + 20px);
+}
+
+/* ---------- Mobile adjustments ---------- */
+@media (max-width: 480px) {
+  #dialog-box #avatar-box {
+    width: 22%;
+    min-width: 60px;
+    max-width: 80px;
+    padding: 6px;
+  }
+
+  #dialog-box #avatar-box img#avatar {
+    max-width: 56px;
+  }
+
+  #dialog-box #text-box {
+    padding: 8px 10px 10px;
+    overflow-y: auto;
+  }
+
+  #dialog-box .jenny-title {
+    font-size: 0.72rem;
+  }
+
+  #dialog-box .jenny-text {
+    font-size: 0.78rem;
+  }
+
+  #jenny-fab {
+    width: 48px;
+    height: 48px;
+    right: 12px;
+    bottom: 12px;
+  }
+
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  #jenny-fab,
+  #dialog-box {
+    transition: none;
+  }
+
+  #dialog-box .jenny-text.typing::after {
+    animation: none;
+  }
+
+  #dialog-box {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   Phase 3 – Don't-show checkbox, FAB badge & pulse
+   ========================================================= */
+
+/* Don't-show-again checkbox (sits in controls row) */
+#dialog-box .jenny-dont-show {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: var(--jenny-text-muted);
+  cursor: pointer;
+  user-select: none;
+  margin-right: auto;
+}
+
+#dialog-box .jenny-dont-show[hidden] {
+  display: none !important;
+}
+
+#dialog-box .jenny-dont-show input {
+  accent-color: var(--jenny-firebrick);
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  cursor: pointer;
+}
+
+#dialog-box .jenny-dont-show span {
+  line-height: 1;
+}
+
+/* FAB notification badge */
+#jenny-fab .jenny-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--jenny-firebrick);
+  border: 2px solid var(--jenny-surface);
+  box-shadow: 0 0 6px rgba(178, 34, 34, 0.7);
+  pointer-events: none;
+}
+
+#jenny-fab .jenny-badge[hidden] {
+  display: none !important;
+}
+
+/* Pulse animation when there are unseen tips */
+#jenny-fab.has-badge {
+  opacity: 0.85;
+  animation: jenny-fab-pulse 2s ease-in-out infinite;
+}
+
+@keyframes jenny-fab-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(178, 34, 34, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(178, 34, 34, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #jenny-fab.has-badge {
+    animation: none;
+  }
+}
+
+/* =========================================================
+   Phase 6 – Mobile polish & safe-area
+   ========================================================= */
+
+/* iOS / notched devices: keep FAB above home indicator */
+@supports (padding: env(safe-area-inset-bottom)) {
+  #jenny-fab {
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    right: calc(16px + env(safe-area-inset-right));
+  }
+
+  body.jenny-open #jenny-fab {
+    bottom: calc(var(--jenny-dialog-h) + 20px + env(safe-area-inset-bottom));
+  }
+
+  #dialog-box {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Tighter controls row on very small screens */
+@media (max-width: 380px) {
+  #dialog-box .jenny-controls {
+    flex-wrap: wrap;
+  }
+
+  #dialog-box .jenny-dont-show {
+    order: 3;
+    width: 100%;
+    margin-top: 2px;
+    margin-right: 0;
+  }
+
+  #dialog-box .jenny-text {
+      font-size: 0.76rem;
+  }
+}
+
+/* Landscape phones: keep dialog compact */
+@media (max-height: 420px) and (orientation: landscape) {
+  :root { --jenny-dialog-h: min(200px, 45vh); }
+
+  #dialog-box .jenny-text {
+    font-size: 0.76rem;
+  }
+
+  #dialog-box #avatar-box {
+    min-width: 52px;
+    max-width: 64px;
+    padding: 4px;
+  }
+
+
+}
+
+/* Wide screens: text fits in fewer lines, so a shorter strip is enough */
+@media (min-width: 768px) and (min-height: 421px) {
+  :root { --jenny-dialog-h: 150px; }
+}
