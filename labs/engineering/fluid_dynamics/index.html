@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Steady pipe flow: continuity, Bernoulli equation and venturi pressure drop.">
+  <title>Fluid Dynamics | Engineering | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/fluid-dynamics.css">
+  <script defer src="scripts/fluid-model.js"></script>
+  <script defer src="scripts/fluid-dynamics.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="fluid-dynamics"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Engineering</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Fluid Dynamics</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 05 / ENGINEERING</p>
+    <h1>Fluid <span>Dynamics.</span></h1>
+    <p class="lead">Steady incompressible flow in a venturi-style pipe. Continuity sets the speeds; Bernoulli links pressure, velocity and height.</p>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Pipe diagram">
+        <canvas id="fluid-canvas" role="img" aria-label="Pipe with inlet and throat. Particles speed up in the constriction; pressure falls."></canvas>
+        <p class="hint-bar" id="hint-bar">Venturi / pipe flow. Continuity links areas and speeds; Bernoulli links pressure, speed and height.</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and results">
+        <p class="eyebrow-sm">PRESETS</p>
+        <div class="presets" role="group">
+          <button type="button" class="chip" data-preset="venturi">Venturi</button>
+          <button type="button" class="chip" data-preset="wide">Mild taper</button>
+          <button type="button" class="chip" data-preset="friction">With friction</button>
+          <button type="button" class="chip" data-preset="elevate">Elevated throat</button>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">GEOMETRY &amp; FLOW</p>
+        <div class="ctl">
+          <label for="c-D1">Inlet D₁</label>
+          <output id="o-D1">80 mm</output>
+          <input id="c-D1" type="range" min="40" max="120" step="2" value="80">
+        </div>
+        <div class="ctl">
+          <label for="c-D2">Throat D₂</label>
+          <output id="o-D2">40 mm</output>
+          <input id="c-D2" type="range" min="15" max="80" step="1" value="40">
+        </div>
+        <div class="ctl">
+          <label for="c-Q">Volume flow Q</label>
+          <output id="o-Q">5.0 L/s</output>
+          <input id="c-Q" type="range" min="0.5" max="15" step="0.1" value="5">
+        </div>
+        <div class="ctl">
+          <label for="c-p1">Inlet pressure p₁</label>
+          <output id="o-p1">150 kPa</output>
+          <input id="c-p1" type="range" min="50" max="300" step="5" value="150">
+        </div>
+        <div class="ctl">
+          <label for="c-z2">Throat height z₂</label>
+          <output id="o-z2">0.00 m</output>
+          <input id="c-z2" type="range" min="-0.5" max="2" step="0.05" value="0">
+        </div>
+        <div class="ctl">
+          <label for="c-f">Friction factor f</label>
+          <output id="o-f">0.000</output>
+          <input id="c-f" type="range" min="0" max="0.05" step="0.001" value="0">
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">RESULTS</p>
+        <dl class="stats">
+          <div><dt>v₁</dt><dd id="s-v1">–</dd></div>
+          <div class="hl"><dt>v₂</dt><dd id="s-v2">–</dd></div>
+          <div><dt>p₁</dt><dd id="s-p1">–</dd></div>
+          <div class="hl"><dt>p₂</dt><dd id="s-p2">–</dd></div>
+          <div><dt>Q</dt><dd id="s-Q">–</dd></div>
+          <div><dt>v₂/v₁</dt><dd id="s-ratio">–</dd></div>
+          <div><dt>Head loss h_L</dt><dd id="s-hL">–</dd></div>
+          <div><dt>Total head H₁</dt><dd id="s-H1">–</dd></div>
+          <div><dt>Total head H₂</dt><dd id="s-H2">–</dd></div>
+        </dl>
+        <p class="unit-note">Water ρ = 1000 kg/m³. Ideal Bernoulli when f = 0. Head loss uses Darcy–Weisbach with a single f.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol>
+          <li><b>Venturi.</b> Narrow the throat. Speed rises, pressure falls — the classic effect used in flow meters.</li>
+          <li><b>Continuity.</b> Check that v₂/v₁ ≈ (D₁/D₂)².</li>
+          <li><b>Friction.</b> Raise f and watch total head H₂ drop below H₁.</li>
+          <li><b>Elevation.</b> Lift the throat (z₂). Gravitational head trades with pressure.</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The engineering</h3>
+        <p>For steady incompressible flow, volume flow rate is constant along the pipe. Where the section shrinks, speed must rise. Bernoulli then says pressure usually falls — unless height or losses change the balance.</p>
+        <p>Real pipes also need a friction model (Moody chart, fittings). This lab keeps a single factor so the ideal Bernoulli structure stays clear.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

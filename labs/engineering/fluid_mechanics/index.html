@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Hydrostatics, manometers and buoyancy: pressure with depth and Archimedes principle.">
+  <title>Fluid Mechanics | Engineering | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/fluid-mechanics.css">
+  <script defer src="scripts/fm-model.js"></script>
+  <script defer src="scripts/fluid-mechanics.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="fluid-mechanics"></script>
+</head>
+<body class="m-hydro">
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Engineering</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Fluid Mechanics</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 05 / ENGINEERING</p>
+    <h1>Fluid <span>Mechanics.</span></h1>
+    <p class="lead">Hydrostatic pressure, U-tube manometers and buoyancy. Explore how depth, density and displaced volume set forces in a static fluid.</p>
+
+    <div class="mode-tabs" role="tablist" aria-label="Topic">
+      <button type="button" class="active" data-mode="hydro">Hydrostatics</button>
+      <button type="button" data-mode="mano">Manometer</button>
+      <button type="button" data-mode="buoy">Buoyancy</button>
+    </div>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Diagram">
+        <canvas id="fm-canvas" role="img" aria-label="Hydrostatics, manometer or buoyancy diagram depending on the selected mode."></canvas>
+        <p class="hint-bar" id="hint-bar">Pressure increases linearly with depth. p = ρgh (gauge).</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and results">
+        <p class="eyebrow-sm">FLUID</p>
+        <div class="fluid-row" role="group">
+          <button type="button" class="active" data-fluid="water">Water</button>
+          <button type="button" data-fluid="seawater">Seawater</button>
+          <button type="button" data-fluid="oil">Oil</button>
+          <button type="button" data-fluid="mercury">Mercury</button>
+          <button type="button" data-fluid="alcohol">Alcohol</button>
+        </div>
+
+        <div class="ctrl-hydro">
+          <p class="eyebrow-sm" style="margin-top:6px">DEPTH</p>
+          <div class="ctl">
+            <label for="c-h">Depth h</label>
+            <output id="o-h">2.00 m</output>
+            <input id="c-h" type="range" min="0.1" max="10" step="0.1" value="2">
+          </div>
+        </div>
+
+        <div class="ctrl-mano">
+          <p class="eyebrow-sm" style="margin-top:6px">COLUMN DIFFERENCE</p>
+          <div class="ctl">
+            <label for="c-dh">Δh</label>
+            <output id="o-dh">30.0 cm</output>
+            <input id="c-dh" type="range" min="-50" max="50" step="1" value="30">
+          </div>
+        </div>
+
+        <div class="ctrl-buoy">
+          <p class="eyebrow-sm" style="margin-top:6px">OBJECT</p>
+          <div class="ctl">
+            <label for="c-rhoObj">Object density</label>
+            <output id="o-rhoObj">600 kg/m³</output>
+            <input id="c-rhoObj" type="range" min="100" max="2000" step="10" value="600">
+          </div>
+          <div class="ctl">
+            <label for="c-H">Height H</label>
+            <output id="o-H">80 cm</output>
+            <input id="c-H" type="range" min="20" max="150" step="5" value="80">
+          </div>
+          <div class="ctl">
+            <label for="c-A">Base area A</label>
+            <output id="o-A">0.50 m²</output>
+            <input id="c-A" type="range" min="0.1" max="2" step="0.05" value="0.5">
+          </div>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">RESULTS</p>
+        <dl class="stats">
+          <div data-for="hydro" class="hl"><dt>Gauge pressure</dt><dd id="s-p">–</dd></div>
+          <div data-for="hydro"><dt>Absolute pressure</dt><dd id="s-pabs">–</dd></div>
+          <div data-for="hydro"><dt>Depth</dt><dd id="s-h">–</dd></div>
+          <div data-for="mano" class="hl" style="display:none"><dt>Δp</dt><dd id="s-dp">–</dd></div>
+          <div data-for="mano" style="display:none"><dt>Δh</dt><dd id="s-dh">–</dd></div>
+          <div data-for="buoy" class="hl" style="display:none"><dt>Weight W</dt><dd id="s-W">–</dd></div>
+          <div data-for="buoy" style="display:none"><dt>Buoyant force F_B</dt><dd id="s-FB">–</dd></div>
+          <div data-for="buoy" style="display:none"><dt>Draft</dt><dd id="s-draft">–</dd></div>
+          <div data-for="buoy" style="display:none"><dt>Net force (up)</dt><dd id="s-net">–</dd></div>
+          <div data-for="buoy" style="display:none"><dt>Status</dt><dd id="s-status">–</dd></div>
+          <div id="row-rho"><dt>Fluid density</dt><dd id="s-rho">–</dd></div>
+        </dl>
+        <p class="unit-note">Static fluid only. p = ρgh. F_B = ρ_fluid g V_displaced. Atmospheric pressure ≈ 101.3 kPa.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol>
+          <li><b>Depth.</b> In Hydrostatics, double h — gauge pressure doubles.</li>
+          <li><b>Mercury.</b> Switch to mercury: the same depth gives a much larger pressure.</li>
+          <li><b>Manometer.</b> Change Δh and watch Δp. Mercury needs a smaller column for the same Δp.</li>
+          <li><b>Float or sink.</b> In Buoyancy, raise object density above the fluid density — it sinks and F_B &lt; W.</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The engineering</h3>
+        <p>In a static fluid, pressure depends only on depth and density. Manometers turn a pressure difference into a readable height. Archimedes’ principle says the buoyant force equals the weight of the fluid displaced — the key to floating structures and ships.</p>
+        <p>This lab is hydrostatics only. Flowing fluids (Bernoulli, head loss) are covered in the separate Fluid Dynamics project.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

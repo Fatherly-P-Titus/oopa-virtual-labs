@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Steady one-dimensional heat conduction through multilayer walls with convection.">
+  <title>Heat Transfer | Engineering | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/heat-transfer.css">
+  <script defer src="scripts/heat-model.js"></script>
+  <script defer src="scripts/heat-transfer.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="heat-transfer"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Engineering</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Heat Transfer</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 05 / ENGINEERING</p>
+    <h1>Heat <span>Transfer.</span></h1>
+    <p class="lead">Steady conduction through a multilayer plane wall. Thermal resistances add in series; heat flux follows from the overall temperature drop.</p>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Wall and temperature profile">
+        <canvas id="wall-canvas" role="img" aria-label="Multilayer wall between hot and cold sides with heat flux arrow."></canvas>
+        <canvas id="tx-canvas" role="img" aria-label="Temperature versus position through the wall."></canvas>
+        <p class="hint-bar" id="hint-bar">Steady 1D wall. Add layers, change materials and thicknesses, and watch heat flux and the temperature profile.</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and results">
+        <p class="eyebrow-sm">PRESETS</p>
+        <div class="presets" role="group">
+          <button type="button" class="chip" data-preset="wall">Insulated wall</button>
+          <button type="button" class="chip" data-preset="single">Concrete slab</button>
+          <button type="button" class="chip" data-preset="window">Glass pane</button>
+          <button type="button" class="chip" data-preset="metal">Steel sheet</button>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">TEMPERATURES</p>
+        <div class="ctl">
+          <label for="c-Th">Hot side T</label>
+          <output id="o-Th">20 °C</output>
+          <input id="c-Th" type="range" min="-20" max="100" step="1" value="20">
+        </div>
+        <div class="ctl">
+          <label for="c-Tc">Cold side T</label>
+          <output id="o-Tc">-5 °C</output>
+          <input id="c-Tc" type="range" min="-30" max="40" step="1" value="-5">
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">CONVECTION</p>
+        <div class="ctl">
+          <label for="c-hh">h hot</label>
+          <output id="o-hh">10 W/m²K</output>
+          <input id="c-hh" type="range" min="1" max="100" step="1" value="10">
+        </div>
+        <div class="ctl">
+          <label for="c-hc">h cold</label>
+          <output id="o-hc">25 W/m²K</output>
+          <input id="c-hc" type="range" min="1" max="100" step="1" value="25">
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">LAYERS</p>
+        <div class="layer-list" id="layer-list"></div>
+        <button type="button" class="btn-add" id="btn-add">+ Add layer</button>
+
+        <p class="eyebrow-sm" style="margin-top:6px">RESULTS</p>
+        <dl class="stats">
+          <div class="hl"><dt>Heat flux q''</dt><dd id="s-q">–</dd></div>
+          <div><dt>R total</dt><dd id="s-R">–</dd></div>
+          <div><dt>U = 1/R</dt><dd id="s-U">–</dd></div>
+          <div><dt>T hot</dt><dd id="s-Th">–</dd></div>
+          <div><dt>T cold</dt><dd id="s-Tc">–</dd></div>
+        </dl>
+        <p class="unit-note">q'' = ΔT / ΣR''. Layer R'' = L/k. Convection R'' = 1/h. Steady 1D only.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol>
+          <li><b>Insulation.</b> Compare the insulated wall preset with the concrete slab — q'' drops sharply.</li>
+          <li><b>Thickness.</b> Double the insulation thickness and watch R and q''.</li>
+          <li><b>Glass.</b> Thin glass has small conduction resistance; changing h matters more than L.</li>
+          <li><b>Stack.</b> Add a second insulation layer and see resistances add in series.</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The engineering</h3>
+        <p>In steady one-dimensional conduction, heat flux is the same through every layer. Each layer is a thermal resistance R'' = L/k; convection adds R'' = 1/h. The overall temperature drop drives q'' = ΔT / ΣR''.</p>
+        <p>Building envelopes, furnace walls and electronic packages are often designed with this series-resistance picture before moving to 2D or transient analysis.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

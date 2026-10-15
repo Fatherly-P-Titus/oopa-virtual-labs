@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Planar two-link robot arm: forward and inverse kinematics, workspace and joint angles.">
+  <title>Robot Arm | Engineering | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/robot-arm.css">
+  <script defer src="scripts/robot-arm-model.js"></script>
+  <script defer src="scripts/robot-arm.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="robot-arm"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Engineering</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Robot Arm</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 05 / ENGINEERING</p>
+    <h1>Robot <span>Arm.</span></h1>
+    <p class="lead">A planar two-link arm. Set joint angles for forward kinematics, or click a point in the workspace to solve inverse kinematics.</p>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Arm workspace">
+        <canvas id="arm-canvas" role="img" aria-label="Two-link robot arm. Shaded ring is the reachable workspace. Click to set an IK target."></canvas>
+        <p class="hint-bar" id="hint-bar">Drag joint-angle sliders for forward kinematics. Click the workspace to solve inverse kinematics.</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and results">
+        <p class="eyebrow-sm">PRESETS</p>
+        <div class="presets" role="group">
+          <button type="button" class="chip" data-preset="reach">Reach</button>
+          <button type="button" class="chip" data-preset="fold">Folded</button>
+          <button type="button" class="chip" data-preset="straight">Straight</button>
+          <button type="button" class="chip" data-preset="up">Up</button>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">JOINT ANGLES</p>
+        <div class="ctl">
+          <label for="c-t1">θ₁ (shoulder)</label>
+          <output id="o-t1">40°</output>
+          <input id="c-t1" type="range" min="-180" max="180" step="1" value="40">
+        </div>
+        <div class="ctl">
+          <label for="c-t2">θ₂ (elbow)</label>
+          <output id="o-t2">50°</output>
+          <input id="c-t2" type="range" min="-160" max="160" step="1" value="50">
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">LINK LENGTHS</p>
+        <div class="ctl">
+          <label for="c-L1">L₁</label>
+          <output id="o-L1">1.00 m</output>
+          <input id="c-L1" type="range" min="0.3" max="1.5" step="0.05" value="1">
+        </div>
+        <div class="ctl">
+          <label for="c-L2">L₂</label>
+          <output id="o-L2">0.75 m</output>
+          <input id="c-L2" type="range" min="0.2" max="1.2" step="0.05" value="0.75">
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">IK ELBOW</p>
+        <div class="toggle-row" role="group">
+          <button type="button" class="active" data-elbow="up">Elbow up</button>
+          <button type="button" data-elbow="down">Elbow down</button>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">RESULTS</p>
+        <dl class="stats">
+          <div><dt>θ₁</dt><dd id="s-t1">–</dd></div>
+          <div><dt>θ₂</dt><dd id="s-t2">–</dd></div>
+          <div class="hl"><dt>End x</dt><dd id="s-x">–</dd></div>
+          <div class="hl"><dt>End y</dt><dd id="s-y">–</dd></div>
+          <div><dt>Reach r</dt><dd id="s-r">–</dd></div>
+          <div><dt>r min</dt><dd id="s-rmin">–</dd></div>
+          <div><dt>r max</dt><dd id="s-rmax">–</dd></div>
+        </dl>
+        <p class="status-line" id="status-line" role="status"></p>
+        <p class="unit-note">FK: (θ₁,θ₂)→(x,y). IK: click workspace. Shaded annulus is reachable.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol>
+          <li><b>Forward.</b> Sweep θ₁ and θ₂. The end-effector traces arcs of the workspace.</li>
+          <li><b>Inverse.</b> Click a point inside the ring. The arm jumps to a configuration that reaches it.</li>
+          <li><b>Elbow up / down.</b> Same target, two solutions — switch the toggle.</li>
+          <li><b>Unreachable.</b> Click outside the outer circle or inside the inner hole. IK reports failure.</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The engineering</h3>
+        <p>Forward kinematics maps joint angles to Cartesian pose. Inverse kinematics does the reverse and is harder: the same point can often be reached with more than one set of angles (elbow up vs down).</p>
+        <p>The reachable set for a planar 2R arm is an annulus. This lab is kinematic only — no dynamics, torque limits or collision checking.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

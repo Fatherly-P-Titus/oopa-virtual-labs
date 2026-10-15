@@ -1,0 +1,224 @@
+/* Logic Gates */
+
+.sim-layout {
+  display: grid;
+  grid-template-columns: 1fr min(300px, 100%);
+  gap: 16px;
+  margin-bottom: 28px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .sim-layout { grid-template-columns: 1fr; }
+}
+
+.stage {
+  border: 1px solid var(--line, #e7e3e0);
+  border-radius: 11px;
+  background: #faf9f8;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+}
+
+.stage-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line, #e7e3e0);
+  background: #fff;
+  align-items: center;
+}
+
+.stage-toolbar .tool {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid #ded8d5;
+  border-radius: 7px;
+  background: #fff;
+  font: 600 11px var(--font-body, inherit);
+  cursor: pointer;
+}
+
+.stage-toolbar .tool:hover { border-color: var(--red, #b22222); }
+.stage-toolbar .tool.active {
+  background: var(--red, #b22222);
+  border-color: var(--red, #b22222);
+  color: #fff;
+}
+
+.stage-toolbar .sep {
+  width: 1px;
+  height: 20px;
+  background: #e7e3e0;
+  margin: 0 2px;
+}
+
+#logic-canvas {
+  display: block;
+  width: 100%;
+  height: 440px;
+  cursor: crosshair;
+  background:
+    linear-gradient(rgba(0,0,0,.03) 1px, transparent 1px) 0 0 / 20px 20px,
+    linear-gradient(90deg, rgba(0,0,0,.03) 1px, transparent 1px) 0 0 / 20px 20px,
+    #f7f6f4;
+  touch-action: none;
+}
+
+.hint-bar {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--muted, #666);
+  border-top: 1px solid var(--line, #e7e3e0);
+  background: #fff;
+}
+
+.panel {
+  border: 1px solid var(--line, #e7e3e0);
+  border-radius: 11px;
+  background: #fff;
+  padding: 16px 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.eyebrow-sm {
+  color: var(--red, #b22222);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  margin: 0;
+}
+
+.presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.presets .chip {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid #ded8d5;
+  border-radius: 99px;
+  background: #fff;
+  font: 600 11px var(--font-body, inherit);
+  cursor: pointer;
+}
+
+.presets .chip:hover { border-color: var(--red, #b22222); }
+
+.stats {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  font-size: 13px;
+}
+
+.stats > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid #f0ecea;
+}
+
+.stats dt { color: var(--muted, #666); margin: 0; }
+.stats dd { margin: 0; font-weight: 700; }
+
+.status-line {
+  font-size: 12px;
+  color: var(--muted, #666);
+  min-height: 1.3em;
+  margin: 0;
+}
+
+.status-line.ok { color: #2e7d32; }
+.status-line.err { color: var(--red, #b22222); font-weight: 600; }
+
+.truth-box {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 12px;
+}
+
+.truth-box table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.truth-box th, .truth-box td {
+  padding: 5px 8px;
+  text-align: center;
+  border-bottom: 1px solid #f0ecea;
+}
+
+.truth-box th {
+  background: #faf9f8;
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted, #666);
+}
+
+.truth-box tr:last-child td { border-bottom: 0; }
+.truth-box .bit1 { color: #2e7d32; font-weight: 700; }
+.truth-box .bit0 { color: #999; }
+
+.legend {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--muted, #666);
+}
+
+.legend span::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.legend .hi::before { background: #2e7d32; }
+.legend .lo::before { background: #999; }
+
+.two {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.two .card {
+  border: 1px solid var(--line, #e7e3e0);
+  border-radius: 11px;
+  padding: 20px;
+  background: #fff;
+}
+
+.two .card h3 {
+  font: 700 16px var(--font-display, inherit);
+  margin: 0 0 10px;
+}
+
+.two .card p, .two .card li {
+  font-size: 13px;
+  color: var(--muted, #666);
+  line-height: 1.65;
+  margin: 0 0 8px;
+}
+
+.two .card ol { padding-left: 18px; margin: 0; }
+
+.unit-note {
+  font-size: 11px;
+  color: #888;
+  margin: 2px 0 0;
+}

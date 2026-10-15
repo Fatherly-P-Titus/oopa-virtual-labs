@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Interactive gear trains: simple pairs, idlers and compound trains. Explore ratio, speed, torque and direction of rotation.">
+  <title>Gear Trains | Engineering | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/gear-trains.css">
+  <script defer src="scripts/gear-trains-model.js"></script>
+  <script defer src="scripts/gear-trains.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="gear-trains"></script>
+</head>
+<body class="t-simple">
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Engineering</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Gear Trains</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 05 / ENGINEERING</p>
+    <h1>Gear <span>Trains.</span></h1>
+    <p class="lead">Explore spur-gear trains: simple pairs, idlers and compound reductions. Change tooth counts and watch speed, torque and direction of rotation.</p>
+
+    <div class="mode-tabs" role="tablist" aria-label="Train type">
+      <button type="button" class="active" data-train="simple">Simple pair</button>
+      <button type="button" data-train="idler">Idler</button>
+      <button type="button" data-train="compound">Compound</button>
+    </div>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Gear train diagram">
+        <canvas id="gear-canvas" role="img" aria-label="Animated gear train. Gears rotate at speeds set by the tooth ratios."></canvas>
+        <p class="hint-bar" id="hint-bar">Two meshing gears. Ratio = N₁/N₂. Output turns the opposite way.</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and results">
+        <p class="eyebrow-sm">INPUT</p>
+        <div class="ctl">
+          <label for="c-nin">Input speed</label>
+          <output id="o-nin">60 rpm</output>
+          <input id="c-nin" type="range" min="0" max="180" step="5" value="60">
+        </div>
+        <div class="ctl">
+          <label for="c-tin">Input torque</label>
+          <output id="o-tin">5.0 N·m</output>
+          <input id="c-tin" type="range" min="0.5" max="20" step="0.5" value="5">
+        </div>
+        <div class="ctl">
+          <label for="c-eta">Efficiency</label>
+          <output id="o-eta">95%</output>
+          <input id="c-eta" type="range" min="50" max="100" step="1" value="95">
+        </div>
+
+        <div class="ctrl-simple">
+          <p class="eyebrow-sm" style="margin-top:6px">TEETH</p>
+          <div class="ctl">
+            <label for="c-N1">Driver N₁</label>
+            <output id="o-N1">20</output>
+            <input id="c-N1" type="range" min="12" max="60" step="1" value="20">
+          </div>
+          <div class="ctl">
+            <label for="c-N2">Driven N₂</label>
+            <output id="o-N2">40</output>
+            <input id="c-N2" type="range" min="12" max="80" step="1" value="40">
+          </div>
+        </div>
+
+        <div class="ctrl-idler">
+          <p class="eyebrow-sm" style="margin-top:6px">TEETH</p>
+          <div class="ctl">
+            <label for="c-iN1">Driver N₁</label>
+            <output id="o-iN1">20</output>
+            <input id="c-iN1" type="range" min="12" max="50" step="1" value="20">
+          </div>
+          <div class="ctl">
+            <label for="c-iN2">Idler N₂</label>
+            <output id="o-iN2">30</output>
+            <input id="c-iN2" type="range" min="12" max="50" step="1" value="30">
+          </div>
+          <div class="ctl">
+            <label for="c-iN3">Driven N₃</label>
+            <output id="o-iN3">40</output>
+            <input id="c-iN3" type="range" min="12" max="60" step="1" value="40">
+          </div>
+        </div>
+
+        <div class="ctrl-compound">
+          <p class="eyebrow-sm" style="margin-top:6px">TEETH</p>
+          <div class="ctl">
+            <label for="c-cN1">Driver N₁</label>
+            <output id="o-cN1">20</output>
+            <input id="c-cN1" type="range" min="12" max="40" step="1" value="20">
+          </div>
+          <div class="ctl">
+            <label for="c-cN2">Compound N₂</label>
+            <output id="o-cN2">40</output>
+            <input id="c-cN2" type="range" min="16" max="60" step="1" value="40">
+          </div>
+          <div class="ctl">
+            <label for="c-cN3">Compound N₃</label>
+            <output id="o-cN3">16</output>
+            <input id="c-cN3" type="range" min="12" max="40" step="1" value="16">
+          </div>
+          <div class="ctl">
+            <label for="c-cN4">Output N₄</label>
+            <output id="o-cN4">48</output>
+            <input id="c-cN4" type="range" min="20" max="80" step="1" value="48">
+          </div>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">RESULTS</p>
+        <dl class="stats">
+          <div class="hl"><dt>|Speed ratio|</dt><dd id="s-ratio">–</dd></div>
+          <div><dt>Direction</dt><dd id="s-dir">–</dd></div>
+          <div><dt>Input speed</dt><dd id="s-nin">–</dd></div>
+          <div class="hl"><dt>Output speed</dt><dd id="s-nout">–</dd></div>
+          <div><dt>Input torque</dt><dd id="s-tin">–</dd></div>
+          <div class="hl"><dt>Output torque</dt><dd id="s-tout">–</dd></div>
+          <div><dt>Efficiency</dt><dd id="s-eta">–</dd></div>
+        </dl>
+        <button type="button" class="tool" id="btn-pause" style="min-height:34px;padding:0 12px;border:1px solid #ded8d5;border-radius:7px;background:#fff;font:600 12px inherit;cursor:pointer;align-self:flex-start">Pause</button>
+        <p class="unit-note">Ideal kinematics. Output torque includes efficiency. Power is conserved when η = 100%.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol>
+          <li><b>Reduction.</b> On a simple pair, set N₂ twice N₁. Output speed halves; torque roughly doubles.</li>
+          <li><b>Idler direction.</b> Switch to Idler. Input and output rotate the same way; the middle gear only passes motion.</li>
+          <li><b>Compound reduction.</b> On Compound, increase N₂ and N₄. The overall ratio multiplies the two stages.</li>
+          <li><b>Efficiency.</b> Lower efficiency and watch output torque fall while speeds stay the same.</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The engineering</h3>
+        <p>Meshing spur gears have a speed ratio equal to the inverse tooth ratio, and they turn in opposite directions. An idler adds a second reversal so the output matches the input sense without changing the overall ratio magnitude (still set by first and last gears).</p>
+        <p>A compound shaft multiplies stage ratios, giving large reductions in a compact layout. Ideal torque scales with the inverse of the speed ratio; real trains lose a fraction of power at each mesh.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

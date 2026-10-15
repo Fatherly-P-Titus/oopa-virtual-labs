@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Interactive logic gates: place AND, OR, NOT, NAND, XOR and more, wire them, toggle inputs and watch levels propagate.">
+  <title>Logic Gates | Engineering | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/logic-gates.css">
+  <script defer src="scripts/logic-gates-model.js"></script>
+  <script defer src="scripts/logic-gates.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="logic-gates"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Engineering</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Logic Gates</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 05 / ENGINEERING</p>
+    <h1>Logic <span>Gates.</span></h1>
+    <p class="lead">Build combinational circuits with AND, OR, NOT, NAND, NOR, XOR and XNOR. Toggle inputs and watch binary levels flow to the outputs.</p>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Logic workspace">
+        <div class="stage-toolbar" role="toolbar" aria-label="Logic tools">
+          <button type="button" class="tool active" data-tool="select">Select</button>
+          <button type="button" class="tool" data-tool="INPUT">Input</button>
+          <button type="button" class="tool" data-tool="OUTPUT">Output</button>
+          <span class="sep" aria-hidden="true"></span>
+          <button type="button" class="tool" data-tool="NOT">NOT</button>
+          <button type="button" class="tool" data-tool="AND">AND</button>
+          <button type="button" class="tool" data-tool="OR">OR</button>
+          <button type="button" class="tool" data-tool="NAND">NAND</button>
+          <button type="button" class="tool" data-tool="NOR">NOR</button>
+          <button type="button" class="tool" data-tool="XOR">XOR</button>
+          <button type="button" class="tool" data-tool="XNOR">XNOR</button>
+          <span class="sep" aria-hidden="true"></span>
+          <button type="button" class="tool" data-tool="wire">Wire</button>
+          <button type="button" class="tool" data-tool="delete">Delete</button>
+          <span class="sep" aria-hidden="true"></span>
+          <button type="button" class="tool" id="btn-clear">Clear</button>
+        </div>
+        <canvas id="logic-canvas" role="img" aria-label="Logic circuit workspace. Green wires and ports are logic 1; grey are logic 0."></canvas>
+        <p class="hint-bar" id="hint-bar">Click an input to toggle 0/1. Use Wire to connect output ports to input ports.</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and truth table">
+        <p class="eyebrow-sm">PRESETS</p>
+        <div class="presets" role="group">
+          <button type="button" class="chip" data-preset="inverter">Inverter</button>
+          <button type="button" class="chip" data-preset="andOr">AND–OR</button>
+          <button type="button" class="chip" data-preset="halfAdder">Half adder</button>
+          <button type="button" class="chip" data-preset="nandXor">XOR from NAND</button>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">SUMMARY</p>
+        <dl class="stats">
+          <div><dt>Gates</dt><dd id="s-gates">0</dd></div>
+          <div><dt>Inputs</dt><dd id="s-inputs">0</dd></div>
+          <div><dt>Wires</dt><dd id="s-wires">0</dd></div>
+        </dl>
+        <p class="status-line" id="status-line" role="status"></p>
+        <p class="legend"><span class="hi">Logic 1</span><span class="lo">Logic 0</span></p>
+
+        <p class="eyebrow-sm">TRUTH TABLE</p>
+        <p class="unit-note" id="truth-head">Truth table (AND)</p>
+        <div class="truth-box">
+          <table>
+            <thead>
+              <tr id="truth-cols"><th>A</th><th>B</th><th>Out</th></tr>
+            </thead>
+            <tbody id="truth-body"></tbody>
+          </table>
+        </div>
+        <p class="unit-note">Select a gate to show its truth table. Unconnected inputs read as 0. Combinational only — cycles are rejected.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol>
+          <li><b>Half adder.</b> Load the Half adder preset. Toggle the two inputs: Sum is XOR, Carry is AND.</li>
+          <li><b>Build an inverter.</b> Place Input → NOT → Output and wire them. Toggle the input.</li>
+          <li><b>NAND universality.</b> Load XOR from NAND. Four NAND gates implement XOR — a classic result.</li>
+          <li><b>Truth table.</b> Select any gate and compare the live circuit to the table on the right.</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The engineering</h3>
+        <p>Combinational logic has no memory: the outputs depend only on the current inputs. Each gate applies a Boolean function; wires carry the result to the next stage.</p>
+        <p>This lab uses ideal binary levels and instantaneous propagation. Real chips have voltage thresholds, delay and fan-out limits — ignored here so the Boolean structure stays clear.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

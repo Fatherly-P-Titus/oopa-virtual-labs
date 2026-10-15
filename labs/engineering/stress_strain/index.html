@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Axial stress and strain in a prismatic bar: Young’s modulus, elongation and safety factor.">
+  <title>Stress and Strain | Engineering | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/stress-strain.css">
+  <script defer src="scripts/stress-strain-model.js"></script>
+  <script defer src="scripts/stress-strain.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="stress-strain"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Engineering</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Stress and Strain</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 05 / ENGINEERING</p>
+    <h1>Stress and <span>Strain.</span></h1>
+    <p class="lead">Load a prismatic bar in axial tension. Explore stress, strain, elongation, Young’s modulus and the safety factor against yield.</p>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Bar and stress-strain diagram">
+        <canvas id="bar-canvas" role="img" aria-label="Axial bar with applied force. Dashed outline is the undeformed length."></canvas>
+        <canvas id="curve-canvas" role="img" aria-label="Stress-strain diagram with elastic line and operating point."></canvas>
+        <p class="hint-bar" id="hint-bar">Axial bar in tension. Change force, length, diameter or material and watch stress, strain and safety factor.</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and results">
+        <p class="eyebrow-sm">MATERIAL</p>
+        <div class="mat-row" role="group">
+          <button type="button" class="active" data-mat="steel">Steel</button>
+          <button type="button" data-mat="aluminum">Aluminium</button>
+          <button type="button" data-mat="titanium">Titanium</button>
+          <button type="button" data-mat="concrete">Concrete</button>
+          <button type="button" data-mat="rubber">Rubber</button>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">GEOMETRY &amp; LOAD</p>
+        <div class="ctl">
+          <label for="c-F">Force F</label>
+          <output id="o-F">50.0 kN</output>
+          <input id="c-F" type="range" min="1" max="200" step="1" value="50">
+        </div>
+        <div class="ctl">
+          <label for="c-L">Length L</label>
+          <output id="o-L">1.00 m</output>
+          <input id="c-L" type="range" min="0.2" max="3" step="0.05" value="1">
+        </div>
+        <div class="ctl">
+          <label for="c-d">Diameter d</label>
+          <output id="o-d">20.0 mm</output>
+          <input id="c-d" type="range" min="5" max="50" step="0.5" value="20">
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">RESULTS</p>
+        <dl class="stats">
+          <div class="hl"><dt>Stress σ</dt><dd id="s-sigma">–</dd></div>
+          <div><dt>Strain ε</dt><dd id="s-eps">–</dd></div>
+          <div><dt>Elongation δ</dt><dd id="s-delta">–</dd></div>
+          <div><dt>Area A</dt><dd id="s-A">–</dd></div>
+          <div><dt>Young’s E</dt><dd id="s-E">–</dd></div>
+          <div><dt>Yield σy</dt><dd id="s-sy">–</dd></div>
+          <div id="row-n" class="hl"><dt>Safety factor n</dt><dd id="s-n">–</dd></div>
+        </dl>
+        <p class="status-line" id="status-line" role="status"></p>
+        <p class="unit-note">σ = F/A, ε = δ/L, δ = FL/(AE), n = σy/σ. Linear elastic idealisation up to yield.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol>
+          <li><b>Stress vs area.</b> Halve the diameter. Area falls by four; stress rises by four.</li>
+          <li><b>Stiffer material.</b> Switch steel → rubber. Elongation jumps; E is much smaller.</li>
+          <li><b>Safety factor.</b> Raise the force until n drops below 1 — the model flags yield.</li>
+          <li><b>Length.</b> Longer bars stretch more for the same stress (same ε, larger δ).</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The engineering</h3>
+        <p>Stress is force per unit area; strain is elongation per unit length. In the linear elastic range they are linked by Young’s modulus. Design often keeps working stress well below yield so the safety factor stays comfortably above one.</p>
+        <p>This lab is uniaxial and uniform. Real parts have stress concentrations, multiaxial states and nonlinear material curves that need more advanced analysis.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

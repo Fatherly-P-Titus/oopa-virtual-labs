@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Interactive truss and beam loads: build pin-jointed structures, apply loads, and see tension, compression, reactions, shear and moment.">
+  <title>Truss and Beam Loads | Engineering | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/truss-beam.css">
+  <script defer src="scripts/truss-model.js"></script>
+  <script defer src="scripts/truss-beam.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="truss-beam"></script>
+</head>
+<body class="mode-truss">
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Engineering</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Truss and Beam Loads</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 05 / ENGINEERING</p>
+    <h1>Truss and Beam <span>Loads.</span></h1>
+    <p class="lead">Build pin-jointed trusses and simple beams, apply loads, and watch how forces travel through the structure to the supports.</p>
+
+    <div class="mode-tabs" role="tablist" aria-label="Structure mode">
+      <button type="button" class="active" data-mode="truss">Truss</button>
+      <button type="button" data-mode="beam">Beam</button>
+    </div>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Structure workspace">
+        <div class="stage-toolbar" role="toolbar" aria-label="Structure tools">
+          <button type="button" class="tool active" data-tool="select">Select</button>
+          <button type="button" class="tool truss-tool" data-tool="joint">Joint</button>
+          <button type="button" class="tool truss-tool" data-tool="member">Member</button>
+          <button type="button" class="tool truss-tool" data-tool="pin">Pin support</button>
+          <button type="button" class="tool truss-tool" data-tool="roller">Roller</button>
+          <button type="button" class="tool" data-tool="load">Load</button>
+          <button type="button" class="tool" data-tool="delete">Delete</button>
+          <span class="sep" aria-hidden="true"></span>
+          <button type="button" class="tool" id="btn-analyse">Analyse</button>
+          <button type="button" class="tool" id="btn-clear">Clear</button>
+        </div>
+        <canvas id="struct-canvas" role="img" aria-label="Structure diagram. Blue members are in tension, red in compression."></canvas>
+        <p class="hint-bar" id="hint-bar">Load a preset or place joints and members.</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and results">
+        <p class="eyebrow-sm">PRESETS</p>
+        <div class="presets truss-only" role="group">
+          <button type="button" class="chip" data-preset="triangle">Triangle</button>
+          <button type="button" class="chip" data-preset="roof">Roof truss</button>
+          <button type="button" class="chip" data-preset="bridge">Bridge bay</button>
+        </div>
+        <div class="presets beam-only" role="group">
+          <button type="button" class="chip" data-preset="beam-simple">Simple beam</button>
+          <button type="button" class="chip" data-preset="beam-cantilever">Cantilever</button>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">LOAD MAGNITUDE</p>
+        <div class="ctl">
+          <label for="load-fy">Downward load</label>
+          <input id="load-fy" type="number" min="0.5" step="0.5" value="10">
+        </div>
+
+        <div class="beam-only">
+          <p class="eyebrow-sm" style="margin-top:6px">BEAM</p>
+          <div class="ctl">
+            <label for="beam-span">Span</label>
+            <input id="beam-span" type="number" min="2" step="0.5" value="10">
+          </div>
+          <label class="ctl" style="display:flex;gap:8px;align-items:center;margin-top:4px">
+            <input id="beam-cantilever" type="checkbox">
+            <span>Cantilever (fixed left)</span>
+          </label>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">SUMMARY</p>
+        <dl class="stats truss-only">
+          <div><dt>Joints</dt><dd id="s-joints">0</dd></div>
+          <div><dt>Members</dt><dd id="s-members">0</dd></div>
+          <div><dt>Supports</dt><dd id="s-supports">0</dd></div>
+        </dl>
+        <dl class="stats beam-only">
+          <div><dt>Span</dt><dd id="s-span">–</dd></div>
+          <div><dt>Loads</dt><dd id="s-loads">0</dd></div>
+          <div><dt>Ra</dt><dd id="s-ra">–</dd></div>
+          <div><dt>Rb</dt><dd id="s-rb">–</dd></div>
+        </dl>
+        <p class="status-line" id="status-line" role="status"></p>
+
+        <div class="truss-only">
+          <p class="legend"><span class="ten">Tension</span><span class="comp">Compression</span><span class="zero">Near zero</span></p>
+          <p class="eyebrow-sm">MEMBER FORCES</p>
+          <div class="force-list">
+            <table>
+              <thead><tr><th>Member</th><th>Force</th><th></th></tr></thead>
+              <tbody id="force-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <p class="unit-note">Forces in model units. Tension positive. Ideal pins, no self-weight unless added as loads.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol>
+          <li><b>Triangle truss.</b> Load the Triangle preset. The two diagonals compress; the base is in tension. Reactions share the load equally.</li>
+          <li><b>Open a path.</b> Delete one diagonal member. The solver should report an unstable mechanism.</li>
+          <li><b>Roof loads.</b> Load Roof truss and compare chord forces with the web members.</li>
+          <li><b>Beam diagrams.</b> Switch to Beam, load Simple beam, then add a second point load and watch shear and moment change.</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The engineering</h3>
+        <p>In a truss, every member carries only axial force. Equilibrium at each joint (ΣFx = 0, ΣFy = 0) determines those forces and the support reactions when the structure is statically determinate (m + r = 2j).</p>
+        <p>In a beam, bending and shear appear. Vertical equilibrium and moment equilibrium about a support give the reactions; integrating along the span produces the shear force and bending moment diagrams.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

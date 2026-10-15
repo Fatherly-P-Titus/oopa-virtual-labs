@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Interactive DC circuit builder: place batteries, resistors and switches, wire them together and read voltages and currents.">
+  <title>Circuit Builder | Engineering | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/circuit-builder.css">
+  <script defer src="scripts/circuit-model.js"></script>
+  <script defer src="scripts/circuit-builder.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="circuit-builder"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Engineering</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Circuit Builder</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 05 / ENGINEERING</p>
+    <h1>Circuit <span>Builder.</span></h1>
+    <p class="lead">Build simple DC circuits with batteries, resistors and switches. Wire the terminals, open or close switches, and watch voltages and currents update from Ohm’s law and Kirchhoff’s laws.</p>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Circuit workspace">
+        <div class="stage-toolbar" role="toolbar" aria-label="Circuit tools">
+          <div class="tool-group">
+            <button type="button" class="tool active" data-tool="select">Select</button>
+            <button type="button" class="tool" data-tool="battery">Battery</button>
+            <button type="button" class="tool" data-tool="resistor">Resistor</button>
+            <button type="button" class="tool" data-tool="switch">Switch</button>
+            <button type="button" class="tool" data-tool="wire">Wire</button>
+            <button type="button" class="tool" data-tool="ammeter">Ammeter</button>
+            <button type="button" class="tool" data-tool="voltmeter">Voltmeter</button>
+            <button type="button" class="tool" data-tool="delete">Delete</button>
+          </div>
+          <span class="sep" aria-hidden="true"></span>
+          <button type="button" class="tool" id="btn-analyse">Analyse</button>
+          <button type="button" class="tool" id="btn-clear">Clear</button>
+        </div>
+        <canvas id="circuit-canvas" role="img" aria-label="Circuit diagram workspace. Place components and connect their terminals with wires."></canvas>
+        <p class="hint-bar" id="hint-bar">Choose a tool and place components, or load a preset.</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and readouts">
+        <p class="eyebrow-sm">PRESETS</p>
+        <div class="presets" role="group" aria-label="Circuit presets">
+          <button type="button" class="chip" data-preset="series">Series</button>
+          <button type="button" class="chip" data-preset="parallel">Parallel</button>
+          <button type="button" class="chip" data-preset="mixed">Mixed</button>
+          <button type="button" class="chip" data-preset="withSwitch">With switch</button>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:8px">SELECTED COMPONENT</p>
+        <div class="props-box empty" id="props-box">Select a component to edit its value or toggle a switch.</div>
+        <div class="ctl" style="margin-top:4px">
+          <label for="prop-value" id="prop-value-label">Value</label>
+          <input id="prop-value" type="number" min="0.1" step="1" disabled>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:8px">CIRCUIT SUMMARY</p>
+        <dl class="stats" id="stats">
+          <div><dt>Components</dt><dd id="s-comps">0</dd></div>
+          <div><dt>Nodes</dt><dd id="s-nodes">0</dd></div>
+          <div><dt>Source power</dt><dd id="s-power">–</dd></div>
+        </dl>
+        <p class="status-line" id="status-line" role="status"></p>
+
+        <p class="eyebrow-sm" style="margin-top:4px">BRANCH READINGS</p>
+        <div class="branch-list">
+          <table>
+            <thead>
+              <tr><th>Branch</th><th>Value</th><th>V</th><th>I</th></tr>
+            </thead>
+            <tbody id="branch-body"></tbody>
+          </table>
+        </div>
+        <p class="unit-note">Ideal DC model. Wires have zero resistance. Battery negative is ground for the first source.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol class="try">
+          <li><b>Series voltages.</b> Load the Series preset. The two resistors share the same current; the larger resistor takes a larger share of the battery voltage.</li>
+          <li><b>Parallel currents.</b> Load Parallel. Both resistors see the full battery voltage; currents add at the nodes.</li>
+          <li><b>Open the switch.</b> Load With switch, then click the switch to open it. Current falls to zero.</li>
+          <li><b>Build your own.</b> Place a battery and two resistors, wire them in series or parallel, and compare the readings.</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The engineering</h3>
+        <p>Currents and voltages obey Kirchhoff’s current and voltage laws. The solver builds a conductance matrix (nodal analysis) with the negative terminal of the first battery as ground, then finds every node voltage and branch current.</p>
+        <p>The model is ideal and direct-current only: no capacitance, inductance, internal resistance or AC behaviour. That keeps the maths transparent while you explore series, parallel and mixed networks.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

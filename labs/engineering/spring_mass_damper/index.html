@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Interactive spring-mass-damper: free and forced 1DOF vibration, damping regimes and resonance.">
+  <title>Spring–Mass–Damper | Engineering | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/smd.css">
+  <script defer src="scripts/smd-model.js"></script>
+  <script defer src="scripts/smd.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="spring-mass-damper"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Engineering</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Spring–Mass–Damper</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 05 / ENGINEERING</p>
+    <h1>Spring–Mass–<span>Damper.</span></h1>
+    <p class="lead">A single mass on a spring with viscous damping. Explore free vibration, damping regimes and forced response near resonance.</p>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Vibration workspace">
+        <div class="stage-toolbar">
+          <button type="button" class="btn primary" id="btn-play">Pause</button>
+          <button type="button" class="btn" id="btn-reset">Reset</button>
+        </div>
+        <canvas id="smd-canvas" role="img" aria-label="Mass on a spring and damper. Displacement is measured from equilibrium."></canvas>
+        <canvas id="plot-canvas" role="img" aria-label="Displacement versus time strip chart."></canvas>
+        <p class="hint-bar" id="hint-bar">Underdamped free vibration by default. Try the presets for critical, overdamped and forced response.</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and results">
+        <p class="eyebrow-sm">PRESETS</p>
+        <div class="presets" role="group">
+          <button type="button" class="chip" data-preset="under">Underdamped</button>
+          <button type="button" class="chip" data-preset="critical">Critical</button>
+          <button type="button" class="chip" data-preset="over">Overdamped</button>
+          <button type="button" class="chip" data-preset="forced">Resonance</button>
+          <button type="button" class="chip" data-preset="offres">Off-resonance</button>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">PARAMETERS</p>
+        <div class="ctl">
+          <label for="c-m">Mass m</label>
+          <output id="o-m">1.00 kg</output>
+          <input id="c-m" type="range" min="0.2" max="5" step="0.05" value="1">
+        </div>
+        <div class="ctl">
+          <label for="c-k">Stiffness k</label>
+          <output id="o-k">40.0 N/m</output>
+          <input id="c-k" type="range" min="5" max="120" step="1" value="40">
+        </div>
+        <div class="ctl">
+          <label for="c-c">Damping c</label>
+          <output id="o-c">2.0 N·s/m</output>
+          <input id="c-c" type="range" min="0" max="30" step="0.1" value="2">
+        </div>
+        <div class="ctl">
+          <label for="c-F0">Force amplitude F₀</label>
+          <output id="o-F0">0.0 N</output>
+          <input id="c-F0" type="range" min="0" max="20" step="0.5" value="0">
+        </div>
+        <div class="ctl">
+          <label for="c-omega">Drive ω</label>
+          <output id="o-omega">5.0 rad/s</output>
+          <input id="c-omega" type="range" min="0.5" max="20" step="0.1" value="5">
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">RESULTS</p>
+        <dl class="stats">
+          <div class="hl"><dt>ωₙ</dt><dd id="s-wn">–</dd></div>
+          <div><dt>fₙ</dt><dd id="s-fn">–</dd></div>
+          <div class="hl"><dt>ζ</dt><dd id="s-zeta">–</dd></div>
+          <div><dt>Regime</dt><dd id="s-regime">–</dd></div>
+          <div><dt>x</dt><dd id="s-x">–</dd></div>
+          <div><dt>v</dt><dd id="s-v">–</dd></div>
+          <div><dt>Steady |X|</dt><dd id="s-amp">–</dd></div>
+        </dl>
+        <p class="unit-note">mẍ + cẋ + kx = F₀ cos(ωt). RK4 integration. Steady |X| is the analytical harmonic amplitude.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol>
+          <li><b>Underdamped.</b> Watch the free decay oscillate. Note ωₙ and ζ.</li>
+          <li><b>Critical.</b> Raise damping to 2√(km). The mass returns without crossing zero more than once.</li>
+          <li><b>Resonance.</b> Apply a force at ω ≈ ωₙ. Amplitude grows until damping balances the drive.</li>
+          <li><b>Off resonance.</b> Drive well below ωₙ — steady amplitude is smaller.</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The engineering</h3>
+        <p>Natural frequency depends only on mass and stiffness. Damping ratio ζ decides whether the free response oscillates. Forced response peaks near ωₙ when damping is light — the classic resonance problem in machines and structures.</p>
+        <p>This model is linear and single-DOF. Real systems have many modes, nonlinear stiffness and non-viscous damping; the 1DOF case still teaches the core ideas.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

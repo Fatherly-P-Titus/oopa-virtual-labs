@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Interactive simple machines: levers, inclined planes, pulleys and wheel-and-axle. Explore mechanical advantage and effort.">
+  <title>Simple Machines | Engineering | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/simple-machines.css">
+  <script defer src="scripts/simple-machines-model.js"></script>
+  <script defer src="scripts/simple-machines.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="simple-machines"></script>
+</head>
+<body class="m-lever">
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Engineering</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Simple Machines</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 05 / ENGINEERING</p>
+    <h1>Simple <span>Machines.</span></h1>
+    <p class="lead">Explore levers, inclined planes, pulleys and the wheel and axle. Change the geometry and efficiency, and see how mechanical advantage changes the effort you need.</p>
+
+    <div class="mode-tabs" role="tablist" aria-label="Machine type">
+      <button type="button" class="active" data-machine="lever">Lever</button>
+      <button type="button" data-machine="incline">Inclined plane</button>
+      <button type="button" data-machine="pulley">Pulley</button>
+      <button type="button" data-machine="wheel">Wheel &amp; axle</button>
+    </div>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Machine diagram">
+        <canvas id="machine-canvas" role="img" aria-label="Diagram of the selected simple machine with load and effort forces."></canvas>
+        <p class="hint-bar" id="hint-bar">Class 1: fulcrum between effort and load. Class 2: load between. Class 3: effort between.</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and results">
+        <p class="eyebrow-sm">LOAD &amp; EFFICIENCY</p>
+        <div class="ctl">
+          <label for="c-load">Load</label>
+          <output id="o-load">100 N</output>
+          <input id="c-load" type="range" min="10" max="500" step="5" value="100">
+        </div>
+        <div class="ctl">
+          <label for="c-eta">Efficiency</label>
+          <output id="o-eta">90%</output>
+          <input id="c-eta" type="range" min="20" max="100" step="1" value="90">
+        </div>
+
+        <div class="ctrl-lever">
+          <p class="eyebrow-sm" style="margin-top:6px">LEVER CLASS</p>
+          <div class="class-row" role="group">
+            <button type="button" class="active" data-class="1">Class 1</button>
+            <button type="button" data-class="2">Class 2</button>
+            <button type="button" data-class="3">Class 3</button>
+          </div>
+          <div class="ctl" style="margin-top:8px">
+            <label for="c-dE">Effort arm</label>
+            <output id="o-dE">2.00 m</output>
+            <input id="c-dE" type="range" min="0.3" max="4" step="0.05" value="2">
+          </div>
+          <div class="ctl">
+            <label for="c-dL">Load arm</label>
+            <output id="o-dL">1.00 m</output>
+            <input id="c-dL" type="range" min="0.3" max="4" step="0.05" value="1">
+          </div>
+        </div>
+
+        <div class="ctrl-incline">
+          <p class="eyebrow-sm" style="margin-top:6px">PLANE</p>
+          <div class="ctl">
+            <label for="c-angle">Angle</label>
+            <output id="o-angle">30°</output>
+            <input id="c-angle" type="range" min="5" max="60" step="1" value="30">
+          </div>
+          <div class="ctl">
+            <label for="c-mu">Friction μ</label>
+            <output id="o-mu">0.00</output>
+            <input id="c-mu" type="range" min="0" max="0.6" step="0.01" value="0">
+          </div>
+        </div>
+
+        <div class="ctrl-pulley">
+          <p class="eyebrow-sm" style="margin-top:6px">ROPES</p>
+          <div class="ctl">
+            <label for="c-strands">Supporting strands</label>
+            <output id="o-strands">2</output>
+            <input id="c-strands" type="range" min="1" max="6" step="1" value="2">
+          </div>
+        </div>
+
+        <div class="ctrl-wheel">
+          <p class="eyebrow-sm" style="margin-top:6px">RADII</p>
+          <div class="ctl">
+            <label for="c-R">Wheel radius R</label>
+            <output id="o-R">0.40 m</output>
+            <input id="c-R" type="range" min="0.15" max="1" step="0.01" value="0.4">
+          </div>
+          <div class="ctl">
+            <label for="c-r">Axle radius r</label>
+            <output id="o-r">0.10 m</output>
+            <input id="c-r" type="range" min="0.05" max="0.4" step="0.01" value="0.1">
+          </div>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">RESULTS</p>
+        <dl class="stats">
+          <div><dt>Load</dt><dd id="s-load">100 N</dd></div>
+          <div><dt>Ideal MA</dt><dd id="s-ma-ideal">–</dd></div>
+          <div class="hl"><dt>Actual MA</dt><dd id="s-ma-actual">–</dd></div>
+          <div><dt>Ideal effort</dt><dd id="s-effort-ideal">–</dd></div>
+          <div class="hl"><dt>Actual effort</dt><dd id="s-effort-actual">–</dd></div>
+          <div><dt>Efficiency</dt><dd id="s-eta">90%</dd></div>
+        </dl>
+        <p class="unit-note">Ideal MA ignores losses. Actual effort uses efficiency (and friction on the plane when μ &gt; 0).</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol>
+          <li><b>Leverage.</b> On a class 1 lever, lengthen the effort arm. Ideal MA rises and the effort falls.</li>
+          <li><b>Class 3.</b> Switch to class 3: the effort arm is shorter than the load arm, so MA &lt; 1 — useful for speed or range, not force.</li>
+          <li><b>Steep ramp.</b> On the inclined plane, raise the angle. Effort climbs; add friction and it climbs further.</li>
+          <li><b>More strands.</b> On the pulley, increase supporting strands. Ideal MA equals that number.</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The engineering</h3>
+        <p>A simple machine trades force against distance. Mechanical advantage is load divided by effort. In the ideal case there is no friction, so work in equals work out.</p>
+        <p>Real machines lose energy to friction and deformation. Efficiency \(\eta\) is actual MA divided by ideal MA, so the effort you must apply is \(E = W / (MA_{\mathrm{ideal}} \cdot \eta)\).</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>
