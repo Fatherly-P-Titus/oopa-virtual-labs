@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Interactive particle motion simulator: collisions, temperature, gravity and pressure.">
+  <title>Particle Motion | Physics | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/particle-motion.css">
+  <script defer src="scripts/particle-motion.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="particle-motion"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span><a href="../index.html">Physics</a><span aria-hidden="true">/</span><span aria-current="page">Particle Motion</span></nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">PHYSICS / PARTICLE MOTION</p>
+    <h1>Particle <span>Motion.</span></h1>
+    <p class="lead">Particles move freely, bounce off the walls and collide with each other. Change the conditions and watch how speed, energy and pressure respond.</p>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Simulation">
+        <canvas id="sim" role="img" aria-label="Animated box of colliding particles. Faster particles are drawn redder."></canvas>
+        <div class="toolbar">
+          <button class="btn btn-primary" id="btn-play" type="button" aria-pressed="true">Pause</button>
+          <button class="btn" id="btn-step" type="button">Step</button>
+          <button class="btn" id="btn-reset" type="button">Reset</button>
+          <label class="speed">Time <select id="timescale" aria-label="Simulation speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+        </div>
+      </section>
+
+      <aside class="panel" aria-label="Controls and readouts">
+        <h2>Conditions</h2>
+        <div class="presets" role="group" aria-label="Presets">
+          <button class="btn chip" type="button" data-preset="gas">Ideal gas</button>
+          <button class="btn chip" type="button" data-preset="hot">Hot gas</button>
+          <button class="btn chip" type="button" data-preset="settle">Settling</button>
+        </div>
+        <div class="ctl"><label for="c-n">Particles</label><output id="o-n"></output><input id="c-n" type="range" min="2" max="250" step="1"></div>
+        <div class="ctl"><label for="c-T">Temperature</label><output id="o-T"></output><input id="c-T" type="range" min="1" max="100" step="1"></div>
+        <div class="ctl"><label for="c-g">Gravity</label><output id="o-g"></output><input id="c-g" type="range" min="0" max="600" step="10"></div>
+        <div class="ctl"><label for="c-r">Particle size</label><output id="o-r"></output><input id="c-r" type="range" min="2" max="14" step="1"></div>
+        <div class="ctl"><label for="c-e">Elasticity</label><output id="o-e"></output><input id="c-e" type="range" min="0.5" max="1" step="0.01"></div>
+        <label class="check"><input id="c-collide" type="checkbox"> Particles collide with each other</label>
+        <label class="check"><input id="c-trails" type="checkbox"> Show motion trails</label>
+
+        <h2 class="gap">Readouts</h2>
+        <dl class="stats">
+          <div><dt>Average speed</dt><dd id="s-avg">–</dd></div>
+          <div><dt>RMS speed</dt><dd id="s-rms">–</dd></div>
+          <div><dt>Kinetic energy</dt><dd id="s-ke">–</dd></div>
+          <div><dt>Total energy</dt><dd id="s-te">–</dd></div>
+          <div><dt>Collisions / s</dt><dd id="s-col">–</dd></div>
+          <div><dt>Wall pressure</dt><dd id="s-p">–</dd></div>
+        </dl>
+        <p class="unit-note">Speeds in pixels/s; energy and pressure in relative units (every particle has mass 1).</p>
+      </aside>
+    </div>
+
+    <section class="card hist-card" aria-labelledby="hist-h">
+      <h2 id="hist-h">Speed distribution</h2>
+      <canvas id="hist" role="img" aria-label="Histogram of particle speeds with the theoretical Maxwell-Boltzmann curve"></canvas>
+      <p class="unit-note"><span class="key key-bar"></span> measured &nbsp; <span class="key key-curve"></span> 2D Maxwell–Boltzmann prediction. With collisions on and no gravity, the bars settle onto the curve.</p>
+    </section>
+
+    <div class="cards two">
+      <section class="card"><h3>Try this</h3>
+        <ol class="try">
+          <li><b>Reach equilibrium.</b> Gravity 0, elasticity 1. Watch the bars relax onto the curve as particles collide.</li>
+          <li><b>Heat it.</b> Raise Temperature. Average speed and wall pressure climb together.</li>
+          <li><b>Squeeze it.</b> Add particles or enlarge them. Collisions per second and pressure rise.</li>
+          <li><b>Let it settle.</b> Use the Settling preset: with elasticity below 1, energy is lost and particles pile up.</li>
+        </ol>
+      </section>
+      <section class="card"><h3>The physics</h3>
+        <p>Collisions are between equal masses. Along the line joining the centres, the two particles exchange velocity components, so momentum is conserved, and kinetic energy too when elasticity is 1.</p>
+        <p>Temperature sets the average kinetic energy. Pressure is the momentum the walls receive per second per unit of wall length. The model is two-dimensional and idealised, with no friction or spin.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer"><span>© <span id="y"></span> OOPA Virtual Labs</span><span>Explore • Experiment • Discover</span></footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

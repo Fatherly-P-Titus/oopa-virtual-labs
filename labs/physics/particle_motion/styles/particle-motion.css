@@ -1,0 +1,31 @@
+.sim-layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start;margin-bottom:20px}
+.stage{background:#161616;border-radius:14px;padding:10px;box-shadow:0 18px 44px #1010101f}
+#sim{display:block;width:100%;aspect-ratio:8/5;border-radius:8px;background:#161616;touch-action:none}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 4px 4px}
+.toolbar .btn{min-height:38px}
+.speed{margin-left:auto;color:#bbb;font-size:12px;display:flex;align-items:center;gap:6px}
+.speed select{font:inherit;padding:6px 8px;border-radius:6px;border:1px solid #444;background:#222;color:#fff}
+.panel{border:1px solid var(--line);border-radius:14px;padding:20px;background:#fff}
+.panel h2{font-size:15px;letter-spacing:.02em;text-transform:uppercase;color:var(--red)}
+.panel h2.gap{margin-top:22px}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chip{min-height:32px;padding:0 12px;font-size:12px}
+.ctl{display:grid;grid-template-columns:1fr auto;gap:2px 8px;margin-bottom:12px;font-size:13px;font-weight:600}
+.ctl output{font-variant-numeric:tabular-nums;color:var(--red)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--red);margin:4px 0 0}
+.check{display:flex;align-items:center;gap:8px;font-size:13px;margin:8px 0}
+.check input{accent-color:var(--red);width:16px;height:16px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0}
+.stats div{background:var(--off);border-radius:8px;padding:10px 12px}
+.stats dt{font-size:10px;font-weight:700;letter-spacing:.08em;color:#777;text-transform:uppercase}
+.stats dd{margin:2px 0 0;font:700 18px var(--font-display);font-variant-numeric:tabular-nums}
+.unit-note{font-size:11px;color:#888;margin:10px 0 0}
+.hist-card{margin-bottom:20px}
+#hist{width:100%;aspect-ratio:3.4/1;display:block}
+.key{display:inline-block;vertical-align:middle;width:18px;height:8px;border-radius:2px;margin-right:4px}
+.key-bar{background:#b22222} .key-curve{background:none;border-top:2px dashed #111;height:0}
+.cards.two{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.card h3{margin-top:0} .card p{margin:0 0 10px;line-height:1.6}
+.try{margin:8px 0 0;padding-left:20px;font-size:13px;color:var(--muted);line-height:1.6} .try li{margin-bottom:8px} .try b{color:var(--ink)}
+@media (max-width:900px){.sim-layout{grid-template-columns:1fr}.lab-main{padding-top:28px}}
+@media (max-width:480px){.stats dd{font-size:16px}.crumbs{font-size:11px}.toolbar .btn{flex:1}.speed{margin-left:0;width:100%;justify-content:flex-end}}

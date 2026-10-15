@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Interactive projectile motion simulator: launch angle, speed, gravity, air drag, wind and bounce.">
+  <title>Projectile Motion | Physics | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/projectile-motion.css">
+  <script defer src="scripts/projectile-motion.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="projectile-motion"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span><a href="../index.html">Physics</a><span aria-hidden="true">/</span><span aria-current="page">Projectile Motion</span></nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">PHYSICS / PROJECTILE MOTION</p>
+    <h1>Projectile <span>Motion.</span></h1>
+    <p class="lead">Launch a projectile and compare what happens with what the textbook formulas predict. Add air drag, wind, a different planet or a bouncy ground and see which assumptions matter.</p>
+
+    <div class="sim-layout">
+      <div class="left">
+        <section class="stage" aria-label="Simulation">
+          <canvas id="sim" role="img" aria-label="Projectile launch view"></canvas>
+          <div class="toolbar">
+            <button class="btn btn-primary" id="btn-go" type="button">Launch</button>
+            <button class="btn" id="btn-step" type="button">Step</button>
+            <button class="btn" id="btn-reset" type="button">Reset</button>
+            <label class="speed">Time <select id="timescale" aria-label="Simulation speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+          </div>
+          <p class="status" id="status" aria-live="polite">Ready. Set the launch conditions and press Launch.</p>
+        </section>
+
+        <section class="card readouts" aria-labelledby="ro-h">
+          <h2 id="ro-h">Readouts</h2>
+          <dl class="stats">
+            <div><dt>Time</dt><dd id="s-t">–</dd></div>
+            <div><dt>Distance x</dt><dd id="s-x">–</dd></div>
+            <div><dt>Height y</dt><dd id="s-y">–</dd></div>
+            <div><dt>Horizontal speed</dt><dd id="s-vx">–</dd></div>
+            <div><dt>Vertical speed</dt><dd id="s-vy">–</dd></div>
+            <div><dt>Speed</dt><dd id="s-sp">–</dd></div>
+          </dl>
+          <table class="cmp">
+            <caption>Simulated against the ideal (no air, no wind) prediction</caption>
+            <thead><tr><th scope="col">First flight</th><th scope="col">Simulated</th><th scope="col">Ideal</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Range</th><td id="c-r-sim">–</td><td id="c-r-id">–</td></tr>
+              <tr><th scope="row">Flight time</th><td id="c-t-sim">–</td><td id="c-t-id">–</td></tr>
+              <tr><th scope="row">Maximum height</th><td id="c-h-sim">–</td><td id="c-h-id">–</td></tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+
+      <aside class="panel" aria-label="Controls">
+        <h2>Launch</h2>
+        <div class="presets" role="group" aria-label="Presets">
+          <button class="btn chip" type="button" data-preset="max">Max range</button>
+          <button class="btn chip" type="button" data-preset="moon">Moon shot</button>
+          <button class="btn chip" type="button" data-preset="cliff">From a cliff</button>
+          <button class="btn chip" type="button" data-preset="drag">Air drag</button>
+          <button class="btn chip" type="button" data-preset="bounce">Bouncing ball</button>
+        </div>
+        <div class="ctl"><label for="c-v0">Launch speed</label><output id="o-v0"></output><input id="c-v0" type="range" min="1" max="100" step="1"></div>
+        <div class="ctl"><label for="c-angle">Launch angle</label><output id="o-angle"></output><input id="c-angle" type="range" min="0" max="90" step="1"></div>
+        <div class="ctl"><label for="c-h0">Launch height</label><output id="o-h0"></output><input id="c-h0" type="range" min="0" max="100" step="1"></div>
+
+        <h2 class="gap">Environment</h2>
+        <div class="ctl"><label for="sel-planet">World</label><output></output>
+          <select id="sel-planet" aria-label="Gravity preset"><option value="9.81">Earth (9.81)</option><option value="1.62">Moon (1.62)</option><option value="3.71">Mars (3.71)</option><option value="24.79">Jupiter (24.79)</option><option value="custom">Custom</option></select></div>
+        <div class="ctl"><label for="c-g">Gravity</label><output id="o-g"></output><input id="c-g" type="range" min="0.5" max="30" step="0.01"></div>
+        <div class="ctl"><label for="c-c">Air drag</label><output id="o-c"></output><input id="c-c" type="range" min="0" max="0.1" step="0.001"></div>
+        <div class="ctl"><label for="c-wind">Wind (+ is toward the target)</label><output id="o-wind"></output><input id="c-wind" type="range" min="-20" max="20" step="1"></div>
+        <div class="ctl"><label for="c-m">Mass</label><output id="o-m"></output><input id="c-m" type="range" min="0.1" max="10" step="0.1"></div>
+
+        <h2 class="gap">Ground</h2>
+        <div class="ctl"><label for="c-e">Bounciness</label><output id="o-e"></output><input id="c-e" type="range" min="0" max="1" step="0.01"></div>
+        <div class="ctl"><label for="c-mu">Friction</label><output id="o-mu"></output><input id="c-mu" type="range" min="0" max="1" step="0.01"></div>
+
+        <h2 class="gap">Display</h2>
+        <label class="check"><input id="c-ideal" type="checkbox"> Ideal path (dashed)</label>
+        <label class="check"><input id="c-arrow" type="checkbox"> Velocity arrow</label>
+        <label class="check"><input id="c-trail" type="checkbox"> Trail</label>
+        <p class="unit-note">Keyboard: Space launch / pause, S step, R reset.</p>
+      </aside>
+    </div>
+
+    <section class="card chart-card" aria-labelledby="en-h">
+      <h2 id="en-h">Energy over time</h2>
+      <canvas id="energy" role="img" aria-label="Kinetic, potential and total energy against time"></canvas>
+      <p class="unit-note"><span class="key key-ke"></span> kinetic &nbsp; <span class="key key-pe"></span> potential &nbsp; <span class="key key-te"></span> total. In a vacuum the total stays flat. Drag and inelastic bounces make it fall.</p>
+    </section>
+
+    <div class="cards two">
+      <section class="card"><h3>Try this</h3>
+        <ol class="try">
+          <li><b>Find the best angle.</b> Use Max range, then try 30° and 60°. They land at the same spot. Nothing beats 45°.</li>
+          <li><b>Add air.</b> Use the Air drag preset. The path becomes lopsided and the range falls well short of the dashed ideal.</li>
+          <li><b>Re-tune it.</b> With drag on, search for the best angle again. It drops below 45°.</li>
+          <li><b>Change worlds.</b> Pick the Moon. The flight is six times longer and the range six times greater.</li>
+        </ol>
+      </section>
+      <section class="card"><h3>The physics</h3>
+        <p>Without air, the horizontal speed stays constant and the vertical motion is steady acceleration: <b>range = v² sin 2θ / g</b> when launched from the ground. The path is a parabola.</p>
+        <p>Air drag pushes against the motion with force c·|v|·v, where c = ½ρC<sub>d</sub>A (kg/m). Wind changes the speed relative to the air. Bounces keep a fraction of the vertical speed, and friction takes away horizontal speed.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer"><span>© <span id="y"></span> OOPA Virtual Labs</span><span>Explore • Experiment • Discover</span></footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>
