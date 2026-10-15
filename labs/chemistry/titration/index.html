@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Interactive acid-base titration lab: burette, flask, indicators, a live pH curve and an unknown-concentration challenge.">
+  <title>Titration | Chemistry | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/titration.css">
+  <script defer src="scripts/titration.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="titration"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span><a href="../index.html">Chemistry</a><span aria-hidden="true">/</span><span aria-current="page">Titration</span></nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">CHEMISTRY / TITRATION</p>
+    <h1>Acid–base <span>Titration.</span></h1>
+    <p class="lead">Add titrant from the burette a little at a time, watch the indicator change colour, and build the pH curve. Then try the unknown: find a hidden concentration for yourself.</p>
+
+    <div class="sim-layout">
+      <div class="left">
+        <section class="stage" aria-label="Titration apparatus">
+          <canvas id="lab" role="img" aria-label="A burette above a flask with a pH meter"></canvas>
+          <div class="toolbar">
+            <button class="btn btn-primary" id="btn-1" type="button">+1 mL</button>
+            <button class="btn" id="btn-01" type="button">+0.1 mL</button>
+            <button class="btn" id="btn-drop" type="button">+1 drop</button>
+            <button class="btn" id="btn-run" type="button" aria-pressed="false">Run</button>
+            <label class="speed">Flow <select id="sel-rate" aria-label="Flow rate when running"><option value="0.1">Slow</option><option value="0.5" selected>Medium</option><option value="2">Fast</option></select></label>
+            <button class="btn" id="btn-undo" type="button">Undo</button>
+            <button class="btn" id="btn-restart" type="button">Start over</button>
+          </div>
+          <p class="status" id="ti-status" aria-live="polite"></p>
+        </section>
+
+        <section class="card readouts" aria-labelledby="ro-h">
+          <h2 id="ro-h">Readouts</h2>
+          <dl class="stats">
+            <div><dt>Burette reading</dt><dd id="rv1">–</dd></div>
+            <div><dt>pH</dt><dd id="rv2">–</dd></div>
+            <div><dt>Flask volume</dt><dd id="rv3">–</dd></div>
+            <div><dt>Indicator colour</dt><dd id="rv4">–</dd></div>
+            <div><dt>Titrant added</dt><dd id="rv5">–</dd></div>
+            <div class="stat-state"><dt>Stage</dt><dd id="rv6">–</dd></div>
+          </dl>
+        </section>
+
+        <section class="card chart-card" aria-labelledby="gr-h">
+          <h2 id="gr-h">Titration curve</h2>
+          <canvas id="graph" role="img" aria-label="pH against volume of titrant added"></canvas>
+          <p class="unit-note" id="graph-cap"></p>
+        </section>
+
+        <section class="card" aria-labelledby="ic-h">
+          <h2 id="ic-h">Is the indicator a good choice?</h2>
+          <p class="ind-check" id="ind-check"></p>
+        </section>
+      </div>
+
+      <aside class="panel" aria-label="Controls">
+        <h2>Reaction</h2>
+        <div class="ctl"><label for="sel-scen">Titration</label><output></output>
+          <select id="sel-scen">
+            <option value="sa_sb" selected>Strong acid with strong base</option>
+            <option value="wa_sb">Weak acid with strong base</option>
+            <option value="sb_sa">Strong base with strong acid</option>
+            <option value="wb_sa">Weak base with strong acid</option>
+          </select>
+          <small class="hint" id="scen-desc"></small></div>
+        <div class="ctl"><label for="c-ca">Flask solution strength</label><output id="o-ca"></output><input id="c-ca" type="range" min="0.05" max="0.5" step="0.005"></div>
+        <div class="ctl"><label for="c-va">Flask solution volume</label><output id="o-va"></output><input id="c-va" type="range" min="10" max="50" step="1"></div>
+        <div class="ctl"><label for="c-cb">Burette solution strength</label><output id="o-cb"></output><input id="c-cb" type="range" min="0.05" max="0.5" step="0.005"></div>
+        <div class="ctl"><label for="sel-ind">Indicator</label><output></output>
+          <select id="sel-ind">
+            <option value="none">None (pH meter only)</option>
+            <option value="methylorange">Methyl orange</option>
+            <option value="methylred">Methyl red</option>
+            <option value="bromothymol">Bromothymol blue</option>
+            <option value="phenolphthalein" selected>Phenolphthalein</option>
+          </select></div>
+
+        <h2 class="gap">Display</h2>
+        <label class="check"><input id="c-curve" type="checkbox"> Show the full curve (dashed)</label>
+        <label class="check"><input id="c-eq" type="checkbox" checked> Mark the equivalence point</label>
+
+        <h2 class="gap">Challenge</h2>
+        <label class="check"><input id="c-unknown" type="checkbox"> Unknown flask solution</label>
+        <div id="grp-unk" hidden>
+          <p class="unk-note">The strength of the flask solution is hidden. Titrate to the colour change, record the endpoint, then calculate:<br><b>flask strength = burette strength × volume added ÷ flask volume</b></p>
+          <div class="btn-row">
+            <button class="btn" id="btn-endpoint" type="button">Record endpoint</button>
+            <button class="btn" id="btn-newunk" type="button">New unknown</button>
+          </div>
+          <p class="unit-note" id="endpoint-note"></p>
+          <div class="ctl guess"><label for="c-guess">Your answer (mol/L)</label><output></output><input id="c-guess" type="number" min="0" max="1" step="0.001" inputmode="decimal" placeholder="e.g. 0.125"></div>
+          <button class="btn btn-primary" id="btn-check" type="button">Check answer</button>
+          <p class="unk-result" id="unk-result" aria-live="polite"></p>
+        </div>
+        <p class="unit-note">Solutions are at 25 °C. The burette holds 50 mL.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card"><h3>Try this</h3>
+        <ol class="try">
+          <li><b>Find the jump.</b> Strong acid with strong base. Add 1 mL at a time. Near 25 mL the pH leaps from about 3 to about 11.</li>
+          <li><b>Go slowly.</b> Switch to single drops as the colour begins to change. One drop can tip the whole flask.</li>
+          <li><b>Pick the wrong indicator.</b> Weak acid with strong base, then choose methyl orange. It changes colour long before the equivalence point.</li>
+          <li><b>Be the analyst.</b> Tick Unknown flask solution, find the endpoint, and calculate the strength.</li>
+        </ol>
+      </section>
+      <section class="card"><h3>The chemistry</h3>
+        <p>In a titration a solution of known strength (the titrant) is added to a measured volume of another until they have exactly reacted. This is the <b>equivalence point</b>. Here, acid and base react 1 : 1, so <b>C<sub>a</sub>V<sub>a</sub> = C<sub>b</sub>V<sub>b</sub></b> at that point.</p>
+        <p>An indicator changes colour over a narrow pH range, which marks the <b>endpoint</b>. A weak acid or base gives a smaller pH jump, and the equivalence point is not at pH 7, so the indicator must be chosen to match.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer"><span>© <span id="y"></span> OOPA Virtual Labs</span><span>Explore • Experiment • Discover</span></footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

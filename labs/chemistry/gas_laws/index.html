@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Interactive gas laws lab: Boyle's, Charles's, Gay-Lussac's and Avogadro's laws with a piston, a pressure gauge, a graph and a data table.">
+  <title>Gas Laws | Chemistry | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/gas-laws.css">
+  <script defer src="scripts/gas-laws.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="gas-laws"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span><a href="../index.html">Chemistry</a><span aria-hidden="true">/</span><span aria-current="page">Gas Laws</span></nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">CHEMISTRY / GAS LAWS</p>
+    <h1>Gas <span>Laws.</span></h1>
+    <p class="lead">Squeeze, heat and add gas to a piston and watch the pressure respond. Record measurements, graph them, and discover the constant hidden in each law.</p>
+
+    <div class="sim-layout">
+      <div class="left">
+        <section class="stage" aria-label="Gas chamber">
+          <canvas id="chamber" role="img" aria-label="A gas in a cylinder with a movable piston and a pressure gauge"></canvas>
+          <div class="toolbar">
+            <button class="btn" id="btn-pause" type="button" aria-pressed="false">Pause motion</button>
+            <button class="btn" id="btn-reset" type="button">Reset</button>
+            <span class="hold-note" id="hold-note"></span>
+          </div>
+          <p class="status" id="gl-status" aria-live="polite"></p>
+        </section>
+
+        <section class="card readouts" aria-labelledby="ro-h">
+          <h2 id="ro-h">Readouts</h2>
+          <dl class="stats">
+            <div><dt>Pressure</dt><dd id="s-P">–</dd><small id="s-Patm"></small></div>
+            <div><dt>Volume</dt><dd id="s-V">–</dd></div>
+            <div><dt>Temperature</dt><dd id="s-T">–</dd></div>
+            <div><dt>Amount of gas</dt><dd id="s-n">–</dd><small id="s-N"></small></div>
+            <div><dt>Piston hits / s</dt><dd id="s-hits">–</dd></div>
+            <div class="stat-law"><dt id="law-const-label">–</dt><dd id="law-const">–</dd></div>
+          </dl>
+        </section>
+
+        <section class="card chart-card" aria-labelledby="gr-h">
+          <h2 id="gr-h">Graph</h2>
+          <canvas id="graph" role="img" aria-label="Graph of the measurements for the chosen gas law"></canvas>
+          <p class="unit-note" id="graph-cap"></p>
+        </section>
+
+        <section class="card" aria-labelledby="dt-h">
+          <h2 id="dt-h">Data table</h2>
+          <div class="table-wrap">
+            <table class="cmp" id="data-table">
+              <caption>Recorded measurements</caption>
+              <thead><tr>
+                <th scope="col">V (L)</th><th scope="col">P (kPa)</th><th scope="col">T (K)</th><th scope="col">n (mol)</th><th scope="col" id="data-const-head">–</th>
+              </tr></thead>
+              <tbody id="data-body"></tbody>
+            </table>
+          </div>
+          <p class="unit-note" id="table-note"></p>
+        </section>
+      </div>
+
+      <aside class="panel" aria-label="Controls">
+        <h2>Choose a law</h2>
+        <fieldset class="laws">
+          <legend class="sr-only">Gas law</legend>
+          <label class="law"><input type="radio" name="law" value="free"><span>Free play</span></label>
+          <label class="law"><input type="radio" name="law" value="boyle" checked><span>Boyle’s</span></label>
+          <label class="law"><input type="radio" name="law" value="charles"><span>Charles’s</span></label>
+          <label class="law"><input type="radio" name="law" value="gaylussac"><span>Gay-Lussac’s</span></label>
+          <label class="law"><input type="radio" name="law" value="avogadro"><span>Avogadro’s</span></label>
+        </fieldset>
+        <p class="law-desc" id="law-desc"></p>
+
+        <h2 class="gap">The gas</h2>
+        <div class="ctl"><label for="c-V">Volume</label><output id="o-V"></output><input id="c-V" type="range" min="2" max="30" step="0.5"><small class="hint" id="h-V"></small></div>
+        <div class="ctl"><label for="c-T">Temperature</label><output id="o-T"></output><input id="c-T" type="range" min="100" max="800" step="5"><small class="hint" id="h-T"></small></div>
+        <div class="ctl"><label for="c-n">Amount of gas</label><output id="o-n"></output><input id="c-n" type="range" min="0.1" max="3" step="0.1"><small class="hint" id="h-n"></small></div>
+
+        <h2 class="gap">Measure</h2>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btn-record" type="button">Record data point</button>
+          <button class="btn" id="btn-clear" type="button">Clear data</button>
+        </div>
+        <p class="unit-note">Pressure is calculated from PV = nRT. The dots are for illustration: they do not collide with each other.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card"><h3>Try this</h3>
+        <ol class="try">
+          <li><b>Squeeze it.</b> In Boyle’s law, halve the volume. The pressure doubles, and P × V in the table stays the same.</li>
+          <li><b>Heat it.</b> In Charles’s law, raise the temperature and the piston rises. Look at the graph: the line points back to 0 K.</li>
+          <li><b>Lock it.</b> In Gay-Lussac’s law the volume cannot change, so heating the gas raises its pressure. This is why sealed cans are dangerous in a fire.</li>
+          <li><b>Add gas.</b> In Avogadro’s law, add more gas at constant pressure. The volume grows in proportion.</li>
+        </ol>
+      </section>
+      <section class="card"><h3>The physics</h3>
+        <p>All four laws are special cases of the ideal gas law, <b>PV = nRT</b>, with R = 8.314 J/(mol·K). With P in kPa and V in litres, PV is in joules.</p>
+        <p>Temperature must be in <b>kelvin</b>: it starts at absolute zero, where an ideal gas would have no pressure or volume left. Hotter gas means faster particles, which hit the walls harder and more often.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer"><span>© <span id="y"></span> OOPA Virtual Labs</span><span>Explore • Experiment • Discover</span></footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

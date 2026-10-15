@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Thermochemistry: standard enthalpies of formation, Hess’s law cycles and bond-enthalpy estimates.">
+  <title>Thermochemistry / Hess’s Law | Chemistry | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/thermochemistry.css">
+  <script defer src="scripts/thermochemistry-model.js"></script>
+  <script defer src="scripts/thermochemistry.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="thermochemistry"></script>
+</head>
+<body class="m-formation">
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Chemistry</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Thermochemistry</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 02 / CHEMISTRY</p>
+    <h1>Thermochemistry / <span>Hess’s Law.</span></h1>
+    <p class="lead">Compute reaction enthalpies from formation data, build Hess cycles by scaling and reversing steps, and estimate ΔH from average bond enthalpies.</p>
+
+    <div class="mode-tabs" role="tablist" aria-label="Mode">
+      <button type="button" class="active" data-mode="formation">Formation enthalpies</button>
+      <button type="button" data-mode="hess">Hess’s law cycle</button>
+      <button type="button" data-mode="bond">Bond enthalpies</button>
+    </div>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Thermochemical diagram">
+        <canvas id="thermo-canvas" role="img" aria-label="Energy diagram, Hess cycle steps or bond energy breakdown depending on mode."></canvas>
+        <p class="hint-bar" id="hint-bar">ΔH° from tabulated enthalpies of formation. Choose a target reaction.</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and results">
+        <p class="eyebrow-sm">PRESETS</p>
+        <div class="presets" role="group">
+          <button type="button" class="chip" data-preset="ch4">CH₄ combustion</button>
+          <button type="button" class="chip" data-preset="co-path">C → CO → CO₂</button>
+          <button type="button" class="chip" data-preset="methane-hess">CH₄ via Hess</button>
+          <button type="button" class="chip" data-preset="bonds">N₂+H₂ bonds</button>
+        </div>
+
+        <div class="ctrl-formation">
+          <p class="eyebrow-sm" style="margin-top:6px">TARGET REACTION</p>
+          <div class="pick-row" data-pick="target" role="group">
+            <button type="button" class="active" data-target="comb_ch4">CH₄ combustion</button>
+            <button type="button" data-target="form_h2o">H₂O formation</button>
+            <button type="button" data-target="form_co2">CO₂ formation</button>
+            <button type="button" data-target="form_nh3">NH₃ formation</button>
+            <button type="button" data-target="comb_c2h2">C₂H₂ combustion</button>
+            <button type="button" data-target="decomp_caco3">CaCO₃ decomp.</button>
+          </div>
+          <p class="eyebrow-sm" style="margin-top:6px">CONTRIBUTIONS</p>
+          <div class="table-box">
+            <table>
+              <thead><tr><th>Term</th><th>ΔH_f°</th><th>ν·ΔH_f°</th></tr></thead>
+              <tbody id="form-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="ctrl-hess">
+          <p class="eyebrow-sm" style="margin-top:6px">CYCLE</p>
+          <div class="pick-row" data-pick="cycle" role="group">
+            <button type="button" class="active" data-cycle="co_path">C → CO → CO₂</button>
+            <button type="button" data-cycle="methane">CH₄ formation</button>
+            <button type="button" data-cycle="water_gas">Water–gas shift</button>
+          </div>
+          <p class="eyebrow-sm" style="margin-top:6px">STEPS (scale / reverse)</p>
+          <div id="hess-steps"></div>
+        </div>
+
+        <div class="ctrl-bond">
+          <p class="eyebrow-sm" style="margin-top:6px">REACTION</p>
+          <div class="pick-row" data-pick="bond" role="group">
+            <button type="button" class="active" data-bond="h2_cl2">H₂+Cl₂</button>
+            <button type="button" data-bond="ch4_comb">CH₄ combustion</button>
+            <button type="button" data-bond="n2_h2">N₂+3H₂</button>
+            <button type="button" data-bond="c2h4_h2">C₂H₄+H₂</button>
+          </div>
+          <div class="eq-box" style="margin-top:8px">
+            ΔH ≈ Σ(bonds broken) − Σ(bonds formed)<br>
+            Average bond enthalpies at 298 K.
+          </div>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">RESULTS</p>
+        <dl class="stats">
+          <div class="hl"><dt>ΔH</dt><dd id="s-dH">–</dd></div>
+          <div data-for="formation"><dt>Type</dt><dd id="s-type">–</dd></div>
+          <div data-for="hess"><dt>Matches target?</dt><dd id="s-match">–</dd></div>
+          <div data-for="hess"><dt>ΔH_f reference</dt><dd id="s-ref">–</dd></div>
+          <div data-for="bond"><dt>Σ broken</dt><dd id="s-broken">–</dd></div>
+          <div data-for="bond"><dt>Σ formed</dt><dd id="s-formed">–</dd></div>
+        </dl>
+        <p class="status-line" id="status-line" role="status"></p>
+        <p class="unit-note">Standard-state values at 298 K (kJ/mol). Hess arithmetic is exact on the given steps. Bond method is approximate.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol>
+          <li><b>Formation.</b> CH₄ combustion — large negative ΔH from ΔH_f values.</li>
+          <li><b>C → CO → CO₂.</b> Both Hess steps ×1: total equals formation of CO₂ (−393.5 kJ).</li>
+          <li><b>CH₄ via Hess.</b> Load the preset (×1, ×2, reverse combustion) — matches ΔH_f of methane.</li>
+          <li><b>Bonds vs tables.</b> N₂+3H₂ bond estimate vs formation value for NH₃ — note the difference.</li>
+          <li><b>Reverse a step.</b> In a cycle, reverse one equation and watch the total and stoichiometry change.</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The chemistry</h3>
+        <p>Enthalpy is a state function: the net ΔH depends only on initial and final states. Hess’s law lets you add thermochemical equations (scaled or reversed) to reach a target reaction. Formation enthalpies are a convenient standard path from elements.</p>
+        <p>Bond enthalpies give a quick gas-phase estimate but ignore phase changes and the fact that real bond strengths vary with molecular environment.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

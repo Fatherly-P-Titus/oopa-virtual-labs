@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Calorimetry: specific heat, enthalpy of solution and neutralisation, bomb combustion — coffee-cup and bomb calorimeters.">
+  <title>Calorimetry | Chemistry | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/calorimetry.css">
+  <script defer src="scripts/calorimetry-model.js"></script>
+  <script defer src="scripts/calorimetry.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="calorimetry"></script>
+</head>
+<body class="m-metal">
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Chemistry</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Calorimetry</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 02 / CHEMISTRY</p>
+    <h1>Calori<span>metry.</span></h1>
+    <p class="lead">Measure heat with coffee-cup and bomb calorimeters. Determine specific heats, enthalpies of solution and neutralisation, and combustion energies.</p>
+
+    <div class="mode-tabs" role="tablist" aria-label="Calorimetry mode">
+      <button type="button" class="active" data-mode="metal">Specific heat</button>
+      <button type="button" data-mode="solution">Enthalpy of solution</button>
+      <button type="button" data-mode="neut">Neutralisation</button>
+      <button type="button" data-mode="bomb">Bomb combustion</button>
+    </div>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Calorimeter">
+        <canvas id="cal-canvas" role="img" aria-label="Calorimeter vessel with thermometer. Liquid colour tracks temperature."></canvas>
+        <p class="hint-bar" id="hint-bar">Hot metal into cool water. Final temperature gives the metal’s specific heat from the energy balance.</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and results">
+        <p class="eyebrow-sm">PRESETS</p>
+        <div class="presets" role="group">
+          <button type="button" class="chip" data-preset="cu">Cu metal</button>
+          <button type="button" class="chip" data-preset="al">Al + C_cal</button>
+          <button type="button" class="chip" data-preset="naoh">NaOH(s)</button>
+          <button type="button" class="chip" data-preset="nh4">NH₄NO₃ cold pack</button>
+          <button type="button" class="chip" data-preset="neut">HCl + NaOH</button>
+          <button type="button" class="chip" data-preset="bomb">Bomb sample</button>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">CALORIMETER</p>
+        <div class="ctl">
+          <label for="c-Ccal">C_cal (coffee-cup)</label>
+          <output id="o-Ccal">0 J/°C</output>
+          <input id="c-Ccal" type="range" min="0" max="200" step="5" value="0">
+        </div>
+
+        <div class="ctrl-metal">
+          <p class="eyebrow-sm" style="margin-top:6px">METAL</p>
+          <div class="pick-row" data-pick="metal" role="group">
+            <button type="button" data-metal="Al">Al</button>
+            <button type="button" data-metal="Fe">Fe</button>
+            <button type="button" class="active" data-metal="Cu">Cu</button>
+            <button type="button" data-metal="Pb">Pb</button>
+            <button type="button" data-metal="Au">Au</button>
+            <button type="button" data-metal="Ag">Ag</button>
+          </div>
+          <div class="ctl">
+            <label for="c-mMetal">Mass metal</label>
+            <output id="o-mMetal">50 g</output>
+            <input id="c-mMetal" type="range" min="10" max="200" step="1" value="50">
+          </div>
+          <div class="ctl">
+            <label for="c-Tmetal">T metal (initial)</label>
+            <output id="o-Tmetal">100 °C</output>
+            <input id="c-Tmetal" type="range" min="40" max="150" step="1" value="100">
+          </div>
+          <div class="ctl">
+            <label for="c-cMetal">c metal</label>
+            <output id="o-cMetal">0.385</output>
+            <input id="c-cMetal" type="range" min="0.1" max="1.2" step="0.005" value="0.385">
+          </div>
+          <div class="ctl">
+            <label for="c-mWater">Mass water</label>
+            <output id="o-mWater">100 g</output>
+            <input id="c-mWater" type="range" min="50" max="300" step="5" value="100">
+          </div>
+          <div class="ctl">
+            <label for="c-Twater">T water (initial)</label>
+            <output id="o-Twater">25 °C</output>
+            <input id="c-Twater" type="range" min="10" max="40" step="1" value="25">
+          </div>
+        </div>
+
+        <div class="ctrl-solution">
+          <p class="eyebrow-sm" style="margin-top:6px">SALT</p>
+          <div class="pick-row" data-pick="salt" role="group">
+            <button type="button" class="active" data-salt="NaOH">NaOH</button>
+            <button type="button" data-salt="NH4NO3">NH₄NO₃</button>
+            <button type="button" data-salt="CaCl2">CaCl₂</button>
+            <button type="button" data-salt="KCl">KCl</button>
+          </div>
+          <div class="ctl">
+            <label for="c-nSalt">Moles salt</label>
+            <output id="o-nSalt">0.050 mol</output>
+            <input id="c-nSalt" type="range" min="0.01" max="0.2" step="0.005" value="0.05">
+          </div>
+          <div class="ctl">
+            <label for="c-dHsoln">ΔH_soln</label>
+            <output id="o-dHsoln">-44.5 kJ/mol</output>
+            <input id="c-dHsoln" type="range" min="-100" max="50" step="0.5" value="-44.5">
+          </div>
+          <div class="ctl">
+            <label for="c-mSolvent">Mass water</label>
+            <output id="o-mSolvent">100 g</output>
+            <input id="c-mSolvent" type="range" min="50" max="300" step="5" value="100">
+          </div>
+          <div class="ctl">
+            <label for="c-Tsoln">T initial</label>
+            <output id="o-Tsoln">25 °C</output>
+            <input id="c-Tsoln" type="range" min="10" max="40" step="1" value="25">
+          </div>
+        </div>
+
+        <div class="ctrl-neut">
+          <p class="eyebrow-sm" style="margin-top:6px">ACID &amp; BASE</p>
+          <div class="ctl">
+            <label for="c-Cacid">[Acid]</label>
+            <output id="o-Cacid">1.00 M</output>
+            <input id="c-Cacid" type="range" min="0.1" max="2" step="0.05" value="1">
+          </div>
+          <div class="ctl">
+            <label for="c-Vacid">V acid</label>
+            <output id="o-Vacid">50 mL</output>
+            <input id="c-Vacid" type="range" min="10" max="100" step="5" value="50">
+          </div>
+          <div class="ctl">
+            <label for="c-Cbase">[Base]</label>
+            <output id="o-Cbase">1.00 M</output>
+            <input id="c-Cbase" type="range" min="0.1" max="2" step="0.05" value="1">
+          </div>
+          <div class="ctl">
+            <label for="c-Vbase">V base</label>
+            <output id="o-Vbase">50 mL</output>
+            <input id="c-Vbase" type="range" min="10" max="100" step="5" value="50">
+          </div>
+          <div class="ctl">
+            <label for="c-dHneut">ΔH_neut</label>
+            <output id="o-dHneut">-55.8 kJ/mol</output>
+            <input id="c-dHneut" type="range" min="-70" max="-40" step="0.1" value="-55.8">
+          </div>
+          <div class="ctl">
+            <label for="c-Tneut">T initial</label>
+            <output id="o-Tneut">25 °C</output>
+            <input id="c-Tneut" type="range" min="10" max="40" step="1" value="25">
+          </div>
+        </div>
+
+        <div class="ctrl-bomb">
+          <p class="eyebrow-sm" style="margin-top:6px">BOMB</p>
+          <div class="ctl">
+            <label for="c-mSample">Sample mass</label>
+            <output id="o-mSample">1.00 g</output>
+            <input id="c-mSample" type="range" min="0.2" max="3" step="0.05" value="1">
+          </div>
+          <div class="ctl">
+            <label for="c-molarMass">Molar mass</label>
+            <output id="o-molarMass">180 g/mol</output>
+            <input id="c-molarMass" type="range" min="16" max="400" step="1" value="180">
+          </div>
+          <div class="ctl">
+            <label for="c-dUcomb">ΔU_comb</label>
+            <output id="o-dUcomb">-2800 kJ/mol</output>
+            <input id="c-dUcomb" type="range" min="-5000" max="-500" step="10" value="-2800">
+          </div>
+          <div class="ctl">
+            <label for="c-Cbomb">C_bomb</label>
+            <output id="o-Cbomb">2500 J/°C</output>
+            <input id="c-Cbomb" type="range" min="500" max="10000" step="50" value="2500">
+          </div>
+          <div class="ctl">
+            <label for="c-mBombWater">Bath water</label>
+            <output id="o-mBombWater">2000 g</output>
+            <input id="c-mBombWater" type="range" min="500" max="4000" step="50" value="2000">
+          </div>
+          <div class="ctl">
+            <label for="c-dNg">Δn_gas</label>
+            <output id="o-dNg">0.0</output>
+            <input id="c-dNg" type="range" min="-3" max="3" step="0.5" value="0">
+          </div>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">ENERGY BALANCE</p>
+        <div class="eq-box" id="eq-box"></div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">RESULTS</p>
+        <dl class="stats">
+          <div class="hl"><dt>T final</dt><dd id="s-Tf">–</dd></div>
+          <div data-for="metal"><dt>q metal</dt><dd id="s-qMetal">–</dd></div>
+          <div data-for="metal"><dt>q water</dt><dd id="s-qWater">–</dd></div>
+          <div data-for="metal"><dt>c metal</dt><dd id="s-c">–</dd></div>
+          <div data-for="metal"><dt>c recovered</dt><dd id="s-cRec">–</dd></div>
+          <div data-for="solution,neut,bomb"><dt>ΔT</dt><dd id="s-dT">–</dd></div>
+          <div data-for="solution,neut,bomb"><dt>q reaction</dt><dd id="s-qRxn">–</dd></div>
+          <div data-for="solution,neut"><dt>ΔH (input)</dt><dd id="s-dH">–</dd></div>
+          <div data-for="solution,neut"><dt>ΔH (from ΔT)</dt><dd id="s-dHexp">–</dd></div>
+          <div data-for="neut"><dt>n limiting</dt><dd id="s-nLim">–</dd></div>
+          <div data-for="bomb"><dt>ΔU (input)</dt><dd id="s-dU">–</dd></div>
+          <div data-for="bomb"><dt>ΔU (from ΔT)</dt><dd id="s-dUexp">–</dd></div>
+          <div data-for="bomb"><dt>ΔH ≈ ΔU+ΔnRT</dt><dd id="s-dH">–</dd></div>
+          <div data-for="bomb"><dt>C total</dt><dd id="s-Ctot">–</dd></div>
+        </dl>
+        <p class="status-line" id="status-line" role="status"></p>
+        <p class="unit-note">Adiabatic ideal calorimeter. c_water = 4.184 J·g⁻¹·°C⁻¹. Sign: q_rxn &lt; 0 for exothermic processes.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol>
+          <li><b>Copper.</b> Load Cu metal. Note T_f and that q_metal ≈ −q_water.</li>
+          <li><b>Aluminium.</b> Al has a higher c — more heat stored for the same mass and ΔT.</li>
+          <li><b>Cold pack.</b> NH₄NO₃ dissolves endothermically; the cup cools.</li>
+          <li><b>Neutralisation.</b> Equal moles of strong acid and base; ΔH per mole of water.</li>
+          <li><b>Bomb.</b> Raise sample mass — ΔT scales; ΔU per mole stays the same.</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The chemistry</h3>
+        <p>Calorimetry converts a temperature change into an energy change. In a coffee-cup (constant pressure) experiment, q_p ≈ ΔH for the process in the cup. In a bomb (constant volume), q_v ≈ ΔU; enthalpy follows with a small gas-mole correction.</p>
+        <p>This lab is adiabatic and instantaneous. Real data need cooling-curve corrections and careful heat-capacity calibrations — the ideal balance still teaches the core accounting.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

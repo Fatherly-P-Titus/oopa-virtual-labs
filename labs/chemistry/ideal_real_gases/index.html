@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Ideal gas law versus van der Waals equation: isotherms, compressibility factor Z, and critical constants.">
+  <title>Ideal vs Real Gases | Chemistry | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/ideal-real-gases.css">
+  <script defer src="scripts/irg-model.js"></script>
+  <script defer src="scripts/ideal-real-gases.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="ideal-real-gases"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Chemistry</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Ideal vs Real Gases</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 02 / CHEMISTRY</p>
+    <h1>Ideal vs <span>Real Gases.</span></h1>
+    <p class="lead">Compare \(PV = nRT\) with the van der Waals equation. Explore isotherms, the compressibility factor Z, and how \(a\) and \(b\) capture attraction and finite molecular volume.</p>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Isotherms and compressibility">
+        <canvas id="pv-canvas" role="img" aria-label="Pressure versus volume isotherms for ideal gas and van der Waals gas."></canvas>
+        <div class="legend">
+          <span class="ideal">Ideal P</span>
+          <span class="vdw">van der Waals P</span>
+          <span class="z1">Z = 1</span>
+        </div>
+        <canvas id="z-canvas" role="img" aria-label="Compressibility factor Z versus volume."></canvas>
+        <p class="hint-bar" id="hint-bar">Blue = ideal gas isotherm. Red = van der Waals. Z = 1 means ideal behaviour.</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and results">
+        <p class="eyebrow-sm">PRESETS</p>
+        <div class="presets" role="group">
+          <button type="button" class="chip" data-preset="co2-room">CO₂ room T</button>
+          <button type="button" class="chip" data-preset="co2-cold">CO₂ dense</button>
+          <button type="button" class="chip" data-preset="he">Helium</button>
+          <button type="button" class="chip" data-preset="h2o">Water vapour</button>
+          <button type="button" class="chip" data-preset="crit">Critical point</button>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">GAS</p>
+        <div class="gas-row" role="group">
+          <button type="button" data-gas="He">He</button>
+          <button type="button" data-gas="H2">H₂</button>
+          <button type="button" data-gas="N2">N₂</button>
+          <button type="button" data-gas="O2">O₂</button>
+          <button type="button" data-gas="CH4">CH₄</button>
+          <button type="button" class="active" data-gas="CO2">CO₂</button>
+          <button type="button" data-gas="NH3">NH₃</button>
+          <button type="button" data-gas="H2O">H₂O</button>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">CONDITIONS</p>
+        <div class="ctl">
+          <label for="c-T">Temperature T</label>
+          <output id="o-T">300 K</output>
+          <input id="c-T" type="range" min="150" max="800" step="5" value="300">
+        </div>
+        <div class="ctl">
+          <label for="c-V">Volume V</label>
+          <output id="o-V">5.00 L</output>
+          <input id="c-V" type="range" min="0.3" max="40" step="0.1" value="5">
+        </div>
+        <div class="ctl">
+          <label for="c-n">Amount n</label>
+          <output id="o-n">1.00 mol</output>
+          <input id="c-n" type="range" min="0.2" max="3" step="0.05" value="1">
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">VAN DER WAALS CONSTANTS</p>
+        <div class="ctl">
+          <label for="c-a">a (L²·bar·mol⁻²)</label>
+          <output id="o-a">3.640</output>
+          <input id="c-a" type="range" min="0.01" max="8" step="0.01" value="3.64">
+        </div>
+        <div class="ctl">
+          <label for="c-b">b (L·mol⁻¹)</label>
+          <output id="o-b">0.0427</output>
+          <input id="c-b" type="range" min="0.01" max="0.08" step="0.0005" value="0.0427">
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">EQUATIONS</p>
+        <div class="eq-box">
+          Ideal: P = nRT / V<br>
+          van der Waals: P = nRT/(V−nb) − a n²/V²<br>
+          Z = PV / nRT
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">RESULTS @ OPERATING POINT</p>
+        <dl class="stats">
+          <div><dt>Gas</dt><dd id="s-gas">–</dd></div>
+          <div><dt>P ideal</dt><dd id="s-Pideal">–</dd></div>
+          <div class="hl"><dt>P van der Waals</dt><dd id="s-Pvdw">–</dd></div>
+          <div class="hl"><dt>Z</dt><dd id="s-Z">–</dd></div>
+          <div><dt>P_vdw − P_ideal</dt><dd id="s-dP">–</dd></div>
+          <div><dt>T_c</dt><dd id="s-Tc">–</dd></div>
+          <div><dt>P_c</dt><dd id="s-Pc">–</dd></div>
+          <div><dt>V_c</dt><dd id="s-Vc">–</dd></div>
+          <div><dt>T_r = T/T_c</dt><dd id="s-Tr">–</dd></div>
+          <div><dt>a</dt><dd id="s-a">–</dd></div>
+          <div><dt>b</dt><dd id="s-b">–</dd></div>
+        </dl>
+        <p class="unit-note">R = 0.08314 L·bar/(mol·K). van der Waals loops in the two-phase region are shown without Maxwell construction.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol>
+          <li><b>Helium.</b> Almost ideal — red and blue isotherms nearly overlap.</li>
+          <li><b>CO₂ dense.</b> Low T, small V: attractions dominate, P_vdw &lt; P_ideal, Z &lt; 1.</li>
+          <li><b>High pressure.</b> Shrink V until excluded volume (b) pushes P_vdw above ideal.</li>
+          <li><b>Critical.</b> Load the critical-point preset and inspect the flat inflection on the red curve.</li>
+          <li><b>Custom a, b.</b> Raise a alone — pressure drops. Raise b alone — pressure rises at small V.</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The chemistry</h3>
+        <p>Ideal gases ignore molecular size and attractions. van der Waals adds a volume correction \(nb\) and an attractive term \(a n^2/V^2\). At moderate densities attractions lower pressure (Z &lt; 1); at very high densities the finite volume raises pressure (Z &gt; 1).</p>
+        <p>The critical constants follow from \(a\) and \(b\). Real fluids need better equations (Peng–Robinson, etc.), but van der Waals still teaches the essential physics.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

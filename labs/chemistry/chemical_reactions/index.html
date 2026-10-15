@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Combine elements from the periodic table to explore synthesis reactions, balanced equations and real products.">
+  <title>Chemical Reactions | Chemistry | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/chemical-reactions.css">
+  <script defer src="scripts/reactions-model.js"></script>
+  <script defer src="scripts/chemical-reactions.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="chemical-reactions"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Chemistry</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Chemical Reactions</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 02 / CHEMISTRY</p>
+    <h1>Chemical <span>Reactions.</span></h1>
+    <p class="lead">Pick elements from the periodic table and combine them. See balanced equations, real products and reaction types — stoichiometry included (N₂ + H₂ gives NH₃, not NH₂).</p>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Periodic table and reaction result">
+        <div class="legend-pt">
+          <span><i class="m"></i> Metal</span>
+          <span><i class="n"></i> Nonmetal</span>
+          <span><i class="md"></i> Metalloid</span>
+          <span><i class="g"></i> Noble gas</span>
+        </div>
+        <div class="pt-grid" id="pt-grid" role="group" aria-label="Periodic table element picker"></div>
+        <div class="reactant-bar" id="reactant-bar" aria-live="polite"></div>
+        <div class="result-box" id="result-box" aria-live="polite"></div>
+        <p class="hint-bar" id="hint-bar">Select up to three elements. Known pairs show a balanced equation and product. Try N + H for ammonia.</p>
+      </section>
+
+      <aside class="panel" aria-label="Presets and summary">
+        <p class="eyebrow-sm">TRY THESE</p>
+        <div class="presets" role="group">
+          <button type="button" class="chip" data-preset="ammonia">N + H → NH₃</button>
+          <button type="button" class="chip" data-preset="water">H + O → H₂O</button>
+          <button type="button" class="chip" data-preset="salt">Na + Cl → NaCl</button>
+          <button type="button" class="chip" data-preset="mgo">Mg + O → MgO</button>
+          <button type="button" class="chip" data-preset="hcl">H + Cl → HCl</button>
+          <button type="button" class="chip" data-preset="noble">Ne + O (none)</button>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" id="btn-clear">Clear selection</button>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">SUMMARY</p>
+        <dl class="stats">
+          <div><dt>Elements selected</dt><dd id="s-count">0</dd></div>
+          <div><dt>Reactant forms</dt><dd id="s-reactants">–</dd></div>
+          <div><dt>Product</dt><dd id="s-product">–</dd></div>
+          <div><dt>Type</dt><dd id="s-type">–</dd></div>
+        </dl>
+        <p class="unit-note">Curated teaching reactions. Not every pair forms a compound. Noble gases and many transition combinations need special conditions or do not react simply.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol>
+          <li><b>Ammonia.</b> Select N and H — product is NH₃ with the 1 : 3 : 2 balance, not NH₂.</li>
+          <li><b>Salt.</b> Na + Cl → NaCl. Compare with K + Cl.</li>
+          <li><b>Burning metals.</b> Mg + O, Fe + O, Zn + O — oxidation / synthesis.</li>
+          <li><b>Noble gas.</b> Ne + O — no ordinary compound.</li>
+          <li><b>Halogens + hydrogen.</b> H + F, H + Cl, H + Br, H + I.</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The chemistry</h3>
+        <p>Elements combine in fixed ratios set by valence. Writing NH₂ from nitrogen and hydrogen ignores the need to balance atoms and the actual stable molecule NH₃. This lab uses real stoichiometry and common binary products.</p>
+        <p>Many element pairs do not react under mild conditions. That is chemistry too — noble gases, inert metals and unstable combinations are reported honestly rather than inventing a formula.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

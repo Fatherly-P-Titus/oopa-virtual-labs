@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Chemical kinetics: zero-, first- and second-order rate laws, half-life and Arrhenius temperature dependence.">
+  <title>Reaction Rates | Chemistry | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/reaction-rates.css">
+  <script defer src="scripts/reaction-rates-model.js"></script>
+  <script defer src="scripts/reaction-rates.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="reaction-rates"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Chemistry</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Reaction Rates</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 02 / CHEMISTRY</p>
+    <h1>Reaction <span>Rates.</span></h1>
+    <p class="lead">Explore zero-, first- and second-order kinetics. Watch concentration fall with time, compare half-lives and turn on Arrhenius temperature dependence.</p>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Concentration vs time">
+        <canvas id="rate-canvas" role="img" aria-label="Graph of reactant concentration versus time. A vertical dashed line marks the half-life."></canvas>
+        <p class="hint-bar" id="hint-bar">First-order decay by default. Switch order and watch the curve shape and half-life change.</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and results">
+        <p class="eyebrow-sm">PRESETS</p>
+        <div class="presets" role="group">
+          <button type="button" class="chip" data-preset="first">First-order</button>
+          <button type="button" class="chip" data-preset="second">Second-order</button>
+          <button type="button" class="chip" data-preset="zero">Zero-order</button>
+          <button type="button" class="chip" data-preset="hot">Hot (Arrhenius)</button>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">ORDER</p>
+        <div class="order-row" role="group">
+          <button type="button" data-order="0">Zero</button>
+          <button type="button" class="active" data-order="1">First</button>
+          <button type="button" data-order="2">Second</button>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">CONDITIONS</p>
+        <div class="ctl">
+          <label for="c-A0">[A]₀</label>
+          <output id="o-A0">1.00 M</output>
+          <input id="c-A0" type="range" min="0.1" max="2" step="0.05" value="1">
+        </div>
+        <div class="ctl">
+          <label for="c-k">k</label>
+          <output id="o-k">0.050</output>
+          <input id="c-k" type="range" min="0.005" max="0.3" step="0.005" value="0.05">
+        </div>
+
+        <label class="check-row">
+          <input type="checkbox" id="c-arrhenius"> Use Arrhenius (k from T, Eₐ)
+        </label>
+        <div id="arrhenius-controls" style="display:none">
+          <div class="ctl">
+            <label for="c-T">Temperature T</label>
+            <output id="o-T">298 K</output>
+            <input id="c-T" type="range" min="250" max="400" step="1" value="298">
+          </div>
+          <div class="ctl">
+            <label for="c-Ea">Activation energy Eₐ</label>
+            <output id="o-Ea">50 kJ/mol</output>
+            <input id="c-Ea" type="range" min="20" max="120" step="1" value="50">
+          </div>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">RESULTS</p>
+        <dl class="stats">
+          <div><dt>Order</dt><dd id="s-order">1</dd></div>
+          <div class="hl"><dt>k</dt><dd id="s-k">–</dd></div>
+          <div class="hl"><dt>Half-life t½</dt><dd id="s-hl">–</dd></div>
+          <div><dt>[A]₀</dt><dd id="s-A0">–</dd></div>
+          <div><dt>Initial rate</dt><dd id="s-rate0">–</dd></div>
+          <div><dt>T</dt><dd id="s-T">–</dd></div>
+          <div><dt>Eₐ</dt><dd id="s-Ea">–</dd></div>
+        </dl>
+        <p class="unit-note">Rate = k[A]ⁿ. Integrated rate laws are exact. Arrhenius: k = A exp(−Eₐ/RT).</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol>
+          <li><b>Order shapes.</b> Switch Zero → First → Second. Linear, exponential, then hyperbolic decay.</li>
+          <li><b>Half-life.</b> First-order: change [A]₀ — t½ stays the same. Second-order: t½ changes with [A]₀.</li>
+          <li><b>Faster k.</b> Raise k and watch the curve compress and t½ fall.</li>
+          <li><b>Temperature.</b> Enable Arrhenius, raise T — k jumps and the reaction runs much faster.</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The chemistry</h3>
+        <p>The rate law says how concentration affects speed. The order is determined experimentally; this lab lets you see the integrated consequence of each choice. Half-life is a convenient clock — constant for first-order, concentration-dependent otherwise.</p>
+        <p>Arrhenius links temperature to the rate constant through the activation energy barrier. Real mechanisms can be multi-step; here the focus is the single elementary-style rate law.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

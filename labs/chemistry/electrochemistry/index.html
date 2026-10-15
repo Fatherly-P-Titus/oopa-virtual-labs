@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Galvanic cells: standard potentials, Nernst equation, free energy, electron flow and cell diagrams.">
+  <title>Electrochemistry / Galvanic Cell | Chemistry | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/electrochemistry.css">
+  <script defer src="scripts/electrochemistry-model.js"></script>
+  <script defer src="scripts/electrochemistry.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="electrochemistry"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span>
+      <a href="../index.html">Chemistry</a><span aria-hidden="true">/</span>
+      <span aria-current="page">Electrochemistry</span>
+    </nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">LAB 02 / CHEMISTRY</p>
+    <h1>Electrochemistry / <span>Galvanic Cell.</span></h1>
+    <p class="lead">Build a voltaic cell from standard half-reactions. Read E°, apply the Nernst equation, track ΔG and watch electrons flow from anode to cathode.</p>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Galvanic cell diagram">
+        <canvas id="cell-canvas" role="img" aria-label="Two half-cells with salt bridge, wire and voltmeter. Electrons flow in the external circuit when E is positive."></canvas>
+        <p class="hint-bar" id="hint-bar">Daniell cell by default. Change electrodes or concentrations — E follows the Nernst equation.</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and results">
+        <p class="eyebrow-sm">PRESETS</p>
+        <div class="presets" role="group">
+          <button type="button" class="chip" data-preset="daniell">Daniell (Zn–Cu)</button>
+          <button type="button" class="chip" data-preset="agzn">Zn–Ag</button>
+          <button type="button" class="chip" data-preset="she">Zn vs SHE</button>
+          <button type="button" class="chip" data-preset="concent">Concentration cell</button>
+          <button type="button" class="chip" data-preset="swap">Swap sides</button>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">ELECTRODES</p>
+        <div class="electrode-select">
+          <div>
+            <label for="sel-left">Left half-cell</label>
+            <select id="sel-left"></select>
+          </div>
+          <div>
+            <label for="sel-right">Right half-cell</label>
+            <select id="sel-right"></select>
+          </div>
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">CONCENTRATIONS</p>
+        <div class="ctl">
+          <label for="c-left">Left ion / species</label>
+          <output id="o-left">1.00 M</output>
+          <input id="c-left" type="range" min="0.001" max="2" step="0.001" value="1">
+        </div>
+        <div class="ctl">
+          <label for="c-right">Right ion / species</label>
+          <output id="o-right">1.00 M</output>
+          <input id="c-right" type="range" min="0.001" max="2" step="0.001" value="1">
+        </div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">CELL REACTION</p>
+        <div class="eq-box" id="eq-box"></div>
+
+        <p class="eyebrow-sm" style="margin-top:6px">RESULTS</p>
+        <dl class="stats">
+          <div><dt>Anode</dt><dd id="s-anode">–</dd></div>
+          <div><dt>Cathode</dt><dd id="s-cathode">–</dd></div>
+          <div><dt>n (electrons)</dt><dd id="s-n">–</dd></div>
+          <div><dt>E° cell</dt><dd id="s-E0">–</dd></div>
+          <div class="hl"><dt>E cell (Nernst)</dt><dd id="s-E">–</dd></div>
+          <div><dt>Q</dt><dd id="s-Q">–</dd></div>
+          <div><dt>ΔG°</dt><dd id="s-dG0">–</dd></div>
+          <div class="hl"><dt>ΔG</dt><dd id="s-dG">–</dd></div>
+          <div><dt>K (from E°)</dt><dd id="s-K">–</dd></div>
+        </dl>
+        <p class="status-line" id="status-line" role="status"></p>
+
+        <p class="eyebrow-sm" style="margin-top:6px">STANDARD POTENTIALS (V)</p>
+        <table class="potential-table">
+          <thead><tr><th>Couple</th><th>E°</th><th>n</th></tr></thead>
+          <tbody id="pot-body"></tbody>
+        </table>
+        <p class="unit-note">25 °C. E = E° − (0.05916/n) log₁₀ Q. ΔG = −nFE. Activities ≈ molar concentrations. Ideal half-cells only.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card">
+        <h3>Try this</h3>
+        <ol>
+          <li><b>Daniell.</b> Zn–Cu at 1 M: E° ≈ 1.10 V. Electrons flow Zn → Cu in the wire.</li>
+          <li><b>Nernst.</b> Lower [Cu²⁺] or raise [Zn²⁺] — E falls as Q rises.</li>
+          <li><b>Concentration cell.</b> Load the preset: same metal, different concentrations. E is small but non-zero.</li>
+          <li><b>SHE.</b> Zn vs hydrogen electrode: the voltmeter reads the standard potential of zinc (magnitude).</li>
+          <li><b>Swap.</b> Swap sides — anode/cathode labels follow E°, not left/right position.</li>
+        </ol>
+      </section>
+      <section class="card">
+        <h3>The chemistry</h3>
+        <p>In a galvanic cell, spontaneous redox drives electron flow through an external circuit. Reduction occurs at the cathode (higher reduction potential); oxidation at the anode. The salt bridge maintains charge balance with ion flow.</p>
+        <p>The Nernst equation corrects E° for non-standard concentrations. ΔG = −nFE links the cell voltage to chemical free energy; a positive E means a spontaneous cell (ΔG &lt; 0). Equilibrium constant K follows from E° alone.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer">
+    <span>© <span id="y"></span> OOPA Virtual Labs</span>
+    <span>Explore • Experiment • Discover</span>
+  </footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>
