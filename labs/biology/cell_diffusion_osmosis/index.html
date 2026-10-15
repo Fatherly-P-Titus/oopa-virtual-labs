@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Interactive biology lab: watch particles diffuse across a membrane, and see how animal and plant cells respond to salty or fresh water by osmosis.">
+  <title>Cell Diffusion and Osmosis | Biology | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/cell-diffusion-osmosis.css">
+  <script defer src="scripts/cell-diffusion-osmosis.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="cell-diffusion-osmosis"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span><a href="../index.html">Biology</a><span aria-hidden="true">/</span><span aria-current="page">Cell Diffusion and Osmosis</span></nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">BIOLOGY / CELL DIFFUSION AND OSMOSIS</p>
+    <h1>Diffusion <span>&amp; Osmosis.</span></h1>
+    <p class="lead">See how substances move across a cell membrane. Watch particles spread out by diffusion, then put an animal or plant cell in fresh or salty water and see whether it swells, shrinks or stays the same.</p>
+
+    <div class="sim-layout">
+      <div class="left">
+        <section class="stage" aria-label="Experiment">
+          <canvas id="bio" role="img" aria-label="Particles and a membrane"></canvas>
+          <div class="toolbar">
+            <button class="btn" id="btn-pause" type="button" aria-pressed="false">Pause</button>
+            <button class="btn" id="btn-reset" type="button">Reset</button>
+            <label class="speed">Speed <select id="timescale" aria-label="Simulation speed"><option value="1" selected>1×</option><option value="2">2×</option><option value="5">5×</option><option value="10">10×</option></select></label>
+          </div>
+          <p class="status" id="bio-status" aria-live="polite"></p>
+        </section>
+
+        <section class="card readouts" aria-labelledby="ro-h">
+          <h2 id="ro-h">Readouts</h2>
+          <dl class="stats">
+            <div><dt id="rl1">–</dt><dd id="rv1">–</dd></div>
+            <div><dt id="rl2">–</dt><dd id="rv2">–</dd></div>
+            <div><dt id="rl3">–</dt><dd id="rv3">–</dd></div>
+            <div><dt id="rl4">–</dt><dd id="rv4">–</dd></div>
+            <div><dt id="rl5">–</dt><dd id="rv5">–</dd></div>
+            <div class="stat-state"><dt id="rl6">–</dt><dd id="rv6">–</dd></div>
+          </dl>
+        </section>
+
+        <section class="card chart-card" aria-labelledby="gr-h">
+          <h2 id="gr-h">Graph</h2>
+          <canvas id="graph" role="img" aria-label="Graph of the experiment over time"></canvas>
+          <p class="unit-note" id="graph-cap"></p>
+        </section>
+      </div>
+
+      <aside class="panel" aria-label="Controls">
+        <h2>Choose an experiment</h2>
+        <fieldset class="seg">
+          <legend class="sr-only">Experiment</legend>
+          <label class="opt"><input type="radio" name="exp" value="diffusion" checked><span>Diffusion</span></label>
+          <label class="opt"><input type="radio" name="exp" value="osmosis"><span>Osmosis</span></label>
+        </fieldset>
+        <p class="exp-desc" id="exp-desc"></p>
+
+        <div id="grp-diff">
+          <h2 class="gap">Diffusion</h2>
+          <div class="ctl"><label for="sel-solute">Particle type</label><output></output>
+            <select id="sel-solute"><option value="oxygen" selected>Oxygen (small)</option><option value="glucose">Glucose (medium)</option><option value="starch">Starch (large)</option></select>
+            <small class="hint" id="sol-note"></small></div>
+          <div class="ctl"><label for="c-nl">Particles on the left</label><output id="o-nl"></output><input id="c-nl" type="range" min="0" max="150" step="5"></div>
+          <div class="ctl"><label for="c-nr">Particles on the right</label><output id="o-nr"></output><input id="c-nr" type="range" min="0" max="150" step="5"></div>
+          <div class="ctl"><label for="c-temp">Temperature</label><output id="o-temp"></output><input id="c-temp" type="range" min="0" max="60" step="1"></div>
+          <div class="ctl"><label for="c-perm">Membrane openness</label><output id="o-perm"></output><input id="c-perm" type="range" min="0" max="100" step="5"></div>
+        </div>
+
+        <div id="grp-osm" hidden>
+          <h2 class="gap">Osmosis</h2>
+          <fieldset class="seg">
+            <legend class="sr-only">Cell type</legend>
+            <label class="opt"><input type="radio" name="ctype" value="animal" checked><span>Animal cell</span></label>
+            <label class="opt"><input type="radio" name="ctype" value="plant"><span>Plant cell</span></label>
+          </fieldset>
+          <div class="presets" role="group" aria-label="Solution presets">
+            <button class="btn chip" type="button" data-out="0">Pure water</button>
+            <button class="btn chip" type="button" data-out="300">Same as cell</button>
+            <button class="btn chip" type="button" data-out="600">Salty</button>
+            <button class="btn chip" type="button" data-out="900">Very salty</button>
+          </div>
+          <div class="ctl"><label for="c-out">Solution outside the cell</label><output id="o-out"></output><input id="c-out" type="range" min="0" max="900" step="10"></div>
+          <div class="ctl"><label for="c-aqp">Water channels</label><output id="o-aqp"></output><input id="c-aqp" type="range" min="0.2" max="2" step="0.1">
+            <small class="hint">More channels let water cross faster. Inside the cell it is 300 mOsm/L.</small></div>
+        </div>
+        <p class="unit-note">The particles are a simplified picture, not to scale.</p>
+      </aside>
+    </div>
+
+    <div class="cards two">
+      <section class="card"><h3>Try this</h3>
+        <ol class="try">
+          <li><b>Watch it even out.</b> In Diffusion, put 100 particles on the left and none on the right. The graph’s two lines meet, but the crossings per second never stop.</li>
+          <li><b>Block it.</b> Switch the particle to starch, or close the membrane. Nothing crosses, so nothing evens out.</li>
+          <li><b>Burst a cell.</b> In Osmosis, choose an animal cell and Pure water. Water floods in until the cell bursts.</li>
+          <li><b>Compare cells.</b> Repeat with a plant cell. It swells a little, then the cell wall holds it firm (turgid). In Very salty water it pulls away from the wall (plasmolysis).</li>
+        </ol>
+      </section>
+      <section class="card"><h3>The biology</h3>
+        <p><b>Diffusion</b> is the net movement of particles from a region of higher concentration to a region of lower concentration, caused by their random motion. It needs no energy. Heating speeds it up.</p>
+        <p><b>Osmosis</b> is diffusion of water across a selectively permeable membrane, toward the side with more dissolved solute. A solution with less solute than the cell is <b>hypotonic</b>, one with more is <b>hypertonic</b>, and an equal one is <b>isotonic</b>.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer"><span>© <span id="y"></span> OOPA Virtual Labs</span><span>Explore • Experiment • Discover</span></footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

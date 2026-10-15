@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Interactive ecosystem simulator: follow matter and energy through plants, animals, dead matter and the soil.">
+  <title>Ecosystems | Biology | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/ecosystem.css">
+  <script defer src="scripts/ecosystem-model.js"></script>
+  <script defer src="scripts/ecosystem.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="ecosystem"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span><a href="../index.html">Biology</a><span aria-hidden="true">/</span><span aria-current="page">Ecosystems</span></nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">BIOLOGY / ECOSYSTEMS</p>
+    <h1>Living <span>Ecosystems.</span></h1>
+    <p class="lead">Sunlight feeds plants, plants feed herbivores, herbivores feed carnivores, and everything that dies returns its matter to the soil. Change the conditions or cause a disaster and watch the whole web respond.</p>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Food web">
+        <canvas id="sim" role="img" aria-label="Food web diagram. Circles show how much matter is in nutrients, plants, herbivores, carnivores and dead matter. Arrows show how much moves between them each year."></canvas>
+        <div class="toolbar">
+          <button class="btn btn-primary" id="btn-play" type="button" aria-pressed="true">Pause</button>
+          <button class="btn" id="btn-step" type="button">Step</button>
+          <button class="btn" id="btn-reset" type="button">Reset</button>
+          <label class="speed">Time <select id="timescale" aria-label="Simulation speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select></label>
+        </div>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+        <p class="legend">Circle size is the amount of matter. Arrow thickness and numbers are matter moving per year.</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and readouts">
+        <h2>Conditions</h2>
+        <div class="presets" role="group" aria-label="Presets">
+          <button class="btn chip" type="button" data-preset="balanced">Balanced</button>
+          <button class="btn chip" type="button" data-preset="rich">Rich sunlight</button>
+          <button class="btn chip" type="button" data-preset="slow">Slow decomposers</button>
+          <button class="btn chip" type="button" data-preset="leaky">Leaky soil</button>
+        </div>
+        <div class="ctl"><label for="c-light">Sunlight</label><output id="o-light"></output><input id="c-light" type="range" min="0.2" max="1.5" step="0.05"></div>
+        <div class="ctl"><label for="c-d">Decomposer activity</label><output id="o-d"></output><input id="c-d" type="range" min="0.1" max="1.2" step="0.05"></div>
+        <div class="ctl"><label for="c-aH">Herbivore appetite</label><output id="o-aH"></output><input id="c-aH" type="range" min="1.5" max="8" step="0.05"></div>
+        <div class="ctl"><label for="c-aC">Carnivore hunting</label><output id="o-aC"></output><input id="c-aC" type="range" min="1" max="8" step="0.1"></div>
+        <div class="ctl"><label for="c-inflow">Nutrients washed in</label><output id="o-inflow"></output><input id="c-inflow" type="range" min="0" max="40" step="1"></div>
+        <div class="ctl"><label for="c-leach">Nutrients washed out</label><output id="o-leach"></output><input id="c-leach" type="range" min="0" max="0.2" step="0.01"></div>
+
+        <h2 class="gap">Events</h2>
+        <div class="presets" role="group" aria-label="Events">
+          <button class="btn chip" type="button" data-event="fire">Wildfire</button>
+          <button class="btn chip" type="button" data-event="drought">Drought</button>
+          <button class="btn chip" type="button" data-event="fertilizer">Fertilizer runoff</button>
+          <button class="btn chip" type="button" data-event="hunt">Hunt carnivores</button>
+          <button class="btn chip" type="button" data-event="invade">Add herbivores</button>
+        </div>
+
+        <h2 class="gap">Readouts</h2>
+        <dl class="stats">
+          <div><dt>Years</dt><dd id="s-t">–</dd></div>
+          <div><dt>Plant growth per year</dt><dd id="s-g">–</dd></div>
+          <div><dt>Plants</dt><dd id="s-p">–</dd></div>
+          <div><dt>Herbivores</dt><dd id="s-h">–</dd></div>
+          <div><dt>Carnivores</dt><dd id="s-c">–</dd></div>
+          <div><dt>Nutrients</dt><dd id="s-n">–</dd></div>
+          <div><dt>Dead matter</dt><dd id="s-d">–</dd></div>
+          <div><dt>Total matter</dt><dd id="s-tot">–</dd></div>
+        </dl>
+        <p class="unit-note">Amounts are matter units. Total matter only changes when nutrients wash in or out, or when you use an event.</p>
+      </aside>
+    </div>
+
+    <section class="card chart-card" aria-labelledby="chart-h">
+      <div class="chart-head">
+        <h2 id="chart-h">Amounts over time</h2>
+        <label class="speed-light">Show <select id="chart-mode" aria-label="Chart contents"><option value="life" selected>Plants and animals</option><option value="matter">Nutrients and dead matter</option></select></label>
+      </div>
+      <canvas id="chart" role="img" aria-label="Line chart of how much matter is in each part of the ecosystem over time"></canvas>
+      <p class="unit-note">Dashed lines mark events. Years are along the bottom.</p>
+    </section>
+
+    <section class="card pyr-card" aria-labelledby="pyr-h">
+      <h2 id="pyr-h">Energy pyramid</h2>
+      <p class="pyr-intro">New body matter made per year at each level. Each step up passes on only a share of what the level below made.</p>
+      <ol class="pyr">
+        <li><span class="pyr-name">Carnivores</span><div class="pyr-track"><div class="pyr-bar pyr-c" id="pb-c"></div></div><span class="pyr-val" id="pv-c">–</span></li>
+        <li><span class="pyr-name">Herbivores</span><div class="pyr-track"><div class="pyr-bar pyr-h" id="pb-h"></div></div><span class="pyr-val" id="pv-h">–</span></li>
+        <li><span class="pyr-name">Plants</span><div class="pyr-track"><div class="pyr-bar pyr-p" id="pb-p"></div></div><span class="pyr-val" id="pv-p">–</span></li>
+      </ol>
+    </section>
+
+    <div class="cards two">
+      <section class="card"><h3>The biology</h3>
+        <p><b>Producers</b> (plants) turn sunlight and soil nutrients into living matter. <b>Consumers</b> (herbivores and carnivores) eat other living things. <b>Decomposers</b> break dead matter back into nutrients.</p>
+        <p>Matter goes round in a cycle: the same atoms are used again and again. Energy does not. It enters as sunlight and leaves as heat, and each step up the food chain passes on only a part of it.</p>
+        <p class="unit-note">The model is simplified: three groups, a single soil nutrient, no seasons and no other species.</p>
+      </section>
+      <section class="card"><h3>Try this</h3>
+        <ol class="try">
+          <li><b>Follow the cycle.</b> With Balanced, trace the arrows from nutrients to plants, animals, dead matter and back. Total matter stays the same.</li>
+          <li><b>Remove the top predator.</b> Press Hunt carnivores. Herbivores usually rise first, and then the plants fall.</li>
+          <li><b>Slow the recyclers.</b> Press Slow decomposers. Dead matter piles up and nutrients run low.</li>
+          <li><b>Burn it down.</b> Press Wildfire. Plants drop, and the animals follow after a delay.</li>
+          <li><b>Drain the soil.</b> Press Leaky soil. Nutrients wash away and the whole web has less to live on.</li>
+        </ol>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer"><span>© <span id="y"></span> OOPA Virtual Labs</span><span>Explore • Experiment • Discover</span></footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <title>Biology Laboratory | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../styles/lab-shell.css">
+  <script defer src="../../scripts/jenny/jenny-loader.js" data-page="biology"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="../../main-menu.html">Main menu</a><span aria-hidden="true">/</span><span aria-current="page">Biology</span></nav>
+  </header>
+  <main class="lab-main">
+    <p class="eyebrow">LAB 03 / BIOLOGY</p>
+    <h1>Biology <span>Laboratory.</span></h1>
+    <p class="lead">Explore cells, organisms, ecosystems and living systems through interactive experiments. Choose a project to begin.</p>
+    <div class="cards">
+      <a class="card" href="cell_diffusion_osmosis/index.html">
+        <span class="tag">AVAILABLE</span>
+        <h3>Cell Diffusion and Osmosis</h3>
+        <p>Watch particles spread across a membrane, then see how animal and plant cells swell, shrink or burst in fresh and salty water.</p>
+        <span class="card-cta">Open simulator ↗</span>
+      </a>
+      <a class="card" href="single_celled_organisms/index.html">
+        <span class="tag">AVAILABLE</span>
+        <h3>Single-Celled Organisms</h3>
+        <p>Follow cells as they find food, swim, grow, divide and die. Change food, speed, sensing and lifespan to see which cells thrive.</p>
+        <span class="card-cta">Open simulator ↗</span>
+      </a>
+      <a class="card" href="predator_prey/index.html">
+        <span class="tag">AVAILABLE</span>
+        <h3>Predator–Prey Populations</h3>
+        <p>Watch prey and predator numbers rise and fall together. Change growth, hunting and food limits, and see cycles, balance and collapse.</p>
+        <span class="card-cta">Open simulator ↗</span>
+      </a>
+      <a class="card" href="ecosystems/index.html">
+        <span class="tag">AVAILABLE</span>
+        <h3>Ecosystems</h3>
+        <p>Follow matter and energy through plants, animals, dead matter and soil. Change the conditions or cause a disaster and watch the food web respond.</p>
+        <span class="card-cta">Open simulator ↗</span>
+      </a>
+      <div class="card card-planned">
+        <span class="tag tag-muted">PLANNED</span>
+        <h3>More biology projects</h3>
+        <p>Natural selection, body systems and more can be added here as folders alongside the existing projects.</p>
+      </div>
+    </div>
+  </main>
+  <footer class="lab-footer"><span>© <span id="y"></span> OOPA Virtual Labs</span><span>Explore • Experiment • Discover</span></footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Interactive single-celled organisms simulator: cells feed, move, grow, divide and die in a dish.">
+  <title>Single-Celled Organisms | Biology | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/single-cell.css">
+  <script defer src="scripts/cell-model.js"></script>
+  <script defer src="scripts/single-cell.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="single-cell"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span><a href="../index.html">Biology</a><span aria-hidden="true">/</span><span aria-current="page">Single-Celled Organisms</span></nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">BIOLOGY / SINGLE-CELLED ORGANISMS</p>
+    <h1>Single-Celled <span>Organisms.</span></h1>
+    <p class="lead">Each cell finds food, swims, grows, divides in two, and eventually dies. Change the conditions in the dish and see which cells thrive.</p>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Dish of cells">
+        <canvas id="sim" role="img" aria-label="Dish seen from above with cells and food particles. Click a cell to follow it."></canvas>
+        <div class="toolbar">
+          <button class="btn btn-primary" id="btn-play" type="button" aria-pressed="true">Pause</button>
+          <button class="btn" id="btn-step" type="button">Step</button>
+          <button class="btn" id="btn-reset" type="button">Reset</button>
+          <button class="btn" id="btn-follow" type="button">Follow a cell</button>
+          <label class="speed">Time <select id="timescale" aria-label="Simulation speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select></label>
+        </div>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+        <p class="legend"><span class="dot dot-food"></span> Food <span class="dot dot-fed"></span> Fed cell <span class="dot dot-hungry"></span> Hungry cell <span class="dot dot-ready"></span> Ready to divide <span class="dot dot-starve"></span> Starved <span class="dot dot-old"></span> Old age</p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and readouts">
+        <h2>Conditions</h2>
+        <div class="presets" role="group" aria-label="Presets">
+          <button class="btn chip" type="button" data-preset="balanced">Balanced</button>
+          <button class="btn chip" type="button" data-preset="feast">Feast</button>
+          <button class="btn chip" type="button" data-preset="scarce">Scarce food</button>
+          <button class="btn chip" type="button" data-preset="blind">No sensing</button>
+        </div>
+        <div class="ctl"><label for="c-foodRate">Food supply</label><output id="o-foodRate"></output><input id="c-foodRate" type="range" min="0" max="20" step="0.5"></div>
+        <div class="ctl"><label for="c-speed">Swimming speed</label><output id="o-speed"></output><input id="c-speed" type="range" min="10" max="80" step="5"></div>
+        <div class="ctl"><label for="c-metab">Resting energy use</label><output id="o-metab"></output><input id="c-metab" type="range" min="0.1" max="2" step="0.05"></div>
+        <div class="ctl"><label for="c-sense">Sensing range</label><output id="o-sense"></output><input id="c-sense" type="range" min="0" max="120" step="10"></div>
+        <div class="ctl"><label for="c-divide">Energy to divide</label><output id="o-divide"></output><input id="c-divide" type="range" min="30" max="120" step="5"></div>
+        <div class="ctl"><label for="c-maxAge">Lifespan</label><output id="o-maxAge"></output><input id="c-maxAge" type="range" min="60" max="600" step="20"></div>
+        <div class="ctl"><label for="c-n0">Starting cells</label><output id="o-n0"></output><input id="c-n0" type="range" min="2" max="50" step="1"></div>
+
+        <h2 class="gap">Readouts</h2>
+        <dl class="stats">
+          <div><dt>Cells</dt><dd id="s-n">–</dd></div>
+          <div><dt>Food</dt><dd id="s-f">–</dd></div>
+          <div><dt>Seconds</dt><dd id="s-t">–</dd></div>
+          <div><dt>Fed level</dt><dd id="s-fed">–</dd></div>
+          <div><dt>Divisions</dt><dd id="s-b">–</dd></div>
+          <div><dt>Starved</dt><dd id="s-st">–</dd></div>
+          <div><dt>Old age</dt><dd id="s-ag">–</dd></div>
+          <div><dt>Energy use per cell</dt><dd id="s-up">–</dd></div>
+        </dl>
+
+        <h2 class="gap">Followed cell</h2>
+        <div class="selbox" id="sel-box" aria-live="polite">
+          <p id="sel-msg">Click a cell in the dish to follow it.</p>
+          <dl class="sel-stats" id="sel-stats" hidden>
+            <div><dt>Cell</dt><dd id="sel-id">–</dd></div>
+            <div><dt>Doing</dt><dd id="sel-stage">–</dd></div>
+            <div><dt>Age</dt><dd id="sel-age">–</dd></div>
+            <div><dt>Size</dt><dd id="sel-size">–</dd></div>
+          </dl>
+          <label class="meter-label" for="sel-e" id="sel-e-label" hidden>Energy</label>
+          <meter id="sel-e" min="0" max="1" value="0" hidden></meter>
+        </div>
+        <p class="unit-note">Time is in seconds, sizes and speeds in model units. Starting cells apply when you press Reset.</p>
+      </aside>
+    </div>
+
+    <section class="card chart-card" aria-labelledby="chart-h">
+      <h2 id="chart-h">Cells and food over time</h2>
+      <canvas id="chart" role="img" aria-label="Line chart of the number of cells and food particles over time"></canvas>
+      <p class="unit-note"><span class="key key-cells"></span> cells &nbsp; <span class="key key-food"></span> food particles. When cells outrun the food supply, the population falls back.</p>
+    </section>
+
+    <div class="cards two">
+      <section class="card"><h3>Life of a cell</h3>
+        <dl class="life">
+          <dt>Feeding</dt><dd>A cell eats any food it touches. Each particle gives it energy. Sensing range lets it steer toward food nearby.</dd>
+          <dt>Movement</dt><dd>Cells swim in runs with random turns. Faster swimming finds food sooner but uses more energy.</dd>
+          <dt>Growth</dt><dd>A cell grows as its energy rises and shrinks when it runs low. Brown cells are hungry and green cells are well fed.</dd>
+          <dt>Reproduction</dt><dd>At the divide energy, a cell splits into two. Each new cell gets half the energy and starts at age zero.</dd>
+          <dt>Death</dt><dd>A cell starves when its energy reaches zero. It dies of old age if it reaches its lifespan without dividing.</dd>
+        </dl>
+      </section>
+      <section class="card"><h3>Try this</h3>
+        <ol class="try">
+          <li><b>Follow one cell.</b> Click a cell and watch it search, feed with a gold flash, grow, and split in two.</li>
+          <li><b>Switch off sensing.</b> Press No sensing. Cells only find food by bumping into it, so the population grows more slowly.</li>
+          <li><b>Starve the dish.</b> Press Scarce food. Cells turn brown, and red rings mark the cells that starve.</li>
+          <li><b>See that speed has a cost.</b> Raise swimming speed. Cells find food sooner, but each one burns energy faster.</li>
+          <li><b>Shorten lifespan.</b> Cells that fail to divide in time die of old age, shown by grey rings.</li>
+        </ol>
+        <p class="unit-note">The model is simplified: cells pass through each other, food appears at random, and there is no mutation or waste.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer"><span>© <span id="y"></span> OOPA Virtual Labs</span><span>Explore • Experiment • Discover</span></footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>

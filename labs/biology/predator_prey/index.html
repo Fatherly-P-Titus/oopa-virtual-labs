@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b22222">
+  <meta name="description" content="Interactive predator-prey simulator: watch two populations rise and fall together.">
+  <title>Predator–Prey | Biology | OOPA Virtual Labs</title>
+  <link rel="stylesheet" href="../../../styles/lab-shell.css">
+  <link rel="stylesheet" href="styles/predator-prey.css">
+  <script defer src="scripts/predator-prey-model.js"></script>
+  <script defer src="scripts/predator-prey.js"></script>
+  <script defer src="../../../scripts/jenny/jenny-loader.js" data-page="predator-prey"></script>
+</head>
+<body>
+  <header class="lab-header">
+    <a class="wordmark" href="../../../main-menu.html" aria-label="OOPA Virtual Labs home"><span class="wordmark-mark">O</span><span>OOPA <strong>VIRTUAL LABS</strong></span></a>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="../../../main-menu.html">Main menu</a><span aria-hidden="true">/</span><a href="../index.html">Biology</a><span aria-hidden="true">/</span><span aria-current="page">Predator–Prey</span></nav>
+  </header>
+
+  <main class="lab-main">
+    <p class="eyebrow">BIOLOGY / PREDATOR–PREY</p>
+    <h1>Predator–Prey <span>Populations.</span></h1>
+    <p class="lead">Prey multiply, predators eat them, and well-fed predators multiply too. Change the conditions and watch both populations rise and fall.</p>
+
+    <div class="sim-layout">
+      <section class="stage" aria-label="Population over time">
+        <canvas id="sim" role="img" aria-label="Line chart of prey and predator numbers over time"></canvas>
+        <div class="toolbar">
+          <button class="btn btn-primary" id="btn-play" type="button" aria-pressed="true">Pause</button>
+          <button class="btn" id="btn-step" type="button">Step</button>
+          <button class="btn" id="btn-reset" type="button">Reset</button>
+          <label class="speed">Time <select id="timescale" aria-label="Simulation speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select></label>
+        </div>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+      </section>
+
+      <aside class="panel" aria-label="Controls and readouts">
+        <h2>Conditions</h2>
+        <div class="presets" role="group" aria-label="Presets">
+          <button class="btn chip" type="button" data-preset="cycles">Cycles</button>
+          <button class="btn chip" type="button" data-preset="stable">Limited food</button>
+          <button class="btn chip" type="button" data-preset="collapse">Collapse</button>
+        </div>
+        <div class="ctl"><label for="c-r">Prey growth rate</label><output id="o-r"></output><input id="c-r" type="range" min="0.1" max="1.2" step="0.05"></div>
+        <div class="ctl"><label for="c-a">Predation rate</label><output id="o-a"></output><input id="c-a" type="range" min="0.005" max="0.04" step="0.001"></div>
+        <div class="ctl"><label for="c-b">Predator efficiency</label><output id="o-b"></output><input id="c-b" type="range" min="0.1" max="1" step="0.05"></div>
+        <div class="ctl"><label for="c-m">Predator death rate</label><output id="o-m"></output><input id="c-m" type="range" min="0.1" max="1" step="0.05"></div>
+        <div class="ctl"><label for="c-K">Food limit for prey</label><output id="o-K"></output><input id="c-K" type="range" min="60" max="500" step="10"></div>
+        <div class="ctl"><label for="c-x0">Starting prey</label><output id="o-x0"></output><input id="c-x0" type="range" min="5" max="200" step="1"></div>
+        <div class="ctl"><label for="c-y0">Starting predators</label><output id="o-y0"></output><input id="c-y0" type="range" min="1" max="100" step="1"></div>
+        <label class="check"><input id="c-ext" type="checkbox"> A group under 1 animal dies out</label>
+
+        <h2 class="gap">Readouts</h2>
+        <dl class="stats">
+          <div><dt>Prey</dt><dd id="s-x">–</dd></div>
+          <div><dt>Predators</dt><dd id="s-y">–</dd></div>
+          <div><dt>Years</dt><dd id="s-t">–</dd></div>
+          <div><dt>Cycle length</dt><dd id="s-per">–</dd></div>
+          <div><dt>Balance: prey</dt><dd id="s-ex">–</dd></div>
+          <div><dt>Balance: predators</dt><dd id="s-ey">–</dd></div>
+        </dl>
+        <p class="unit-note">Numbers are animals in the habitat. Rates are per year. Start values apply when you press Reset.</p>
+      </aside>
+    </div>
+
+    <section class="card phase-card" aria-labelledby="phase-h">
+      <h2 id="phase-h">Phase portrait</h2>
+      <div class="phase-grid">
+        <canvas id="phase" role="img" aria-label="Plot of predators against prey with the path of the simulation and the balance point"></canvas>
+        <div>
+          <p>Each point is one moment: prey along the bottom, predators up the side. The path loops as the two populations chase each other.</p>
+          <p class="unit-note"><span class="key key-path"></span> path &nbsp; <span class="key key-null"></span> where one group stops changing &nbsp; <span class="key key-dot"></span> balance point</p>
+          <p>Where the dashed lines cross, both populations hold steady. With no food limit, the path circles that point forever. With a food limit, it spirals in and settles.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="cards two">
+      <section class="card"><h3>Try this</h3>
+        <ol class="try">
+          <li><b>Watch the lag.</b> Use Cycles. Predators peak after prey, because they need time to grow on a full food supply.</li>
+          <li><b>Add a food limit.</b> Press Limited food. The swings shrink and both groups settle at the balance point.</li>
+          <li><b>Make predators better hunters.</b> Raise Predation rate. The cycles get bigger, and the prey balance does not change.</li>
+          <li><b>Cause a collapse.</b> Press Collapse. Prey crash so far that fewer than one animal is left, and both groups die out.</li>
+        </ol>
+      </section>
+      <section class="card"><h3>The biology</h3>
+        <p>Prey grow at a steady rate until predators eat them. Predators turn what they eat into offspring and die at a steady rate. This is the Lotka–Volterra model, first written down in the 1920s.</p>
+        <p>The model is simplified: one prey, one predator, an even habitat, and smooth numbers. Real populations also face disease, weather, hiding places and many other species.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="lab-footer"><span>© <span id="y"></span> OOPA Virtual Labs</span><span>Explore • Experiment • Discover</span></footer>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>
