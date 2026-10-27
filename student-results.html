@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#b22222"><title>Student Results | OOPA Virtual Labs"><link rel="stylesheet" href="styles/student-results.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="scripts/exams/backend-config.js"></script><script src="scripts/exams/backend-client.js"></script><script src="scripts/exams/schema.js"></script><script src="scripts/exams/storage.js"></script><script src="scripts/exams/results-service.js"></script><script defer src="scripts/exams/results-page.js"></script></head>
+
+    <body>
+        <header class="site-header">
+            <a class="brand" href="index.html"><span class="brand-mark">O</span><span>OOPA <b>VIRTUAL LABS</b></span></a>
+            <a href="student-exam.html">Student exam portal ↗</a>
+        </header>
+        <main class="page-shell">
+            <p class="eyebrow">STUDENT SERVICES</p>
+            <h1>Check your examination results</h1>
+            <p class="lead">Enter the examination ID and the same name and matric number used for your examination.</p>
+            
+            <section class="notice">
+                <strong>Local prototype notice</strong>
+                <p>Results are read from this browser's local records. For privacy and integrity, do not treat this page as an official result portal until server-side identity verification and storage are implemented.</p>
+            </section><form id="result-form" class="lookup-card">
+                <div>
+                    <label for="exam-code">Examination ID</label>
+                    <input id="exam-code" required maxlength="120" autocomplete="off" placeholder="e.g. EXAM_…">
+                </div>
+                <div>
+                    <label for="student-name">Full name</label>
+                        <input id="student-name" required maxlength="160" autocomplete="name">
+                    </div>
+                    <div>
+                        <label for="matric-number">Matric number</label>
+                        <input id="matric-number" required maxlength="80" autocomplete="off">
+                    </div>
+                    <button type="submit" id="lookup-button">Check results</button>
+                    <p id="lookup-message" class="message" role="status" aria-live="polite"></p></form><section id="result-card" class="result-card" hidden>
+                        <div class="result-heading"><div>
+                            <p class="eyebrow">OFFICIAL WORKSPACE RECORD · LOCAL PROTOTYPE</p>
+                            <h2 id="result-exam-title"></h2>
+                            <p id="result-student"></p>
+                        </div>
+                        <button type="button" id="print-result" class="secondary">Print / Save PDF</button></div><div id="result-reports"></div>
+                        <p class="generated" id="generated-at"></p>
+                    </section>
+                </main>
+                <footer>© <span id="year"></span> OOPA Virtual Labs · Local prototype</footer>
+            </body>
+            
+            </html>

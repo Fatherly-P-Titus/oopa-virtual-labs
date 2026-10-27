@@ -1,65 +1,361 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#b22222">
-  <title>Admin Dashboard | OOPA Virtual Labs</title>
-  <script>
-    /* Demo-only guard, run before first paint so the dashboard never flashes. Not real security. */
-    try { if (sessionStorage.getItem("oopa_admin_demo_access") !== "granted") location.replace("admin-login.html"); }
-    catch (e) { location.replace("admin-login.html"); }
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="#b22222" name="theme-color"/>
+  <title>
+   Management Workspace | OOPA Virtual Labs
+  </title>
+  <script src="scripts/jquery.js">
   </script>
-  <link rel="stylesheet" href="styles/admin-page.css">
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script defer src="scripts/admin-page.js"></script>
-  <script defer src="scripts/jenny/jenny-loader.js" data-page="admin-dashboard"></script>
-</head>
-<body>
+  <script>
+   try { if (!(sessionStorage.getItem('oopa.local.session.v2')||sessionStorage.getItem('oopa.backend.session.v1'))) location.replace('admin-login.html'); } catch (_) { location.replace('admin-login.html'); }
+  </script>
+  <link href="styles/admin-page.css" rel="stylesheet"/>
+  <link href="styles/admin-accounts.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+  </script>
+  <script src="scripts/exams/backend-config.js">
+  </script>
+  <script src="scripts/exams/backend-client.js">
+  </script>
+  <script src="scripts/exams/schema.js">
+  </script>
+  <script src="scripts/exams/storage.js">
+  </script>
+  <script src="scripts/exams/local-auth.js">
+  </script>
+  <script src="scripts/exams/lab-registry.js">
+  </script>
+  <script defer="" src="scripts/admin-page.js">
+  </script>
+  <script data-page="admin-dashboard" defer="" src="scripts/jenny/jenny-loader.js">
+  </script>
+ </head>
+ <body>
   <aside class="sidebar">
-    <a class="brand" href="main-menu.html"><span class="brand-mark">O</span><span>OOPA <b>VIRTUAL LABS</b></span></a>
-    <p class="nav-label">WORKSPACE</p>
-    <a class="side-link active" href="#overview"><span>▦</span> Overview</a>
-    <a class="side-link" href="#labs"><span>⚗</span> Laboratories</a>
-    <a class="side-link" href="#activity"><span>◷</span> Recent activity</a>
-    <div class="sidebar-bottom"><div class="admin-avatar">A</div><div><b>Administrator</b><small>Demo account</small></div><button id="logout-button" title="Log out" aria-label="Log out">↗</button></div>
+   <a class="brand" href="main-menu.html">
+    <span class="brand-mark">
+     O
+    </span>
+    <span>
+     OOPA
+     <b>
+      VIRTUAL LABS
+     </b>
+    </span>
+   </a>
+   <p class="nav-label">
+    WORKSPACE
+   </p>
+   <a class="side-link active" href="#overview">
+    ▦ &nbsp; Overview
+   </a>
+   <a class="side-link" href="exams-management.html">
+    📝 &nbsp; Student lists &amp; exams
+   </a>
+   <a class="side-link" href="grading.html">
+    &checkmark; &nbsp; Submissions &amp; grading
+   </a>
+   <a class="side-link" href="backup-recovery.html">
+    &orarr; &nbsp; Backup &amp; recovery
+   </a>
+   <a class="side-link" href="student-results.html" rel="noopener" target="_blank">
+    ▤ &nbsp; Student results
+   </a>
+   <a class="side-link" href="#instructors" id="instructors-nav">
+    ♙ &nbsp; Instructors
+   </a>
+   <a class="side-link" href="#permissions">
+    ⚗ &nbsp; Hub &amp; lab access
+   </a>
+   <a class="side-link" href="#security">
+    ▣ &nbsp; Account security
+   </a>
+   <div class="sidebar-bottom">
+    <div class="admin-avatar" id="user-avatar">
+     O
+    </div>
+    <div>
+     <b id="sidebar-name">
+      Account
+     </b>
+     <small id="sidebar-role">
+      Role
+     </small>
+    </div>
+    <button aria-label="Log out" id="logout-button" title="Log out">
+     &nearrow;
+    </button>
+   </div>
   </aside>
-
   <main class="dashboard">
-    <header class="dashboard-header">
-      <div><p class="eyebrow">OOPA / ADMINISTRATION</p><h1>Dashboard overview</h1><p class="subheading">Manage your virtual learning space.</p></div>
-      <a class="view-site" href="main-menu.html" target="_blank" rel="noopener">View main menu <span>↗</span></a>
-    </header>
-
-    <section class="welcome-banner" id="overview">
-      <div><p class="banner-eyebrow">WELCOME BACK</p><h2>Make room for the next discovery.</h2><p>This is your starting point for managing OOPA Virtual Labs.</p></div>
-      <div class="banner-symbol">⚛</div>
-    </section>
-
-    <section class="stats-grid" aria-label="Platform summary">
-      <article class="stat-card"><span class="stat-icon red">⚗</span><span class="stat-label">LAB CATEGORIES</span><strong>5</strong><small>Initial categories</small></article>
-      <article class="stat-card"><span class="stat-icon black">▣</span><span class="stat-label">LIVE PROJECTS</span><strong>27</strong><small>Physics: 2, Chemistry: 10, Biology: 4, Engineering: 11</small></article>
-      <article class="stat-card"><span class="stat-icon pale">✳</span><span class="stat-label">PLATFORM STATUS</span><strong class="status-text"><i></i> In development</strong><small>Starter project</small></article>
-    </section>
-
-    <section class="content-panel" id="labs">
-      <div class="panel-heading"><div><p class="eyebrow">CONTENT MANAGEMENT</p><h2>Laboratories</h2></div><span class="badge">STARTER SETUP</span></div>
-      <p class="panel-description">These are placeholder destinations for the first lab categories. Their simulation content can be implemented next.</p>
-      <div class="lab-list">
-        <div class="lab-row"><span class="row-icon">⚛</span><div><b>Physics</b><small>Motion, forces, energy, and heat</small></div><span class="row-status">Available</span><a href="labs/physics/index.html">Open ↗</a></div>
-        <div class="lab-row"><span class="row-icon">⚗</span><div><b>Chemistry</b><small>Matter, reactions, and equilibrium</small></div><span class="row-status">Available</span><a href="labs/chemistry/index.html">Open ↗</a></div>
-        <div class="lab-row"><span class="row-icon">⌬</span><div><b>Biology</b><small>Cells, organisms, and ecosystems</small></div><span class="row-status">Available</span><a href="labs/biology/index.html">Open ↗</a></div>
-        <div class="lab-row"><span class="row-icon">∑</span><div><b>Mathematics</b><small>Equations, statistics, and geometry</small></div><span class="row-status">Placeholder</span><a href="labs/mathematics/index.html">Open ↗</a></div>
-        <div class="lab-row"><span class="row-icon">⚙</span><div><b>Engineering</b><small>Systems, equipment, and processes</small></div><span class="row-status">Available</span><a href="labs/engineering/index.html">Open ↗</a></div>
+   <header class="dashboard-header">
+    <div>
+     <p class="eyebrow">
+      OOPA / MANAGEMENT
+     </p>
+     <h1 id="page-title">
+      Management workspace
+     </h1>
+     <p class="subheading" id="page-subtitle">
+      Manage instructor access and workspace settings.
+     </p>
+    </div>
+    <a class="view-site" href="main-menu.html" rel="noopener" target="_blank">
+     View main menu &nearrow;
+    </a>
+   </header>
+   <section class="security-banner" role="note">
+    <strong>
+     Prototype security notice
+    </strong>
+    <p>
+     Accounts, permissions and sessions are stored in this browser. This is useful for local prototyping only: a visitor can inspect or alter client-side data, and accounts do not sync between devices. Do not use this build to secure real exams or sensitive student records. Production access control requires server-side authentication and authorization.
+    </p>
+   </section>
+   <section class="welcome-banner" id="overview">
+    <div>
+     <p class="banner-eyebrow">
+      SIGNED-IN ACCOUNT
+     </p>
+     <h2 id="welcome-title">
+      Welcome
+     </h2>
+     <p id="welcome-description">
+      Your account is ready.
+     </p>
+    </div>
+    <div class="banner-symbol">
+     ⚛
+    </div>
+   </section>
+   <section aria-label="Workspace summary" class="stats-grid">
+    <article class="stat-card">
+     <span class="stat-label">
+      ACCOUNT ROLE
+     </span>
+     <strong id="stat-role">
+      &mdash;
+     </strong>
+     <small>
+      Current access level
+     </small>
+    </article>
+    <article class="stat-card">
+     <span class="stat-label">
+      INSTRUCTOR ACCOUNTS
+     </span>
+     <strong id="stat-instructors">
+      0
+     </strong>
+     <small>
+      Saved in this browser
+     </small>
+    </article>
+    <article class="stat-card">
+     <span class="stat-label">
+      REGISTERED LABS
+     </span>
+     <strong>
+      27
+     </strong>
+     <small>
+      Across four populated hubs
+     </small>
+    </article>
+   </section>
+   <section class="content-panel" id="instructors">
+    <div class="panel-heading">
+     <div>
+      <p class="eyebrow">
+       ACCOUNT ADMINISTRATION
+      </p>
+      <h2>
+       Instructor accounts
+      </h2>
+     </div>
+     <span class="badge" id="account-mode-badge">
+      OVERALL ADMIN
+     </span>
+    </div>
+    <p class="panel-description">
+     Create individual instructor logins and assign only the hubs and specific labs they need. New or reset credentials must be changed after first sign-in.
+    </p>
+    <div id="admin-only-content">
+     <form class="account-form" id="instructor-form">
+      <input id="instructor-id" type="hidden"/>
+      <div class="form-grid">
+       <div>
+        <label for="instructor-name">
+         Instructor name
+        </label>
+        <input id="instructor-name" maxlength="120" placeholder="e.g. Dr. Ada Okafor" required=""/>
+       </div>
+       <div>
+        <label for="instructor-username">
+         Username
+        </label>
+        <input autocomplete="off" id="instructor-username" maxlength="80" minlength="3" placeholder="e.g. ada.okafor" required=""/>
+       </div>
+       <div>
+        <label for="instructor-password">
+         Initial / reset passphrase
+        </label>
+        <input id="instructor-password" maxlength="200" minlength="10" placeholder="At least 10 characters" type="password"/>
+        <small>
+         Required for new accounts; leave blank to keep an existing passphrase.
+        </small>
+       </div>
+       <div class="active-toggle">
+        <label>
+         <input checked="" id="instructor-active" type="checkbox"/>
+         Account active
+        </label>
+        <small>
+         Inactive accounts cannot sign in.
+        </small>
+       </div>
       </div>
-    </section>
-
-    <section class="content-panel activity-panel" id="activity">
-      <div class="panel-heading"><div><p class="eyebrow">SYSTEM NOTES</p><h2>Recent activity</h2></div></div>
-      <div class="activity-item"><span class="activity-dot"></span><div><b>Starter dashboard initialized</b><p>Base navigation and admin interface are ready for development.</p></div><time>Just now</time></div>
-      <div class="activity-item"><span class="activity-dot"></span><div><b>Laboratory placeholders created</b><p>Five category pages are available as starting points.</p></div><time>Initial setup</time></div>
-    </section>
-    <footer class="dashboard-footer">© <span id="current-year"></span> OOPA Virtual Labs <span>DEMO ADMIN INTERFACE</span></footer>
+      <fieldset>
+       <legend>
+        Hub permissions
+       </legend>
+       <div class="permission-grid" id="hub-permissions">
+       </div>
+      </fieldset>
+      <fieldset>
+       <legend>
+        Specific lab permissions (optional)
+       </legend>
+       <p class="field-help">
+        Hub access allows labs in that hub. Specific lab grants can be used for finer-grained access; these are saved for later exam-authoring enforcement.
+       </p>
+       <div class="permission-grid" id="lab-permissions">
+       </div>
+      </fieldset>
+      <div class="form-actions">
+       <button class="submit-button" id="save-instructor" type="submit">
+        Create instructor
+       </button>
+       <button class="secondary-button" hidden="" id="cancel-edit" type="button">
+        Cancel edit
+       </button>
+      </div>
+      <p aria-live="polite" class="form-message" id="account-message" role="status">
+      </p>
+     </form>
+     <div class="table-wrap">
+      <table>
+       <thead>
+        <tr>
+         <th>
+          Instructor
+         </th>
+         <th>
+          Username
+         </th>
+         <th>
+          Permissions
+         </th>
+         <th>
+          Status
+         </th>
+         <th>
+          Actions
+         </th>
+        </tr>
+       </thead>
+       <tbody id="instructor-rows">
+        <tr>
+         <td colspan="5">
+          Loading accounts&hellip;
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div hidden="" id="instructor-readonly">
+     <h3>
+      Instructor access summary
+     </h3>
+     <p id="my-permissions">
+     </p>
+     <p>
+      Use the Student lists &amp; exams workspace to import rosters and create exams for laboratories assigned to your account.
+     </p>
+    </div>
+   </section>
+   <section class="content-panel" id="permissions">
+    <div class="panel-heading">
+     <div>
+      <p class="eyebrow">
+       ACCESS MODEL
+      </p>
+      <h2>
+       Hubs and laboratories
+      </h2>
+     </div>
+    </div>
+    <p class="panel-description">
+     The current registry contains 27 existing lab destinations. Permission selection is saved on instructor accounts; enforcement in future exam-authoring and exam-taking flows must be applied at each operation. Client-only checks are not tamper-proof.
+    </p>
+    <div class="hub-summary" id="hub-summary">
+    </div>
+   </section>
+   <section class="content-panel" id="security">
+    <div class="panel-heading">
+     <div>
+      <p class="eyebrow">
+       PERSONAL SETTINGS
+      </p>
+      <h2>
+       Change passphrase
+      </h2>
+     </div>
+    </div>
+    <form class="account-form" id="password-form">
+     <div class="form-grid">
+      <div>
+       <label for="current-password">
+        Current passphrase
+       </label>
+       <input autocomplete="current-password" id="current-password" required="" type="password"/>
+      </div>
+      <div>
+       <label for="new-password">
+        New passphrase
+       </label>
+       <input autocomplete="new-password" id="new-password" maxlength="200" minlength="10" required="" type="password"/>
+      </div>
+      <div>
+       <label for="confirm-password">
+        Confirm new passphrase
+       </label>
+       <input autocomplete="new-password" id="confirm-password" maxlength="200" minlength="10" required="" type="password"/>
+      </div>
+     </div>
+     <div class="form-actions">
+      <button class="submit-button" type="submit">
+       Update passphrase
+      </button>
+     </div>
+     <p aria-live="polite" class="form-message" id="password-message" role="status">
+     </p>
+    </form>
+   </section>
+   <footer class="dashboard-footer">
+    &copy;
+    <span id="current-year">
+    </span>
+    OOPA Virtual Labs
+    <span>
+     LOCAL PROTOTYPE &middot; MILESTONE 9
+    </span>
+   </footer>
   </main>
-</body>
+ </body>
 </html>
+

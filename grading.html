@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <meta content="#b22222" name="theme-color"/>
+  <title>
+   Submissions &amp; Grading | OOPA Virtual Labs"&gt;
+   </title>
+
+   <link href="styles/admin-page.css" rel="stylesheet"/>
+   <link href="styles/grading.css" rel="stylesheet"/>
+  
+ </head>
+ <body>
+  <aside class="sidebar">
+   <a class="brand" href="main-menu.html">
+    <span class="brand-mark">
+     O
+    </span>
+    <span>
+     OOPA
+     <b>
+      VIRTUAL LABS
+     </b>
+    </span>
+   </a>
+   <p class="nav-label">
+    WORKSPACE
+   </p>
+   <a class="side-link" href="admin-page.html">
+    ▦ &nbsp; Overview
+   </a>
+   <a class="side-link" href="exams-management.html">
+    ♙ &nbsp; Student lists &amp; exams
+   </a>
+   <a class="side-link active" href="grading.html">
+    &checkmark; &nbsp; Submissions &amp; grading
+   </a>
+   <a class="side-link" href="backup-recovery.html">
+    &orarr; &nbsp; Backup &amp; recovery
+   </a>
+   <a class="side-link" href="student-results.html" rel="noopener" target="_blank">
+    ▤ &nbsp; Student results
+   </a>
+   <div class="sidebar-bottom">
+    <div class="admin-avatar" id="avatar">
+     O
+    </div>
+    <div>
+     <b id="account-name">
+      Account
+     </b>
+     <small id="account-role">
+      Role
+     </small>
+    </div>
+    <button aria-label="Log out" id="logout">
+     &nearrow;
+    </button>
+   </div>
+  </aside>
+  <main class="dashboard">
+   <header class="dashboard-header">
+    <div>
+     <p class="eyebrow">
+      OOPA / ASSESSMENTS
+     </p>
+     <h1>
+      Submissions &amp; grading
+     </h1>
+     <p class="subheading">
+      Review student evidence, record marks and feedback, finalize grades and export results.
+     </p>
+    </div>
+    <div class="header-actions">
+     <a class="view-site" href="exams-management.html">
+      Student lists &amp; exams &nearrow;
+     </a>
+    </div>
+   </header>
+   <section class="security-banner" role="note">
+    <strong>
+     Local prototype notice
+    </strong>
+    <p>
+     Submissions and grades are stored in this browser and do not sync across devices. Grade history is append-only in the app workflow, but browser data can be edited or deleted. Do not use as an authoritative gradebook until server-side authorization and storage are implemented.
+    </p>
+   </section>
+   <section class="content-panel">
+    <div class="panel-heading">
+     <div>
+      <p class="eyebrow">
+       INBOX
+      </p>
+      <h2>
+       Submitted attempts
+      </h2>
+     </div>
+     <span class="badge" id="submission-count">
+      0 SUBMISSIONS
+     </span>
+    </div>
+    <div class="grading-filters">
+     <div>
+      <label for="filter-exam">
+       Examination
+      </label>
+      <select id="filter-exam">
+       <option value="">
+        All permitted exams
+       </option>
+      </select>
+     </div>
+     <div>
+      <label for="filter-status">
+       Grade status
+      </label>
+      <select id="filter-status">
+       <option value="all">
+        All grades
+       </option>
+       <option value="Ungraded">
+        Ungraded
+       </option>
+       <option value="Reviewed">
+        Reviewed
+       </option>
+       <option value="Finalized">
+        Finalized
+       </option>
+      </select>
+     </div>
+     <div class="search-field">
+      <label for="filter-search">
+       Find student or exam
+      </label>
+      <input id="filter-search" placeholder="Name, matric number or exam ID" type="search"/>
+     </div>
+     <div class="filter-actions">
+      <button class="secondary-button" id="refresh-button" type="button">
+       Refresh
+      </button>
+      <button class="secondary-button" id="export-button" type="button">
+       Export CSV
+      </button>
+     </div>
+    </div>
+    <p aria-live="polite" class="form-message" id="list-message" role="status">
+    </p>
+    <div class="table-wrap">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Student
+        </th>
+        <th>
+         Examination
+        </th>
+        <th>
+         Submitted
+        </th>
+        <th>
+         Status
+        </th>
+        <th>
+         Grade
+        </th>
+        <th>
+         Action
+        </th>
+       </tr>
+      </thead>
+      <tbody id="submission-rows">
+       <tr>
+        <td colspan="6">
+         Loading submissions&hellip;
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </section>
+   <section class="content-panel" hidden="" id="review-panel">
+    <div class="panel-heading">
+     <div>
+      <p class="eyebrow">
+       SUBMISSION REVIEW
+      </p>
+      <h2 id="review-heading">
+       Review submission
+      </h2>
+     </div>
+     <span class="badge" id="review-status">
+      UNREVIEWED
+     </span>
+    </div>
+    <div class="review-meta" id="review-meta">
+    </div>
+    <div class="evidence-block">
+     <h3>
+      Student evidence / response
+     </h3>
+     <pre id="evidence-text">No written evidence was provided.</pre>
+     <p class="field-help" id="evidence-note">
+     </p>
+     <p>
+      <a href="#" id="lab-link" rel="noopener" target="_blank">
+       Open associated laboratory in a new tab &nearrow;
+      </a>
+     </p>
+    </div>
+    <div class="grade-layout">
+     <form class="account-form" id="grade-form">
+      <h3>
+       Assessment
+      </h3>
+      <div class="form-grid">
+       <div>
+        <label for="maximum-marks">
+         Maximum marks
+        </label>
+        <input id="maximum-marks" max="100000" min="0.01" required="" step="0.01" type="number" value="100"/>
+       </div>
+       <div>
+        <label for="automatic-marks">
+         Automatic marks
+        </label>
+        <input id="automatic-marks" min="0" required="" step="0.01" type="number" value="0"/>
+        <small>
+         No verified automatic grader is connected by default.
+        </small>
+       </div>
+       <div>
+        <label for="manual-marks">
+         Manual marks
+        </label>
+        <input id="manual-marks" min="0" required="" step="0.01" type="number" value="0"/>
+       </div>
+       <div>
+        <label for="total-preview">
+         Calculated total
+        </label>
+        <output id="total-preview">
+         0 / 100
+        </output>
+       </div>
+      </div>
+      <div>
+       <label for="grade-feedback">
+        Feedback for student
+       </label>
+       <textarea id="grade-feedback" maxlength="10000" placeholder="Explain the score, strengths and improvements." rows="4"></textarea>
+      </div>
+      <div hidden="" id="revision-reason-wrap">
+       <label for="revision-reason">
+        Reason for revising finalized grade
+       </label>
+       <textarea id="revision-reason" maxlength="2000" placeholder="Required when revising a finalized grade" rows="2"></textarea>
+      </div>
+      <div class="form-actions">
+       <button class="secondary-button" id="save-reviewed" type="submit">
+        Save as reviewed
+       </button>
+       <button class="submit-button" id="finalize-grade" type="button">
+        Finalize grade
+       </button>
+      </div>
+      <p aria-live="polite" class="form-message" id="grade-message" role="status">
+      </p>
+     </form>
+     <aside class="history-card">
+      <h3>
+       Grade history
+      </h3>
+      <p class="field-help">
+       Each save creates a new version. Earlier grade records remain available here.
+      </p>
+      <ol class="grade-history" id="grade-history">
+       <li>
+        No grading history yet.
+       </li>
+      </ol>
+      <div class="release-panel">
+       <h3>
+        Results release
+       </h3>
+       <p id="release-state">
+        Results have not been released.
+       </p>
+       <button class="secondary-button" id="release-results" type="button">
+        Release finalized results for this exam
+       </button>
+       <p class="field-help">
+        Release is allowed only when all submitted attempts for the selected exam are finalized.
+       </p>
+      </div>
+     </aside>
+    </div>
+   </section>
+   <footer class="dashboard-footer">
+    &copy;
+    <span id="year">
+    </span>
+    OOPA Virtual Labs
+    <span>
+     LOCAL PROTOTYPE &middot; MILESTONE 6
+    </span>
+   </footer>
+  </main>
+
+   <script src="scripts/jquery.js"></script>
+   <script>
+    try{if(!(sessionStorage.getItem('oopa.local.session.v2')||sessionStorage.getItem('oopa.backend.session.v1')))location.replace('admin-login.html')}catch(_){location.replace('admin-login.html')}
+   </script>
+   
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+   </script>
+   <script src="scripts/exams/backend-config.js">
+   </script>
+   <script src="scripts/exams/backend-client.js">
+   </script>
+   <script src="scripts/exams/schema.js">
+   </script>
+   <script src="scripts/exams/storage.js">
+   </script>
+   <script src="scripts/exams/local-auth.js">
+   </script>
+   <script src="scripts/exams/lab-registry.js">
+   </script>
+   <script src="scripts/exams/grading.js">
+   </script>
+   <script defer="" src="scripts/exams/grading-page.js">
+   </script>
+
+
+ </body>
+</html>
+

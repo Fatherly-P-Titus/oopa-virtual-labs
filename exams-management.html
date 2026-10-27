@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <meta content="#b22222" name="theme-color"/>
+  <title>
+   Student Lists &amp; Exams | OOPA Virtual Labs"&gt;
+  </title>
+
+   <script src="scripts/jquery.js">
+   </script>
+   <script>
+    try{if(!(sessionStorage.getItem('oopa.local.session.v2')||sessionStorage.getItem('oopa.backend.session.v1')))location.replace('admin-login.html')}catch(_){location.replace('admin-login.html')}
+   </script>
+   <link href="styles/admin-page.css" rel="stylesheet"/>
+   <link href="styles/exams-management.css" rel="stylesheet"/>
+  
+  
+ </head>
+
+ <body>
+  <aside class="sidebar">
+   <a class="brand" href="main-menu.html">
+    <span class="brand-mark">
+     O
+    </span>
+    <span>
+     OOPA
+     <b>
+      VIRTUAL LABS
+     </b>
+    </span>
+   </a>
+   <p class="nav-label">
+    WORKSPACE
+   </p>
+   <a class="side-link" href="admin-page.html">
+    ▦ &nbsp; Overview
+   </a>
+   <a class="side-link active" href="#lists">
+    ♙ &nbsp; Student lists &amp; exams
+   </a>
+   <div class="sidebar-bottom">
+    <div class="admin-avatar" id="avatar">
+     O
+    </div>
+    <div>
+     <b id="account-name">
+      Account
+     </b>
+     <small id="account-role">
+      Role
+     </small>
+    </div>
+    <button aria-label="Log out" id="logout">
+     &nearrow;
+    </button>
+   </div>
+  </aside>
+  <main class="dashboard">
+   <header class="dashboard-header">
+    <div>
+     <p class="eyebrow">
+      OOPA / ASSESSMENTS
+     </p>
+     <h1>
+      Student lists &amp; exams
+     </h1>
+     <p class="subheading">
+      Import eligible students, create exams and manage publication status.
+     </p>
+    </div>
+    <div class="header-actions">
+     <a class="view-site" href="student-exam.html" rel="noopener" target="_blank">
+      Student exam portal &nearrow;
+     </a>
+     <a class="view-site" href="grading.html">
+      Submissions &amp; grading &nearrow;
+     </a>
+     <a class="view-site" href="student-results.html" rel="noopener" target="_blank">
+      Student results &nearrow;
+     </a>
+     <a class="view-site" href="admin-page.html">
+      Account workspace &nearrow;
+     </a>
+    </div>
+   </header>
+   <section class="security-banner" role="note">
+    <strong>
+     Local prototype notice
+    </strong>
+    <p>
+     Student lists, exam records, and access-code verifiers are stored in this browser. They do not sync between devices and client-side controls are not tamper-proof. Lab assessment adapters are not yet verified; publishing here does not make a lab secure or exam-ready for real multi-device examinations.
+    </p>
+   </section>
+   <section class="content-panel" id="lists">
+    <div class="panel-heading">
+     <div>
+      <p class="eyebrow">
+       ROSTER MANAGEMENT
+      </p>
+      <h2>
+       Reusable student lists
+      </h2>
+     </div>
+     <span class="badge" id="list-count">
+      0 LISTS
+     </span>
+    </div>
+    <p class="panel-description">
+     CSV format:
+     <code>
+      S/N,Student Name,Matric Number
+     </code>
+     . Header names are recognized; S/N is informational. Matric numbers are normalized to uppercase for duplicate checks.
+    </p>
+    <form class="account-form" id="list-form">
+     <input id="list-id" type="hidden"/>
+     <div class="form-grid">
+      <div>
+       <label for="list-name">
+        List name
+       </label>
+       <input id="list-name" maxlength="120" placeholder="e.g. PHY 201 &mdash; Group A" required=""/>
+      </div>
+      <div>
+       <label for="csv-file">
+        Import roster CSV
+       </label>
+       <input accept=".csv,text/csv" id="csv-file" type="file"/>
+       <small>
+        Choose a CSV file to preview before saving.
+       </small>
+      </div>
+     </div>
+     <div hidden="" id="preview-wrap">
+      <h3>
+       Import preview
+      </h3>
+      <p class="field-help" id="preview-summary">
+      </p>
+      <div class="table-wrap preview-table">
+       <table>
+        <thead>
+         <tr>
+          <th>
+           Line
+          </th>
+          <th>
+           Student name
+          </th>
+          <th>
+           Matric number
+          </th>
+          <th>
+           Result
+          </th>
+         </tr>
+        </thead>
+        <tbody id="preview-rows">
+        </tbody>
+       </table>
+      </div>
+      <div class="form-grid import-choice">
+       <div>
+        <label for="import-mode">
+         Apply to this list
+        </label>
+        <select id="import-mode">
+         <option value="replace">
+          Replace existing entries
+         </option>
+         <option value="add">
+          Add new entries (skip existing matric numbers)
+         </option>
+         <option value="cancel">
+          Cancel import
+         </option>
+        </select>
+       </div>
+       <div>
+        <label class="check-label">
+         <input checked="" id="save-valid-only" type="checkbox"/>
+         Save valid rows only if CSV contains errors
+        </label>
+       </div>
+      </div>
+     </div>
+     <div class="form-actions">
+      <button class="submit-button" id="save-list" type="submit">
+       Save student list
+      </button>
+      <button class="secondary-button" hidden="" id="cancel-list" type="button">
+       Cancel edit
+      </button>
+      <button class="secondary-button" id="download-template" type="button">
+       Download CSV template
+      </button>
+     </div>
+     <p aria-live="polite" class="form-message" id="list-message" role="status">
+     </p>
+    </form>
+    <div class="table-wrap">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         List name
+        </th>
+        <th>
+         Students
+        </th>
+        <th>
+         Updated
+        </th>
+        <th>
+         Actions
+        </th>
+       </tr>
+      </thead>
+      <tbody id="list-rows">
+       <tr>
+        <td colspan="4">
+         Loading lists&hellip;
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="student-editor" hidden="" id="student-editor">
+     <div class="panel-heading">
+      <div>
+       <p class="eyebrow">
+        ROSTER DETAILS
+       </p>
+       <h3 id="student-editor-title">
+        Manage students
+       </h3>
+      </div>
+      <button class="secondary-button" id="close-student-editor" type="button">
+       Close roster editor
+      </button>
+     </div>
+     <form class="account-form" id="student-form">
+      <input id="student-id" type="hidden"/>
+      <div class="form-grid">
+       <div>
+        <label for="student-name">
+         Student name
+        </label>
+        <input id="student-name" maxlength="160" required=""/>
+       </div>
+       <div>
+        <label for="student-matric">
+         Matric number
+        </label>
+        <input id="student-matric" maxlength="80" required=""/>
+       </div>
+      </div>
+      <div class="form-actions">
+       <button class="submit-button" id="save-student" type="submit">
+        Add student
+       </button>
+       <button class="secondary-button" hidden="" id="cancel-student-edit" type="button">
+        Cancel edit
+       </button>
+      </div>
+      <p aria-live="polite" class="form-message" id="student-message" role="status">
+      </p>
+     </form>
+     <div class="table-wrap">
+      <table>
+       <thead>
+        <tr>
+         <th>
+          Student name
+         </th>
+         <th>
+          Matric number
+         </th>
+         <th>
+          Actions
+         </th>
+        </tr>
+       </thead>
+       <tbody id="student-rows">
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </section>
+   <section class="content-panel" id="exam-authoring">
+    <div class="panel-heading">
+     <div>
+      <p class="eyebrow">
+       EXAM AUTHORING
+      </p>
+      <h2>
+       Create an exam
+      </h2>
+     </div>
+     <span class="badge" id="exam-count">
+      0 EXAMS
+     </span>
+    </div>
+    <p class="panel-description">
+     Drafts can be edited. Publishing freezes the roster into an eligibility snapshot. The six-digit access code is only shown during creation and is stored as a salted verifier.
+    </p>
+    <form class="account-form" id="exam-form">
+     <input id="exam-id" type="hidden"/>
+     <div class="form-grid">
+      <div>
+       <label for="exam-title">
+        Exam title
+       </label>
+       <input id="exam-title" maxlength="180" placeholder="e.g. Projectile Motion Practical" required=""/>
+      </div>
+      <div>
+       <label for="exam-lab">
+        Laboratory
+       </label>
+       <select id="exam-lab" required="">
+        <option value="">
+         Select a permitted lab
+        </option>
+       </select>
+       <small id="lab-note">
+        Only labs allowed by your account are listed.
+       </small>
+      </div>
+      <div>
+       <label for="exam-duration">
+        Duration
+       </label>
+       <select id="exam-duration" required="">
+       </select>
+      </div>
+      <div>
+       <label for="exam-code">
+        Six-digit access code
+       </label>
+       <input autocomplete="off" id="exam-code" inputmode="numeric" maxlength="6" minlength="6" pattern="[0-9]{6}" placeholder="e.g. 482731" required=""/>
+       <small>
+        Keep this code private; it is not recoverable from the verifier.
+       </small>
+      </div>
+      <div>
+       <label for="exam-list">
+        Eligible student list
+       </label>
+       <select id="exam-list" required="">
+        <option value="">
+         Select a student list
+        </option>
+       </select>
+      </div>
+      <div>
+       <label for="exam-attempts">
+        Attempt limit per student
+       </label>
+       <select id="exam-attempts">
+        <option value="1">
+         1 attempt
+        </option>
+        <option value="2">
+         2 attempts
+        </option>
+        <option value="3">
+         3 attempts
+        </option>
+        <option value="4">
+         4 attempts
+        </option>
+        <option value="5">
+         5 attempts
+        </option>
+       </select>
+      </div>
+      <div>
+       <label for="exam-from">
+        Opens at (optional)
+       </label>
+       <input id="exam-from" type="datetime-local"/>
+      </div>
+      <div>
+       <label for="exam-until">
+        Closes at (optional)
+       </label>
+       <input id="exam-until" type="datetime-local"/>
+      </div>
+      <div>
+       <label for="results-policy">
+        Results policy
+       </label>
+       <select id="results-policy">
+        <option value="after-release">
+         After instructor releases results
+        </option>
+        <option value="immediate">
+         Immediately after submission
+        </option>
+        <option value="never">
+         Never show results to students
+        </option>
+       </select>
+      </div>
+     </div>
+     <div>
+      <label for="exam-instructions">
+       Student instructions (optional)
+      </label>
+      <textarea id="exam-instructions" maxlength="10000" placeholder="Explain the task, allowed resources and submission expectations." rows="4"></textarea>
+     </div>
+     <div class="form-actions">
+      <button class="submit-button" id="save-exam" type="submit">
+       Save as draft
+      </button>
+      <button class="secondary-button" hidden="" id="cancel-exam" type="button">
+       Cancel edit
+      </button>
+     </div>
+     <p aria-live="polite" class="form-message" id="exam-message" role="status">
+     </p>
+    </form>
+    <div class="table-wrap">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Exam
+        </th>
+        <th>
+         Lab
+        </th>
+        <th>
+         Duration
+        </th>
+        <th>
+         Eligible
+        </th>
+        <th>
+         Status
+        </th>
+        <th>
+         Actions
+        </th>
+       </tr>
+      </thead>
+      <tbody id="exam-rows">
+       <tr>
+        <td colspan="6">
+         Loading exams&hellip;
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </section>
+   <footer class="dashboard-footer">
+    &copy;
+    <span id="year">
+    </span>
+    OOPA Virtual Labs
+    <span>
+     LOCAL PROTOTYPE &middot; MILESTONE 6
+    </span>
+   </footer>
+  </main>
+
+
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+   </script>
+   <script src="scripts/exams/backend-config.js">
+   </script>
+   <script src="scripts/exams/backend-client.js">
+   </script>
+   <script src="scripts/exams/schema.js">
+   </script>
+   <script src="scripts/exams/storage.js">
+   </script>
+   <script src="scripts/exams/local-auth.js">
+   </script>
+   <script src="scripts/exams/lab-registry.js">
+   </script>
+   <script src="scripts/exams/csv.js">
+   </script>
+   <script defer="" src="scripts/exams/exam-management.js">
+   </script>
+
+ </body>
+</html>
+
