@@ -1,0 +1,309 @@
+.security-banner
+{
+    margin:0 0 22px;
+    padding:17px 19px;
+    border:1px solid #e9c8a0;
+    border-left:4px solid #bd6b1b;
+    border-radius:9px;
+    background:#fff8ed;
+    color:#5e421f;
+    font-size:12px;
+    line-height:1.65
+}
+
+.security-banner p
+{
+    margin:5px 0 0
+}
+
+.account-form
+{
+    padding:18px 0 24px
+}
+
+.form-grid
+{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:18px;
+    margin-bottom:20px
+}
+
+.form-grid>div>label,.account-form>label
+{
+    display:block;
+    font-size:12px;
+    font-weight:700;
+    margin-bottom:8px
+}
+
+.account-form input:not([type=checkbox])
+{
+    width:100%;
+    min-height:42px;
+    border:1px solid #dcd6d3;
+    border-radius:7px;
+    padding:10px 12px;
+    font:13px inherit;
+    background:#fff
+}
+
+.account-form input:focus
+{
+    outline:2px solid #b2222230;
+    border-color:#b22222
+}
+
+.account-form small,.field-help
+{
+    display:block;
+    font-size:11px;
+    color:#777;
+    line-height:1.55;
+    margin-top:6px
+}
+
+.active-toggle
+{
+    display:flex;
+    flex-direction:column;
+    justify-content:center
+}
+
+.active-toggle label
+{
+    display:flex;
+    align-items:center;
+    gap:8px
+}
+
+.account-form fieldset
+{
+    border:1px solid #e6e1df;
+    border-radius:8px;
+    margin:18px 0;
+    padding:14px
+}
+
+.account-form legend
+{
+    font-size:12px;
+    font-weight:700;
+    padding:0 7px
+}
+
+.permission-grid
+{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:8px
+}
+
+.check-option
+{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    padding:9px;
+    border:1px solid #eee8e6;
+    border-radius:6px;
+    font-size:12px;
+    line-height:1.4
+}
+
+.check-option input
+{
+    margin-top:2px;
+    accent-color:#b22222
+}
+
+.check-option small
+{
+    margin-top:3px
+}
+
+.form-actions
+{
+    display:flex;
+    gap:10px;
+    align-items:center
+}
+
+.secondary-button,.actions button
+{
+    border:1px solid #ddd2cf;
+    border-radius:6px;
+    padding:10px 13px;
+    background:#fff;
+    color:#333;
+    font-weight:700;
+    font-size:11px;
+    cursor:pointer
+}
+
+.form-message
+{
+    min-height:18px;
+    font-size:12px;
+    color:#b22222;
+    margin:12px 0
+}
+
+.form-message.success
+{
+    color:#247a42
+}
+
+.table-wrap
+{
+    width:100%;
+    overflow-x:auto;
+    border-top:1px solid #eee8e6
+}
+
+table
+{
+    border-collapse:collapse;
+    width:100%;
+    font-size:12px;
+    text-align:left;
+    min-width:720px
+}
+
+th,td
+{
+    padding:13px 10px;
+    border-bottom:1px solid #eee8e6;
+    vertical-align:top
+}
+
+th
+{
+    font-size:10px;
+    color:#777;
+    text-transform:uppercase;
+    letter-spacing:.08em
+}
+
+td
+{
+    line-height:1.55
+}
+
+.account-status
+{
+    display:inline-block;
+    border-radius:20px;
+    padding:3px 8px;
+    font-size:10px;
+    font-weight:700
+}
+
+.account-status.active
+{
+    background:#e8f5eb;
+    color:#267443
+}
+
+.account-status.inactive
+{
+    background:#fbe9e9;
+    color:#a52a2a
+}
+
+.needs-change
+{
+    display:block;
+    color:#a35d18
+}
+
+.actions
+{
+    display:flex;
+    gap:5px
+}
+
+.actions button
+{
+    padding:6px 8px;
+    white-space:nowrap
+}
+
+.hub-summary
+{
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:10px
+}
+
+.hub-summary article
+{
+    border:1px solid #eee8e6;
+    border-radius:8px;
+    padding:13px;
+    display:flex;
+    flex-direction:column;
+    gap:7px
+}
+
+.hub-summary b
+{
+    font-size:12px
+}
+
+.hub-summary span
+{
+    font-size:10px;
+    color:#777
+}
+
+.force-change
+{
+    border:2px solid #bd6b1b
+}
+
+.force-change:before
+{
+    content:'Required: change your passphrase to continue';
+    display:block;
+    font-size:12px;
+    font-weight:700;
+    color:#8b4d13;
+    margin-bottom:15px
+}
+
+@media(max-width:900px)
+{
+    .permission-grid
+    {
+        grid-template-columns:repeat(2,minmax(0,1fr))
+    }
+
+    .hub-summary
+    {
+        grid-template-columns:repeat(2,minmax(0,1fr))
+    }
+}
+
+@media(max-width:600px)
+{
+    .form-grid
+    {
+        grid-template-columns:1fr
+    }
+
+    .permission-grid
+    {
+        grid-template-columns:1fr
+    }
+
+    .hub-summary
+    {
+        grid-template-columns:1fr 1fr
+    }
+
+    .security-banner
+    {
+        font-size:11px
+    }
+}

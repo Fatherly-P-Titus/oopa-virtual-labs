@@ -1,0 +1,217 @@
+body
+{
+    background:#f6f7fb
+}
+
+.content-panel
+{
+    margin-bottom:24px
+}
+
+.content-panel code
+{
+    background:#f0f1f5;
+    padding:3px 6px;
+    border-radius:4px
+}
+
+.preview-table
+{
+    max-height:280px;
+    overflow:auto;
+    margin:10px 0 18px
+}
+
+.preview-table td,.preview-table th
+{
+    font-size:13px;
+    padding:9px
+}
+
+.preview-table tr.invalid
+{
+    background:#fff0f0
+}
+
+.preview-table tr.valid
+{
+    background:#f3fbf5
+}
+
+.import-choice
+{
+    margin-top:12px
+}
+
+.check-label
+{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    margin-top:26px
+}
+
+.check-label input
+{
+    width:auto
+}
+
+.form-message.error
+{
+    color:#a21d1d
+}
+
+.form-message.success
+{
+    color:#176b39
+}
+
+.status-pill
+{
+    display:inline-block;
+    border-radius:999px;
+    padding:5px 9px;
+    font-size:11px;
+    font-weight:700;
+    background:#eceef3;
+    color:#3d4350
+}
+
+.status-pill.published
+{
+    background:#dff6e8;
+    color:#176b39
+}
+
+.status-pill.closed
+{
+    background:#fff0d4;
+    color:#8a5200
+}
+
+.status-pill.archived
+{
+    background:#e8e8eb;
+    color:#595963
+}
+
+.actions
+{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px
+}
+
+.actions button
+{
+    border:1px solid #d8dbe3;
+    background:white;
+    border-radius:6px;
+    padding:7px 9px;
+    cursor:pointer;
+    font:inherit;
+    font-size:12px
+}
+
+.actions button.danger
+{
+    color:#a21d1d
+}
+
+.actions button:disabled
+{
+    opacity:.4;
+    cursor:not-allowed
+}
+
+.field-help
+{
+    color:#687084;
+    font-size:13px
+}
+
+.empty-row
+{
+    text-align:center;
+    color:#687084;
+    padding:18px!important
+}
+
+.badge
+{
+    white-space:nowrap
+}
+
+.security-banner
+{
+    margin-bottom:24px
+}
+
+textarea
+{
+    font:inherit;
+    resize:vertical;
+    width:100%;
+    box-sizing:border-box;
+    border:1px solid #d8dbe3;
+    border-radius:8px;
+    padding:11px;
+    background:#fff
+}
+
+#exam-code
+{
+    letter-spacing:.18em;
+    font-variant-numeric:tabular-nums
+}
+
+@media(max-width:760px)
+{
+    .form-grid
+    {
+        grid-template-columns:1fr
+    }
+
+    .dashboard
+    {
+        padding:18px
+    }
+
+    .table-wrap
+    {
+        overflow-x:auto
+    }
+
+    .check-label
+    {
+        margin-top:0
+    }
+}
+
+.student-editor
+{
+    margin-top:24px;
+    padding-top:22px;
+    border-top:1px solid #e1e4ec
+}
+
+.student-editor .panel-heading
+{
+    align-items:center
+}
+
+.student-editor h3
+{
+    margin:0;
+    font-size:20px
+}
+
+.student-editor .secondary-button
+{
+    cursor:pointer
+}
+
+.student-editor[hidden]
+{
+    display:none!important
+}
