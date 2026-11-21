@@ -1,67 +1,58 @@
-# LabShell (`scenes/common/lab_shell.tscn`)
+# Shared Laboratory Workspace
 
-Reusable chrome matching web `.lab-main` + `.sim-layout`.
+`scenes/common/lab_shell.tscn` is the shared workspace chrome inherited by the manifest laboratories. It owns the application identity, discipline/lab context, hub return action, simulation stage, optional secondary-content area, lab controls area, status line, and footer.
 
-```
+```text
 LabShell
-├── Header (Back + Eyebrow + Title)
-├── Lead
-└── SimLayout  (HBox, gap 20)     ← NOT HSplit
-    ├── Left EXPAND
-    │   ├── Stage (dark PanelContainer)
-    │   │   └── StageHost         ← put canvas Control here
-    │   └── ExtraHost             ← graphs / secondary cards
-    └── Sidebar (330px Panel)
-        └── Scroll → SidebarVBox  ← put sliders / chips here
+├── Workspace header
+│   ├── OOPA Virtual Labs lockup (discipline accent)
+│   ├── Discipline eyebrow + current laboratory title
+│   └── Back button (returns through SceneRouter)
+├── Lead (optional laboratory summary)
+└── Simulation layout
+    ├── Main column
+    │   ├── StageHost (primary simulation viewport)
+    │   └── ExtraHost (optional charts or supporting cards)
+    └── Sidebar (scrollable lab-authored controls)
+├── StatusRow (lab-authored runtime text)
+└── Footer
 ```
 
 ## Exports
 
-| Property | Example |
+| Property | Purpose |
 |----------|---------|
-| `lab_title` | `"Gas Laws"` |
-| `lab_eyebrow` | `"CHEMISTRY  /  GAS LAWS"` |
-| `lab_lead` | Short intro sentence |
-| `field_id` | `"chemistry"` (Back target) |
-| `page_id` | `"gas_laws"` (Jenny) |
-| `back_label` | `"← Chemistry"` |
+| `lab_title` | Current laboratory name shown in the workspace header |
+| `lab_eyebrow` | Discipline and laboratory breadcrumb |
+| `lab_lead` | Optional concise context below the header |
+| `field_id` | Discipline accent and hub return target |
+| `page_id` | Context passed to JennyService |
+| `back_label` | Visible label for the real hub-navigation action |
 
 ## API
 
 ```gdscript
-var shell: LabShell = $LabShell  # or self if extending
-var stage := shell.get_stage()       # Control
-var sidebar := shell.get_sidebar()   # VBoxContainer
-var extra := shell.get_extra()       # VBoxContainer
-shell.set_status("Ready.")
+var shell: LabShell = $LabShell # or the root when the scene inherits LabShell
+var stage: Control = shell.get_stage()
+var sidebar: VBoxContainer = shell.get_sidebar()
+var extra: VBoxContainer = shell.get_extra()
+shell.set_status("Running. Press Pause to stop the simulation.")
+shell.add_to_stage(simulation_control)
 ```
 
-## How a lab uses it (Step 4 pattern)
+The shell preserves the existing lab script API. Laboratory scripts continue to own their models, controls, rendering, reset/play/pause behavior and status wording. The shell does not infer whether a simulation is running, duplicate lab controls, or introduce placeholder actions.
 
-**Option A — instance shell as root content**
+## Layout behavior
 
-```
-GasLawsLab (Control)
-└── LabShell (instance)
-    # in _ready: add Chamber to get_stage(), controls to get_sidebar()
-```
+- At the 1280 × 720 desktop viewport, the simulation stage expands beside a 330 px controls sidebar.
+- Below 1024 px, the sidebar minimum width reduces to 290 px so more room remains for the simulation.
+- Below 900 px, outer margins tighten; below 840 px, secondary brand text and the divider collapse while the lab title and Back action remain.
+- `StageHost` fills the stage. Each lab remains responsible for adapting its own drawing, scrollable content, and aspect ratio.
+- `ExtraHost` is optional and is used for supporting visualizations such as graphs.
+- The status row displays only the exact message supplied by the laboratory script.
 
-**Option B — lab script extends LabShell** (preferred once migrated)
+## Navigation and scope
 
-```gdscript
-extends LabShell
-func _ready() -> void:
-    lab_title = "Gas Laws"
-    super._ready()
-    var chamber := Control.new()
-    chamber.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
-    chamber.draw.connect(_draw_chamber)
-    get_stage().add_child(chamber)
-```
+Back uses the existing `SceneRouter.go_field(field_id)` contract. The field accent follows the M2 discipline palette. SceneRouter, AppState, the manifest, simulation models, and laboratory-specific controls remain outside the shell's implementation scope.
 
-## Layout rules
-
-- Sidebar width **330px** fixed (`custom_minimum_size.x = 330`)
-- Stage uses theme variation **`Stage`** (dark #161616, 14px radius)
-- Theme is applied on the shell root — children inherit it
-- No per-lab `HSplitContainer`
+Twenty-one manifest labs inherit this shell. The nested Logic Gate Builder scene remains a separate `Control`-based project and is not wrapped by this shell; changing it would require modifying its protected scene or discovery path.
