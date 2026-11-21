@@ -1,0 +1,12 @@
+OOPA Instructor & Examination System — M01 COMPLETE
+Baseline: oopa_virtual_labs-77 + M01 foundation
+
+Delivered:
+- data/instructor_system/hubs.json, instructors.json, sample roster CSV
+- OopaIds, OopaSchemas, OopaLocalStore, OopaManifestLabs, OopaFoundationSmoke
+
+Acceptance (run OopaFoundationSmoke.run() when UI exists, or review files):
+- Exam/roster/attempt/grade JSON round-trip API present
+- CSV parse rejects bad headers
+- Manifest lists available labs
+- Labs under scenes/labs unchanged

@@ -1,0 +1,131 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/common/lab_shell.gd" id="1"]
+[ext_resource type="Theme" path="res://themes/oopa_theme.tres" id="2"]
+
+[node name="LabShell" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2")
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.980392, 0.976471, 0.972549, 1)
+
+[node name="MainMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 12
+
+[node name="MainVBox" type="VBoxContainer" parent="MainMargin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="MainMargin/MainVBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Back" type="Button" parent="MainMargin/MainVBox/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"GhostButton"
+text = "← Back"
+
+[node name="HeaderText" type="VBoxContainer" parent="MainMargin/MainVBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="Eyebrow" type="Label" parent="MainMargin/MainVBox/Header/HeaderText"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Eyebrow"
+text = "FIELD  /  LAB"
+uppercase = true
+
+[node name="Title" type="Label" parent="MainMargin/MainVBox/Header/HeaderText"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"H1"
+theme_override_font_sizes/font_size = 28
+text = "Lab Title"
+
+[node name="Lead" type="Label" parent="MainMargin/MainVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Lead"
+text = ""
+autowrap_mode = 3
+
+[node name="SimLayout" type="HBoxContainer" parent="MainMargin/MainVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="Left" type="VBoxContainer" parent="MainMargin/MainVBox/SimLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="Stage" type="PanelContainer" parent="MainMargin/MainVBox/SimLayout/Left"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"Stage"
+
+[node name="StageHost" type="Control" parent="MainMargin/MainVBox/SimLayout/Left/Stage"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 280)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ExtraHost" type="VBoxContainer" parent="MainMargin/MainVBox/SimLayout/Left"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Sidebar" type="PanelContainer" parent="MainMargin/MainVBox/SimLayout"]
+custom_minimum_size = Vector2(330, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Scroll" type="ScrollContainer" parent="MainMargin/MainVBox/SimLayout/Sidebar"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="SidebarVBox" type="VBoxContainer" parent="MainMargin/MainVBox/SimLayout/Sidebar/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 14
+
+[node name="Status" type="Label" parent="MainMargin/MainVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Muted"
+text = ""
+
+[node name="Footer" type="Label" parent="MainMargin/MainVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Footer"
+text = "OOPA Virtual Labs"

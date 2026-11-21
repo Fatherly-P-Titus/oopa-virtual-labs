@@ -1,0 +1,21 @@
+{
+  "id": "aqueous",
+  "name": "Aqueous",
+  "media": {
+    "type": "aqueous",
+    "temperature": 37.0,
+    "pH": 7.0,
+    "viscosity": 1.0,
+    "oxygen": 1.0,
+    "initialFoodHint": 30.0,
+    "initialWasteHint": 0.0
+  },
+  "cells": {
+    "activeTypes": [
+      "coccus",
+      "bacillus",
+      "spirillum"
+    ],
+    "initialCells": 24
+  }
+}

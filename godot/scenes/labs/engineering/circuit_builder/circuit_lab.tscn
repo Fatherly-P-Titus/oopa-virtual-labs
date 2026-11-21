@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/engineering/circuit_builder/circuit_lab.gd" id="2"]
+
+[node name="CircuitLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Circuit Builder"
+lab_eyebrow = "ENGINEERING  /  CIRCUIT BUILDER"
+lab_lead = "Breadboard DC circuits — battery, R, switch, diode, LED, meters."
+field_id = "engineering"
+page_id = "circuit_builder"
+back_label = "<- Engineering"

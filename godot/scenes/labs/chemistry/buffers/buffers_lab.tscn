@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/chemistry/buffers/buffers_lab.gd" id="2"]
+
+[node name="BuffersLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Acid-Base / Buffers"
+lab_eyebrow = "CHEMISTRY  /  BUFFERS"
+lab_lead = "Weak acid, Henderson-Hasselbalch buffer, and strong acid/base. Watch pH and capacity."
+field_id = "chemistry"
+page_id = "buffers"
+back_label = "<- Chemistry"

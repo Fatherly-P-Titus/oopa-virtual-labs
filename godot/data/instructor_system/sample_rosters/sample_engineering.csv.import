@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://b5ycltvowrks2"
+
+[deps]
+
+files=["res://data/instructor_system/sample_rosters/sample_engineering.Student Name.translation", "res://data/instructor_system/sample_rosters/sample_engineering.Matric Number.translation"]
+
+source_file="res://data/instructor_system/sample_rosters/sample_engineering.csv"
+dest_files=["res://data/instructor_system/sample_rosters/sample_engineering.Student Name.translation", "res://data/instructor_system/sample_rosters/sample_engineering.Matric Number.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

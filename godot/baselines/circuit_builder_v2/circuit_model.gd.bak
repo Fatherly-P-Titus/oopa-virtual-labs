@@ -1,0 +1,523 @@
+extends RefCounted
+class_name CircuitModel
+## BASELINE LOCK v2 2026-10-23 — 4-port switch ON/OFF works.
+## Ports allow up to 4 wires each.
+## Switch: in+(0) in−(1) out+(2) out−(3). ON connects 0↔2 and 1↔3. OFF opens both.
+
+const SLOTS: int = 8
+const SLOT_PX: float = 50.0
+
+const R_LED: float = 80.0
+const R_SW_ON: float = 0.5
+const R_OPEN: float = 1.0e9
+const I_ON: float = 0.002
+const I_LIVE: float = 0.001
+const MAX_WIRES_PER_PORT: int = 4
+
+enum Kind { BAT, R, LEDW, LEDO, SWITCH }
+
+const DEFS: Dictionary = {
+	Kind.BAT:    {"label": "BAT",  "value": 9.0, "ports": 2},
+	Kind.R:      {"label": "R",    "value": 330.0, "ports": 2},
+	Kind.LEDW:   {"label": "LEDW", "value": 1.8, "ports": 2},
+	Kind.LEDO:   {"label": "LEDO", "value": 1.8, "ports": 2},
+	Kind.SWITCH: {"label": "SW",   "value": 0.0, "ports": 4},
+}
+
+var chips: Array = []
+var wires: Array = []
+var next_id: int = 1
+
+var chip_i: Dictionary = {}
+var wire_i: Dictionary = {}
+var ok: bool = true
+var message: String = "Place BAT + parts, wire ports. Switch has 4 ports: in+/in− and out+/out−."
+var total_power: float = 0.0
+
+
+func clear() -> void:
+	chips.clear()
+	wires.clear()
+	next_id = 1
+	chip_i.clear()
+	wire_i.clear()
+	ok = true
+	message = "Board cleared."
+	total_power = 0.0
+
+
+func label_of(kind: int) -> String:
+	return str(DEFS[kind]["label"])
+
+
+func port_count(kind: int) -> int:
+	return int(DEFS[kind]["ports"])
+
+
+func port_id(chip_id: int, which: int) -> String:
+	return "c%d_%d" % [chip_id, which]
+
+
+## Port roles for SWITCH: 0=in+, 1=in−, 2=out+, 3=out−
+## For 2-port chips: 0=+, 1=−
+func port_is_positive(kind: int, which: int) -> bool:
+	if kind == Kind.SWITCH:
+		return which == 0 or which == 2
+	return which == 0
+
+
+func slot_free(sr: int, sc: int, ignore_id: int = -1) -> bool:
+	if sr < 0 or sc < 0 or sr >= SLOTS or sc >= SLOTS:
+		return false
+	for c in chips:
+		if int(c.id) == ignore_id:
+			continue
+		if int(c.slot_r) == sr and int(c.slot_c) == sc:
+			return false
+	return true
+
+
+func add_chip(kind: int, slot_r: int, slot_c: int, value: float = -1.0) -> Dictionary:
+	if not slot_free(slot_r, slot_c):
+		return {}
+	var def: Dictionary = DEFS[kind]
+	var ch := {
+		"id": next_id,
+		"kind": kind,
+		"slot_r": slot_r,
+		"slot_c": slot_c,
+		"rot": 0,
+		"value": float(def["value"]) if value < 0.0 else value,
+		"closed": true,
+		"lit": false,
+	}
+	next_id += 1
+	chips.append(ch)
+	solve()
+	return ch
+
+
+func chip_has_wires(cid: int) -> bool:
+	var prefix := "c%d_" % cid
+	for w in wires:
+		if str(w.port_a).begins_with(prefix) or str(w.port_b).begins_with(prefix):
+			return true
+	return false
+
+
+func rotate_chip(cid: int, clockwise: bool) -> bool:
+	var ch: Dictionary = chip_by_id(cid)
+	if ch.is_empty() or chip_has_wires(cid):
+		return false
+	var r: int = int(ch.rot)
+	ch.rot = (r + 1) % 4 if clockwise else (r + 3) % 4
+	return true
+
+
+func remove_chip(cid: int) -> void:
+	for i in range(chips.size() - 1, -1, -1):
+		if int(chips[i].id) == cid:
+			chips.remove_at(i)
+			break
+	var prefix := "c%d_" % cid
+	for i in range(wires.size() - 1, -1, -1):
+		if str(wires[i].port_a).begins_with(prefix) or str(wires[i].port_b).begins_with(prefix):
+			wires.remove_at(i)
+	solve()
+
+
+func chip_by_id(cid: int) -> Dictionary:
+	for c in chips:
+		if int(c.id) == cid:
+			return c
+	return {}
+
+
+func wire_count_on_port(port: String) -> int:
+	var n: int = 0
+	for w in wires:
+		if str(w.port_a) == port or str(w.port_b) == port:
+			n += 1
+	return n
+
+
+func port_connection_count(port: String) -> int:
+	var n: int = 0
+	for w in wires:
+		if str(w.port_a) == port or str(w.port_b) == port:
+			n += 1
+	return n
+
+
+func port_can_accept_wire(port: String) -> bool:
+	return port_connection_count(port) < MAX_PORT_WIRES
+
+
+func add_wire(port_a: String, port_b: String) -> Dictionary:
+	if port_a == "" or port_b == "" or port_a == port_b:
+		return {}
+	for w in wires:
+		if (str(w.port_a) == port_a and str(w.port_b) == port_b) or (str(w.port_a) == port_b and str(w.port_b) == port_a):
+			return {}
+	if not port_can_accept_wire(port_a) or not port_can_accept_wire(port_b):
+		message = "Port full — max %d wires per port." % MAX_PORT_WIRES
+		return {}
+	var w2 := {"id": next_id, "port_a": port_a, "port_b": port_b}
+	next_id += 1
+	wires.append(w2)
+	solve()
+	return w2
+
+
+
+func set_switch_closed(cid: int, is_closed: bool) -> void:
+	for i in range(chips.size()):
+		if int(chips[i]["id"]) == cid and int(chips[i]["kind"]) == Kind.SWITCH:
+			chips[i]["closed"] = is_closed
+			break
+	solve()
+
+
+func _find(x: String, parent: Dictionary) -> String:
+	var r: String = x
+	while str(parent.get(r, r)) != r:
+		r = str(parent[r])
+	var cur: String = x
+	while cur != r:
+		var nxt: String = str(parent.get(cur, cur))
+		parent[cur] = r
+		cur = nxt
+	return r
+
+
+func _unite(a: String, b: String, parent: Dictionary) -> void:
+	var ra := _find(a, parent)
+	var rb := _find(b, parent)
+	if ra != rb:
+		parent[rb] = ra
+
+
+func solve() -> void:
+	chip_i.clear()
+	wire_i.clear()
+	total_power = 0.0
+	for i in range(chips.size()):
+		chips[i]["lit"] = false
+		chip_i[int(chips[i].id)] = 0.0
+	for w in wires:
+		wire_i[int(w.id)] = 0.0
+
+	if chips.is_empty():
+		ok = true
+		message = "Drag chips onto the board, then wire ports."
+		return
+
+	# Nets from WIRES only
+	var parent: Dictionary = {}
+	for c in chips:
+		var nports: int = port_count(int(c.kind))
+		for pi in range(nports):
+			var pid := port_id(int(c.id), pi)
+			parent[pid] = pid
+	for w in wires:
+		var pa := str(w.port_a)
+		var pb := str(w.port_b)
+		if not parent.has(pa):
+			parent[pa] = pa
+		if not parent.has(pb):
+			parent[pb] = pb
+		_unite(pa, pb, parent)
+	for k in parent.keys():
+		_find(str(k), parent)
+
+	var bat: Dictionary = {}
+	for c in chips:
+		if int(c.kind) == Kind.BAT:
+			bat = c
+			break
+	if bat.is_empty():
+		ok = false
+		message = "Add a BAT chip."
+		return
+
+	var bat_v: float = maxf(float(bat.value), 0.0)
+	var net_pos: String = _find(port_id(int(bat.id), 0), parent)
+	var net_gnd: String = _find(port_id(int(bat.id), 1), parent)
+
+	if net_pos == net_gnd:
+		ok = false
+		message = "Battery + and − are shorted by wires."
+		return
+
+	var net_set: Dictionary = {}
+	for c in chips:
+		var nports: int = port_count(int(c.kind))
+		for pi in range(nports):
+			net_set[_find(port_id(int(c.id), pi), parent)] = true
+
+	var unknown: Array = []
+	var idx: Dictionary = {}
+	for n in net_set.keys():
+		var ns: String = str(n)
+		if ns == net_gnd or ns == net_pos:
+			continue
+		idx[ns] = unknown.size()
+		unknown.append(ns)
+	var nu: int = unknown.size()
+
+	var volt: Dictionary = {}
+	volt[net_gnd] = 0.0
+	volt[net_pos] = bat_v
+
+	if bat_v <= 0.001:
+		ok = true
+		message = "Battery at 0 V — no current."
+		return
+
+	# Edges: passives + switch pairs when ON
+	var edges: Array = []
+	var open_switch_count: int = 0
+	for ci in range(chips.size()):
+		var c: Dictionary = chips[ci]
+		var k: int = int(c["kind"])
+		var cid: int = int(c["id"])
+		if k == Kind.BAT:
+			continue
+		if k == Kind.SWITCH:
+			var is_on: bool = bool(c.get("closed", true))
+			if not is_on:
+				open_switch_count += 1
+				chip_i[cid] = 0.0
+				continue
+			# ON: connect in+→out+ and in−→out−
+			var n_in_p: String = _find(port_id(cid, 0), parent)
+			var n_in_m: String = _find(port_id(cid, 1), parent)
+			var n_out_p: String = _find(port_id(cid, 2), parent)
+			var n_out_m: String = _find(port_id(cid, 3), parent)
+			edges.append({"cid": cid, "na": n_in_p, "nb": n_out_p, "r": R_SW_ON, "kind": k, "leg": 0})
+			edges.append({"cid": cid, "na": n_in_m, "nb": n_out_m, "r": R_SW_ON, "kind": k, "leg": 1})
+			continue
+		var na: String = _find(port_id(cid, 0), parent)
+		var nb: String = _find(port_id(cid, 1), parent)
+		var r: float = R_OPEN
+		match k:
+			Kind.R:
+				r = maxf(float(c["value"]), 0.1)
+			Kind.LEDW, Kind.LEDO:
+				r = R_LED
+		edges.append({"cid": cid, "na": na, "nb": nb, "r": r, "kind": k, "leg": 0})
+
+	if not _has_path(net_pos, net_gnd, edges):
+		ok = true
+		total_power = 0.0
+		for w in wires:
+			wire_i[int(w.id)] = 0.0
+		for c2 in chips:
+			chip_i[int(c2.id)] = 0.0
+		if open_switch_count > 0:
+			message = "Switch OFF — path open, no current."
+		else:
+			message = "Open circuit — no path from BAT + to BAT −."
+		return
+
+	# Matrix
+	var G: Array = []
+	var rhs: Array = []
+	for i in range(nu):
+		var row: Array = []
+		for j in range(nu):
+			row.append(0.0)
+		G.append(row)
+		rhs.append(0.0)
+
+	for e in edges:
+		var na: String = str(e.na)
+		var nb: String = str(e.nb)
+		var g: float = 1.0 / maxf(float(e.r), 1e-9)
+		if na == nb:
+			continue
+		var a_u: bool = idx.has(na)
+		var b_u: bool = idx.has(nb)
+		var va_f: float = float(volt.get(na, 0.0))
+		var vb_f: float = float(volt.get(nb, 0.0))
+		if a_u and b_u:
+			var ia: int = int(idx[na])
+			var ib: int = int(idx[nb])
+			G[ia][ia] = float(G[ia][ia]) + g
+			G[ib][ib] = float(G[ib][ib]) + g
+			G[ia][ib] = float(G[ia][ib]) - g
+			G[ib][ia] = float(G[ib][ia]) - g
+		elif a_u and not b_u:
+			var ia2: int = int(idx[na])
+			G[ia2][ia2] = float(G[ia2][ia2]) + g
+			rhs[ia2] = float(rhs[ia2]) + g * vb_f
+		elif b_u and not a_u:
+			var ib2: int = int(idx[nb])
+			G[ib2][ib2] = float(G[ib2][ib2]) + g
+			rhs[ib2] = float(rhs[ib2]) + g * va_f
+
+	if nu > 0:
+		var sol: Array = _gauss(G, rhs)
+		if sol.is_empty():
+			ok = true
+			total_power = 0.0
+			for w in wires:
+				wire_i[int(w.id)] = 0.0
+			for c2 in chips:
+				chip_i[int(c2.id)] = 0.0
+			message = "Open circuit — no complete path."
+			return
+		for i in range(nu):
+			volt[str(unknown[i])] = float(sol[i])
+
+	var i_max: float = 0.0
+	var switch_i_acc: Dictionary = {}  # cid -> max leg current
+	for e in edges:
+		var na: String = str(e.na)
+		var nb: String = str(e.nb)
+		var va: float = float(volt.get(na, 0.0))
+		var vb: float = float(volt.get(nb, 0.0))
+		var dv: float = va - vb
+		var k: int = int(e.kind)
+		var cid: int = int(e.cid)
+		var i: float = 0.0
+		if k == Kind.LEDW or k == Kind.LEDO:
+			i = maxf(dv, 0.0) / R_LED
+			for ci in range(chips.size()):
+				if int(chips[ci].id) == cid:
+					chips[ci]["lit"] = i >= I_ON
+					break
+			chip_i[cid] = i
+		elif k == Kind.SWITCH:
+			i = dv / maxf(float(e.r), 0.01)
+			var prev: float = float(switch_i_acc.get(cid, 0.0))
+			switch_i_acc[cid] = maxf(prev, absf(i))
+			chip_i[cid] = float(switch_i_acc[cid])
+		else:
+			i = dv / maxf(float(e.r), 0.1)
+			chip_i[cid] = i
+		i_max = maxf(i_max, absf(float(chip_i.get(cid, 0.0))))
+
+	var i_bat: float = 0.0
+	for e in edges:
+		var na: String = str(e.na)
+		var nb: String = str(e.nb)
+		var cid: int = int(e.cid)
+		var i: float = float(chip_i.get(cid, 0.0))
+		if int(e.kind) == Kind.SWITCH:
+			i = float(e.get("leg", 0))  # don't double-count; use leg current estimate
+			i = absf(float(volt.get(na, 0.0)) - float(volt.get(nb, 0.0))) / R_SW_ON
+		if na == net_pos:
+			i_bat += i
+		elif nb == net_pos:
+			i_bat -= absf(i)
+	# simpler bat current: sum of currents into ground through edges ending on gnd
+	i_bat = 0.0
+	for e in edges:
+		var na: String = str(e.na)
+		var nb: String = str(e.nb)
+		var va: float = float(volt.get(na, 0.0))
+		var vb: float = float(volt.get(nb, 0.0))
+		var i_e: float = (va - vb) / maxf(float(e.r), 0.01)
+		if na == net_pos:
+			i_bat += i_e
+		elif nb == net_pos:
+			i_bat -= i_e
+	chip_i[int(bat.id)] = i_bat
+	total_power = absf(bat_v * i_bat)
+	i_max = maxf(i_max, absf(i_bat))
+
+	for w in wires:
+		wire_i[int(w.id)] = i_max
+
+	ok = true
+	var lit_n: int = 0
+	for c in chips:
+		if bool(c.get("lit", false)):
+			lit_n += 1
+
+	if i_max < I_LIVE:
+		if open_switch_count > 0:
+			message = "Switch OFF — path open, no current."
+		else:
+			message = "No current — wire BAT+ through the circuit to BAT−."
+	else:
+		if open_switch_count > 0:
+			message = "Switch OFF but CURRENT STILL FLOWS — another path bypasses the switch."
+		else:
+			message = "Current flowing · %d LED on · Imax=%.3f A" % [lit_n, i_max]
+
+
+func _has_path(start: String, goal: String, edges: Array) -> bool:
+	if start == goal:
+		return true
+	var adj: Dictionary = {}
+	for e in edges:
+		var a: String = str(e["na"])
+		var b: String = str(e["nb"])
+		if a == b:
+			continue
+		if not adj.has(a):
+			adj[a] = []
+		if not adj.has(b):
+			adj[b] = []
+		adj[a].append(b)
+		adj[b].append(a)
+	var seen: Dictionary = {}
+	var stack: Array = [start]
+	seen[start] = true
+	while stack.size() > 0:
+		var n: String = str(stack.pop_back())
+		if n == goal:
+			return true
+		if not adj.has(n):
+			continue
+		for m in adj[n]:
+			var ms: String = str(m)
+			if seen.has(ms):
+				continue
+			seen[ms] = true
+			stack.append(ms)
+	return false
+
+
+func _gauss(G: Array, rhs: Array) -> Array:
+	var n: int = rhs.size()
+	if n == 0:
+		return []
+	var A: Array = []
+	for i in range(n):
+		var row: Array = []
+		for j in range(n):
+			row.append(float(G[i][j]))
+		row.append(float(rhs[i]))
+		A.append(row)
+	for col in range(n):
+		var piv: int = col
+		var best: float = absf(float(A[col][col]))
+		for r in range(col + 1, n):
+			var v: float = absf(float(A[r][col]))
+			if v > best:
+				best = v
+				piv = r
+		if best < 1e-14:
+			return []
+		if piv != col:
+			var tmp = A[col]
+			A[col] = A[piv]
+			A[piv] = tmp
+		var div: float = float(A[col][col])
+		for j in range(col, n + 1):
+			A[col][j] = float(A[col][j]) / div
+		for r in range(n):
+			if r == col:
+				continue
+			var f: float = float(A[r][col])
+			if absf(f) < 1e-18:
+				continue
+			for j in range(col, n + 1):
+				A[r][j] = float(A[r][j]) - f * float(A[col][j])
+	var x: Array = []
+	for i in range(n):
+		x.append(float(A[i][n]))
+	return x

@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/physics/particle_motion/particle_lab.gd" id="2"]
+
+[node name="ParticleLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Particle Motion"
+lab_eyebrow = "PHYSICS  /  PARTICLE MOTION"
+lab_lead = "Track position, velocity and acceleration vectors. Constant v, constant a, or F = ma."
+field_id = "physics"
+page_id = "particle_motion"
+back_label = "<- Physics"

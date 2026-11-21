@@ -1,0 +1,20 @@
+{
+  "id": "hot_spring",
+  "name": "Hot Spring",
+  "media": {
+    "type": "hot_spring",
+    "temperature": 48.0,
+    "pH": 6.2,
+    "viscosity": 0.85,
+    "oxygen": 0.7,
+    "initialFoodHint": 22.0,
+    "initialWasteHint": 2.0
+  },
+  "cells": {
+    "activeTypes": [
+      "bacillus",
+      "vibrio"
+    ],
+    "initialCells": 20
+  }
+}

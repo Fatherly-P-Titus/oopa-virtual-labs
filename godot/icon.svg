@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="24" fill="#080808"/>
+  <circle cx="48" cy="64" r="28" fill="#b22222"/>
+  <circle cx="80" cy="64" r="28" fill="#b22222"/>
+  <path d="M40 64c0-8 6-14 14-18 2 10 2 26 0 36-8-4-14-10-14-18z" fill="#ffffff" opacity="0.9"/>
+  <text x="64" y="118" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="700" fill="#ffffff">OOPA</text>
+</svg>

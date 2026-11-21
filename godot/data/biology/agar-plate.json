@@ -1,0 +1,22 @@
+{
+  "id": "agar",
+  "name": "Agar Plate",
+  "media": {
+    "type": "agar",
+    "temperature": 37.0,
+    "pH": 7.2,
+    "viscosity": 2.4,
+    "oxygen": 1.1,
+    "initialFoodHint": 40.0,
+    "initialWasteHint": 0.0
+  },
+  "cells": {
+    "activeTypes": [
+      "coccus",
+      "bacillus",
+      "spirillum",
+      "vibrio"
+    ],
+    "initialCells": 16
+  }
+}

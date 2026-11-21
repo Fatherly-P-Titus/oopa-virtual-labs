@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/biology/ecosystems/ecosystems_lab.gd" id="2"]
+
+[node name="EcosystemsLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Ecosystems"
+lab_eyebrow = "BIOLOGY  /  ECOSYSTEMS"
+lab_lead = "Energy and matter through a food web: nutrients, producers, herbivores, carnivores, and detritus."
+field_id = "biology"
+page_id = "ecosystems"
+back_label = "← Biology"

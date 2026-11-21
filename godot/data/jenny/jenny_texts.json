@@ -1,0 +1,686 @@
+{
+  "pages": {
+    "main_menu": {
+      "page_name": "Main Menu",
+      "page_convo": [
+        {
+          "id": "mm-intro",
+          "type": "info",
+          "title": "Welcome",
+          "text": "Hi \u2014 I'm Jenny, your lab guide. Pick a field below to explore interactive simulations."
+        },
+        {
+          "id": "mm-fields",
+          "type": "tip",
+          "title": "Fields",
+          "text": "Chemistry, Biology, Physics and Engineering each hold multiple projects. Open cards show how many labs are ready."
+        },
+        {
+          "id": "mm-progress",
+          "type": "info",
+          "title": "Building the suite",
+          "text": "New labs appear as Available when their Godot scenes are ready. Planned means coming soon."
+        }
+      ]
+    },
+    "chemistry": {
+      "page_name": "Chemistry",
+      "page_convo": [
+        {
+          "id": "chem-hub",
+          "type": "info",
+          "title": "Chemistry laboratory",
+          "text": "Matter, reactions, equilibrium and energy. Open any Available project to run the simulation."
+        },
+        {
+          "id": "chem-gas",
+          "type": "tip",
+          "title": "Start here",
+          "text": "Gas Laws is a good first stop \u2014 ideal gas PV = nRT with a live piston and pressure gauge."
+        }
+      ]
+    },
+    "biology": {
+      "page_name": "Biology",
+      "page_convo": [
+        {
+          "id": "bio-hub",
+          "type": "info",
+          "title": "Biology laboratory",
+          "text": "Cells, populations and ecosystems will live here as we port each simulation."
+        }
+      ]
+    },
+    "physics": {
+      "page_name": "Physics",
+      "page_convo": [
+        {
+          "id": "phy-hub",
+          "type": "info",
+          "title": "Physics laboratory",
+          "text": "Motion and forces. Projectile and particle labs are planned next."
+        }
+      ]
+    },
+    "engineering": {
+      "page_name": "Engineering",
+      "page_convo": [
+        {
+          "id": "eng-hub",
+          "type": "info",
+          "title": "Engineering laboratory",
+          "text": "Circuits, structures and machines. Circuit Builder and more will unlock here."
+        }
+      ]
+    },
+    "gas_laws": {
+      "page_name": "Gas Laws",
+      "page_convo": [
+        {
+          "id": "gl-1",
+          "type": "info",
+          "title": "Ideal gas",
+          "text": "Pressure is always calculated from PV = nRT (R = 8.314). The moving particles only illustrate temperature and amount \u2014 they do not create the pressure reading."
+        },
+        {
+          "id": "gl-2",
+          "type": "tip",
+          "title": "Choose a law",
+          "text": "Each law locks two quantities at the moment you select it. You control one slider; the fourth variable follows the law."
+        },
+        {
+          "id": "gl-3",
+          "type": "tip",
+          "title": "Boyle",
+          "text": "Under Boyle, only volume is free. Compress the piston and watch P rise so that P \u00d7 V stays constant. Record several points and check the table."
+        },
+        {
+          "id": "gl-4",
+          "type": "tip",
+          "title": "Charles & Avogadro",
+          "text": "When volume is set by the law, the piston may hit its stops (2\u201330 L). A status message appears if that happens."
+        },
+        {
+          "id": "gl-5",
+          "type": "info",
+          "title": "Record & graph",
+          "text": "Record data points, then compare the constant column across rows. The graph shows points and a prediction curve for the active law."
+        }
+      ]
+    },
+    "reaction_rates": {
+      "page_name": "Reaction Rates",
+      "page_convo": [
+        {
+          "id": "rr-1",
+          "type": "info",
+          "title": "Rate law",
+          "text": "We model A \u2192 products with rate = k[A]^n for order n = 0, 1 or 2. The curve is the analytical integrated law \u2014 not a numerical ODE."
+        },
+        {
+          "id": "rr-2",
+          "type": "tip",
+          "title": "Curve shape",
+          "text": "Zero-order falls in a straight line; first-order is exponential; second-order decays more slowly at long times. Switch orders and compare."
+        },
+        {
+          "id": "rr-3",
+          "type": "tip",
+          "title": "Half-life",
+          "text": "The dashed red line marks t\u00bd. For first-order, t\u00bd depends only on k; for second-order it also depends on [A]\u2080."
+        },
+        {
+          "id": "rr-4",
+          "type": "info",
+          "title": "Arrhenius",
+          "text": "Enable Arrhenius to set k from temperature and Ea. Raising T increases k and shortens the half-life."
+        }
+      ]
+    },
+    "buffers": {
+      "page_name": "Buffers",
+      "page_convo": [
+        {
+          "id": "bf-1",
+          "type": "info",
+          "title": "Three modes",
+          "text": "Weak acid (quadratic Ka), Buffer (Henderson\u2013Hasselbalch), and Strong acid/base for comparison."
+        },
+        {
+          "id": "bf-2",
+          "type": "tip",
+          "title": "Buffer ratio",
+          "text": "pH \u2248 pKa + log([A\u207b]/[HA]). Equal HA and A\u207b puts you near the pKa \u2014 the best buffer region."
+        },
+        {
+          "id": "bf-3",
+          "type": "tip",
+          "title": "Capacity",
+          "text": "In Buffer mode, add strong acid or base. Small additions barely move pH; large ones break the buffer."
+        },
+        {
+          "id": "bf-4",
+          "type": "info",
+          "title": "Acids",
+          "text": "Pick acetic, formic, and others \u2014 each has a real Ka. Drag pKa for a custom acid."
+        }
+      ]
+    },
+    "predator_prey": {
+      "page_name": "Predator\u2013Prey",
+      "page_convo": [
+        {
+          "id": "pp-1",
+          "type": "info",
+          "title": "Lotka\u2013Volterra",
+          "text": "Prey grow, predators eat prey and convert them into more predators, predators die. The classic model produces endless cycles."
+        },
+        {
+          "id": "pp-2",
+          "type": "tip",
+          "title": "Phase portrait",
+          "text": "Plotting prey vs predators often traces a closed loop around the equilibrium (yellow dot)."
+        },
+        {
+          "id": "pp-3",
+          "type": "tip",
+          "title": "Food limit K",
+          "text": "When K is finite, prey cannot explode without predators. Cycles can damp toward equilibrium."
+        },
+        {
+          "id": "pp-4",
+          "type": "tip",
+          "title": "Try Extinction",
+          "text": "Load the Extinction preset with the floor on \u2014 populations that fall below 1 are wiped out for good."
+        }
+      ]
+    },
+    "fluid_dynamics": {
+      "page_name": "Fluid Dynamics",
+      "page_convo": [
+        {
+          "id": "fd-1",
+          "type": "info",
+          "title": "Continuity",
+          "text": "For steady incompressible flow, Q = A\u00b7v is the same at every section. Narrow the pipe and speed must rise."
+        },
+        {
+          "id": "fd-2",
+          "type": "tip",
+          "title": "Bernoulli",
+          "text": "p/\u03c1 + v\u00b2/2 + gz stays constant if you ignore losses. Faster fluid \u2192 lower static pressure \u2014 that is the venturi effect."
+        },
+        {
+          "id": "fd-3",
+          "type": "tip",
+          "title": "Head loss",
+          "text": "Friction factor f and length L add head loss h_L, so pressure drops more than the ideal Bernoulli prediction."
+        },
+        {
+          "id": "fd-4",
+          "type": "tip",
+          "title": "Try Venturi",
+          "text": "Load the Venturi preset, then shrink D\u2082 \u2014 watch v\u2082 climb and p\u2082 fall."
+        }
+      ]
+    },
+    "heat_transfer": {
+      "page_name": "Heat Transfer",
+      "page_convo": [
+        {
+          "id": "ht-1",
+          "type": "info",
+          "title": "q = \u0394T / R",
+          "text": "Heat flux through a wall equals the temperature difference divided by the total thermal resistance. Units: W/m\u00b2."
+        },
+        {
+          "id": "ht-2",
+          "type": "tip",
+          "title": "Series resistances",
+          "text": "Each layer adds R = L/k. Convection films add R = 1/h. They all add in series for a single path through the wall."
+        },
+        {
+          "id": "ht-3",
+          "type": "tip",
+          "title": "Insulation",
+          "text": "Low thermal conductivity k (or thicker L) raises R and lowers q \u2014 that is how insulation cuts heat loss in winter."
+        },
+        {
+          "id": "ht-4",
+          "type": "tip",
+          "title": "Presets",
+          "text": "Compare Winter wall vs Bare brick at the same outdoor temperature \u2014 watch q jump when insulation is removed."
+        }
+      ]
+    },
+    "robot_arm": {
+      "page_name": "Robot Arm",
+      "page_convo": [
+        {
+          "id": "ra-1",
+          "type": "info",
+          "title": "Forward kinematics",
+          "text": "Given joint angles \u03b8\u2081 and \u03b8\u2082, FK computes the end-effector (x, y). Move the sliders and watch the arm."
+        },
+        {
+          "id": "ra-2",
+          "type": "tip",
+          "title": "Inverse kinematics",
+          "text": "Click a point in the workspace to solve for angles that reach it. Some points have two solutions (elbow up / down)."
+        },
+        {
+          "id": "ra-3",
+          "type": "tip",
+          "title": "Workspace",
+          "text": "Reachable points lie between |L\u2081\u2212L\u2082| and L\u2081+L\u2082 from the base. Outside the grey rings, IK fails."
+        },
+        {
+          "id": "ra-4",
+          "type": "tip",
+          "title": "Try it",
+          "text": "Load Long reach, then click near the outer ring \u2014 then toggle Elbow up to see the other configuration."
+        }
+      ]
+    },
+    "simple_machines": {
+      "page_name": "Simple Machines",
+      "page_convo": [
+        {
+          "id": "sm-1",
+          "type": "info",
+          "title": "Mechanical advantage",
+          "text": "MA = load / effort. Ideal MA ignores losses; actual MA includes efficiency or friction."
+        },
+        {
+          "id": "sm-2",
+          "type": "tip",
+          "title": "Lever",
+          "text": "Class 1: fulcrum between load and effort (crowbar). Class 2: load between (wheelbarrow). Class 3: effort between (tweezers)."
+        },
+        {
+          "id": "sm-3",
+          "type": "tip",
+          "title": "Incline",
+          "text": "MA \u2248 1/sin(\u03b8). A gentler ramp needs less effort but a longer path."
+        },
+        {
+          "id": "sm-4",
+          "type": "tip",
+          "title": "Pulley & wheel",
+          "text": "Pulley MA \u2248 number of supporting strands. Wheel-and-axle MA \u2248 R/r."
+        }
+      ]
+    },
+    "titration": {
+      "page_name": "Titration",
+      "page_convo": [
+        {
+          "id": "ti-1",
+          "type": "info",
+          "title": "Equivalence",
+          "text": "Veq = Ca\u00b7Va/Cb for a 1:1 reaction. At equivalence, moles of acid and base match."
+        },
+        {
+          "id": "ti-2",
+          "type": "tip",
+          "title": "Add carefully",
+          "text": "Near the endpoint, use +0.1 mL or +drop. The pH jumps steeply for strong\u2013strong titrations."
+        },
+        {
+          "id": "ti-3",
+          "type": "tip",
+          "title": "Indicators",
+          "text": "Phenolphthalein suits strong acid\u2013strong base and weak acid\u2013strong base. Methyl orange is better for strong acid\u2013weak base."
+        },
+        {
+          "id": "ti-4",
+          "type": "info",
+          "title": "Theory curve",
+          "text": "Turn on the theoretical curve to compare your measured points with the exact charge-balance prediction."
+        }
+      ]
+    },
+    "chemical_equilibrium": {
+      "page_name": "Chemical Equilibrium",
+      "page_convo": [
+        {
+          "id": "eq-1",
+          "type": "info",
+          "title": "Kc",
+          "text": "At equilibrium the reaction quotient Q equals Kc. Changing initials, volume or temperature moves the system to a new balance."
+        },
+        {
+          "id": "eq-2",
+          "type": "tip",
+          "title": "ICE table",
+          "text": "Initial concentrations \u2192 extent \u03be \u2192 equilibrium concentrations. The bars compare I vs E for each species."
+        },
+        {
+          "id": "eq-3",
+          "type": "tip",
+          "title": "Le Chatelier",
+          "text": "T+ / T\u2212 shifts Kc (endo vs exo). Halving V raises all concentrations \u2014 gas reactions with \u0394n \u2260 0 shift composition."
+        },
+        {
+          "id": "eq-4",
+          "type": "info",
+          "title": "Haber",
+          "text": "N\u2082 + 3H\u2082 \u21cc 2NH\u2083 is exothermic; cooling favours ammonia. High pressure (small V) also favours products."
+        }
+      ]
+    },
+    "projectile_motion": {
+      "page_name": "Projectile Motion",
+      "page_convo": [
+        {
+          "id": "pm-1",
+          "type": "info",
+          "title": "Ideal parabola",
+          "text": "With no drag, range R = v\u2080\u00b2 sin(2\u03b8)/g on flat ground is maximised at 45\u00b0. The dashed path is that vacuum trajectory."
+        },
+        {
+          "id": "pm-2",
+          "type": "tip",
+          "title": "Air drag",
+          "text": "Turn up drag c \u2014 the real path falls short and is no longer symmetric. Mass then matters because acceleration scales as c/m."
+        },
+        {
+          "id": "pm-3",
+          "type": "tip",
+          "title": "Cliff & bounce",
+          "text": "Launch from height for a longer flight. Raise bounce e to see multiple landings before rolling stops."
+        },
+        {
+          "id": "pm-4",
+          "type": "info",
+          "title": "Gravity presets",
+          "text": "Moon g \u2248 1.62 m/s\u00b2 stretches the arc dramatically compared with Earth."
+        }
+      ]
+    },
+    "circuit_builder": {
+      "page_name": "Circuit Builder",
+      "page_convo": [
+        {
+          "id": "cb-1",
+          "type": "info",
+          "title": "Multi-wire ports",
+          "text": "Any port can take up to 4 wires. Use that to branch from BAT+ to several loads, or join returns to BAT\u2212."
+        },
+        {
+          "id": "cb-2",
+          "type": "tip",
+          "title": "Switch",
+          "text": "The switch has in+/in\u2212 and out+/out\u2212. ON connects in\u2192out for each polarity. OFF opens both."
+        },
+        {
+          "id": "cb-3",
+          "type": "tip",
+          "title": "Series path",
+          "text": "For a switch to kill an LED, the switch must sit on the only path from BAT+ to BAT\u2212."
+        },
+        {
+          "id": "cb-4",
+          "type": "tip",
+          "title": "Ports",
+          "text": "Blue = +. Red = \u2212. Grey wire = no current. Yellow = current flowing."
+        }
+      ]
+    },
+    "particle_motion": {
+      "page_name": "Particle Motion",
+      "page_convo": [
+        {
+          "id": "km-1",
+          "type": "info",
+          "title": "Kinetic picture",
+          "text": "Particles move freely and bounce off the walls (and each other). Temperature sets how fast they move on average."
+        },
+        {
+          "id": "km-2",
+          "type": "tip",
+          "title": "Ideal-like",
+          "text": "With elasticity = 1 and gravity = 0, total kinetic energy stays roughly constant \u2014 closer to an ideal gas in a box."
+        },
+        {
+          "id": "km-3",
+          "type": "tip",
+          "title": "Dissipation",
+          "text": "Raise gravity and lower elasticity: each bounce loses energy and particles settle toward the bottom."
+        },
+        {
+          "id": "km-4",
+          "type": "tip",
+          "title": "Colour",
+          "text": "Bluer = slower; redder = faster. Colour tracks each particle's instantaneous speed."
+        }
+      ]
+    },
+    "pendulum_springs": {
+      "page_name": "Pendulum & Springs",
+      "page_convo": [
+        {
+          "id": "ps-1",
+          "type": "info",
+          "title": "SHM",
+          "text": "For small angles the pendulum period is 2\u03c0\u221a(L/g), independent of amplitude. The spring period is 2\u03c0\u221a(m/k)."
+        },
+        {
+          "id": "ps-2",
+          "type": "tip",
+          "title": "Energy",
+          "text": "KE and PE trade places each quarter cycle. With damping = 0, total energy stays roughly constant."
+        },
+        {
+          "id": "ps-3",
+          "type": "tip",
+          "title": "Large angles",
+          "text": "At large release angles the pendulum is no longer simple harmonic \u2014 period grows slightly."
+        }
+      ]
+    },
+    "collisions": {
+      "page_name": "Collision Motion",
+      "page_convo": [
+        {
+          "id": "col-1",
+          "type": "info",
+          "title": "Restitution e",
+          "text": "e = 1 is elastic (KE conserved for the pair, ignoring walls). e = 0 is perfectly inelastic \u2014 bodies share velocity along the contact normal."
+        },
+        {
+          "id": "col-2",
+          "type": "tip",
+          "title": "Momentum",
+          "text": "With no external force along a direction, total momentum in that direction stays constant. Watch px before and after a 1D hit."
+        },
+        {
+          "id": "col-3",
+          "type": "tip",
+          "title": "Mass ratio",
+          "text": "A heavy mass hitting a light one at rest transfers a large speed to the light mass in the elastic case."
+        }
+      ]
+    },
+    "wave_interference": {
+      "page_name": "Wave Interference",
+      "page_convo": [
+        {
+          "id": "wv-1",
+          "type": "info",
+          "title": "Path difference",
+          "text": "Constructive interference where path difference \u03b4 = m\u03bb; destructive where \u03b4 = (m+\u00bd)\u03bb."
+        },
+        {
+          "id": "wv-2",
+          "type": "tip",
+          "title": "Phase shift",
+          "text": "Adding \u03c0 phase to source 2 swaps bright and dark fringes along the centre line."
+        },
+        {
+          "id": "wv-3",
+          "type": "tip",
+          "title": "Separation",
+          "text": "Wider source separation packs more fringes into the same screen region."
+        }
+      ]
+    },
+    "single_cell": {
+      "page_name": "Single-Celled Organisms",
+      "page_convo": [
+        {
+          "id": "sc-1",
+          "type": "info",
+          "title": "Media-first world",
+          "text": "Food (green) and waste (grey) live on a grid. Temperature, pH, viscosity and oxygen change how well cells eat and move."
+        },
+        {
+          "id": "sc-2",
+          "type": "tip",
+          "title": "Life cycle",
+          "text": "Each tick a cell senses food, metabolizes, moves up the gradient, grows, and may divide with a mutated genome \u2014 or die from starvation or age."
+        },
+        {
+          "id": "sc-3",
+          "type": "tip",
+          "title": "Four types",
+          "text": "Coccus is balanced, Bacillus is an efficient feeder, Spirillum is a fast forager, Vibrio is a hardy middle ground. Watch which type wins in each preset."
+        },
+        {
+          "id": "sc-4",
+          "type": "tip",
+          "title": "Try this",
+          "text": "Load Hot Spring, press Play, then cool the temperature toward 37 \u00b0C \u2014 population and energy charts should respond. Click a cell to possess it."
+        },
+        {
+          "id": "sc-5",
+          "type": "info",
+          "title": "Presets",
+          "text": "Aqueous is a friendly broth. Hot Spring is warmer and leaner. Agar is viscous with richer food \u2014 motion slows, colonies persist."
+        }
+      ]
+    },
+    "ecosystems": {
+      "page_name": "Ecosystems",
+      "page_convo": [
+        {
+          "id": "eco-1",
+          "type": "info",
+          "title": "Food web compartments",
+          "text": "Nutrients feed producers. Herbivores eat producers. Carnivores eat herbivores. Death and inefficient eating build detritus, which recycles back to nutrients."
+        },
+        {
+          "id": "eco-2",
+          "type": "tip",
+          "title": "Energy pyramid",
+          "text": "Each trophic step keeps only a fraction of the energy (efficiency). Upper levels are thinner \u2014 that is why the pyramid narrows."
+        },
+        {
+          "id": "eco-3",
+          "type": "tip",
+          "title": "Nutrient bloom",
+          "text": "High nutrient input can fuel a producer bloom. Without enough grazers, the system tilts toward plants and detritus."
+        },
+        {
+          "id": "eco-4",
+          "type": "tip",
+          "title": "Overfish",
+          "text": "High carnivore death (or predation pressure) can crash the top level and let herbivores surge \u2014 then overgraze producers."
+        }
+      ]
+    },
+    "evolution": {
+      "page_name": "Evolution",
+      "page_convo": [
+        {
+          "id": "ev-1",
+          "type": "info",
+          "title": "Selection",
+          "text": "Individuals closer to the environmental optimum have higher fitness and leave more offspring. The mean trait moves toward z*."
+        },
+        {
+          "id": "ev-2",
+          "type": "tip",
+          "title": "Mutation",
+          "text": "Mutation adds variation. Without it, selection uses up diversity and adaptation to a moving target stalls."
+        },
+        {
+          "id": "ev-3",
+          "type": "tip",
+          "title": "Drift",
+          "text": "In small populations, random sampling (drift) can overpower weak selection \u2014 try the Weak/drift preset."
+        },
+        {
+          "id": "ev-4",
+          "type": "tip",
+          "title": "Moving target",
+          "text": "When the optimum shifts each generation, the population must evolve continuously to keep up \u2014 a simple model of environmental change."
+        }
+      ]
+    },
+    "ecology": {
+      "page_name": "Ecology",
+      "page_convo": [
+        {
+          "id": "ec-1",
+          "type": "info",
+          "title": "Competition",
+          "text": "When two species share resources, each reduces the other's growth. Competition coefficients \u03b1 measure how strongly that happens."
+        },
+        {
+          "id": "ec-2",
+          "type": "tip",
+          "title": "Competitive exclusion",
+          "text": "If niches are nearly identical (\u03b1 \u2248 1), one species usually drives the other to zero \u2014 Gause's principle."
+        },
+        {
+          "id": "ec-3",
+          "type": "tip",
+          "title": "Coexistence",
+          "text": "When each species inhibits itself more than its competitor (niche partitioning), a stable coexistence equilibrium can appear."
+        },
+        {
+          "id": "ec-4",
+          "type": "tip",
+          "title": "Isoclines",
+          "text": "On the phase plane, teal and violet lines are zero-growth isoclines. Their crossing (yellow) is the predicted equilibrium."
+        }
+      ]
+    },
+    "chemical_reactions": {
+      "page_name": "Chemical Reactions",
+      "page_convo": [
+        {
+          "id": "cr-1",
+          "type": "info",
+          "title": "Reaction types",
+          "text": "Synthesis, decomposition, single/double replacement, combustion, acid\u2013base, and simple redox \u2014 each catalogue entry is tagged with its type."
+        },
+        {
+          "id": "cr-2",
+          "type": "tip",
+          "title": "Limiting reactant",
+          "text": "The reactant that runs out first limits how far the reaction can go. Lower one slider and watch products shrink."
+        },
+        {
+          "id": "cr-3",
+          "type": "tip",
+          "title": "Builder",
+          "text": "Pick two species and Find reaction \u2014 if a known pair exists in the catalogue, that reaction loads automatically."
+        },
+        {
+          "id": "cr-4",
+          "type": "tip",
+          "title": "Try this",
+          "text": "Open AgCl precipitate, set AgNO\u2083 high and NaCl low \u2014 NaCl becomes limiting and leftover silver nitrate remains."
+        },
+        {
+          "id": "cr-5",
+          "type": "tip",
+          "title": "Free mix",
+          "text": "Pick up to three species and Run free mix. Exact reactant sets from the catalogue will load; unknown combinations report no reaction \u2014 chemistry stays honest."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/engineering/robot_arm/robot_arm_lab.gd" id="2"]
+
+[node name="RobotArmLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Robot Arm"
+lab_eyebrow = "ENGINEERING  /  ROBOT ARM"
+lab_lead = "Planar 2-link arm. Move joint angles (FK) or click the workspace to set a target (IK)."
+field_id = "engineering"
+page_id = "robot_arm"
+back_label = "← Engineering"

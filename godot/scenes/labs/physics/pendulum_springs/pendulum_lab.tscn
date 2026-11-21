@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/physics/pendulum_springs/pendulum_lab.gd" id="2"]
+
+[node name="PendulumLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Pendulum & Springs"
+lab_eyebrow = "PHYSICS  /  PENDULUM & SPRINGS"
+lab_lead = "Simple pendulum or mass–spring. Watch SHM, energy exchange, and damping."
+field_id = "physics"
+page_id = "pendulum_springs"
+back_label = "<- Physics"

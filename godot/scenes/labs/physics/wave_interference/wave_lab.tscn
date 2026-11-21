@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/physics/wave_interference/wave_lab.gd" id="2"]
+
+[node name="WaveLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Wave Interference"
+lab_eyebrow = "PHYSICS  /  WAVE INTERFERENCE"
+lab_lead = "Two coherent sources — constructive and destructive interference fringes."
+field_id = "physics"
+page_id = "wave_interference"
+back_label = "<- Physics"

@@ -1,0 +1,83 @@
+[gd_scene format=3 uid="uid://cr1vhjyuxtrfh"]
+
+[ext_resource type="Script" uid="uid://b2wwj76veaab8" path="res://scenes/boot/splash.gd" id="1"]
+
+[node name="Splash" type="Control" unique_id=934455808]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Fill" type="ColorRect" parent="." unique_id=1283721243]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BackgroundImage" type="TextureRect" parent="." unique_id=1392098966]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="BottomScrim" type="ColorRect" parent="." unique_id=1809545752]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -140.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+color = Color(0.0313726, 0.0313726, 0.0313726, 0.55)
+
+[node name="Overlay" type="MarginContainer" parent="." unique_id=35467823]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -120.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 28
+
+[node name="VBox" type="VBoxContainer" parent="Overlay" unique_id=693520995]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Status" type="Label" parent="Overlay/VBox" unique_id=1613088271]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.92)
+theme_override_font_sizes/font_size = 13
+text = "EXPLORE  ·  EXPERIMENT  ·  DISCOVER"
+horizontal_alignment = 1
+
+[node name="Progress" type="ProgressBar" parent="Overlay/VBox" unique_id=549346076]
+custom_minimum_size = Vector2(220, 4)
+layout_mode = 2
+size_flags_horizontal = 4
+max_value = 3.0
+show_percentage = false
+
+[node name="Continue" type="Button" parent="Overlay/VBox" unique_id=1124417309]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Continue to main menu"
+
+[connection signal="pressed" from="Overlay/VBox/Continue" to="." method="_on_continue_pressed"]

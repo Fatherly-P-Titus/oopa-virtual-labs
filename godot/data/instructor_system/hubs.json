@@ -1,0 +1,24 @@
+{
+  "hubs": [
+    {
+      "id": "chemistry",
+      "title": "Chemistry",
+      "short": "CHEM"
+    },
+    {
+      "id": "biology",
+      "title": "Biology",
+      "short": "BIO"
+    },
+    {
+      "id": "physics",
+      "title": "Physics",
+      "short": "PHYS"
+    },
+    {
+      "id": "engineering",
+      "title": "Engineering",
+      "short": "ENG"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/biology/ecology/ecology_lab.gd" id="2"]
+
+[node name="EcologyLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Ecology"
+lab_eyebrow = "BIOLOGY  /  ECOLOGY"
+lab_lead = "Two species compete for limited resources. Change niche overlap and carrying capacities — see coexistence or competitive exclusion."
+field_id = "biology"
+page_id = "ecology"
+back_label = "← Biology"

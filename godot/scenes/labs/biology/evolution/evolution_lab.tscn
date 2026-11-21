@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/biology/evolution/evolution_lab.gd" id="2"]
+
+[node name="EvolutionLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Evolution"
+lab_eyebrow = "BIOLOGY  /  EVOLUTION"
+lab_lead = "Natural selection on a heritable trait. Mutation and drift compete with selection — watch the population track the optimum."
+field_id = "biology"
+page_id = "evolution"
+back_label = "← Biology"

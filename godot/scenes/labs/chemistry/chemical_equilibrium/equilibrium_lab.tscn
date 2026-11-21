@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/chemistry/chemical_equilibrium/equilibrium_lab.gd" id="2"]
+
+[node name="EquilibriumLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Chemical Equilibrium"
+lab_eyebrow = "CHEMISTRY  /  EQUILIBRIUM"
+lab_lead = "Solve Kc equilibrium. Change volume, concentration or temperature and watch the shift."
+field_id = "chemistry"
+page_id = "chemical_equilibrium"
+back_label = "<- Chemistry"

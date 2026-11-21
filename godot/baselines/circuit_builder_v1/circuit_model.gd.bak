@@ -1,0 +1,411 @@
+extends RefCounted
+class_name CircuitModel
+## Clean restart — simple netlist DC solver.
+##
+## Rules:
+## 1) Wires merge ports into nets (union-find).
+## 2) BAT fixes voltage: net(+) = Vbat, net(−) = 0 (ground).
+## 3) R / LED / closed switch are resistances between two nets.
+## 4) LED lights when forward current > threshold (blue=anode → red=cathode).
+##
+## No Thevenin battery stamp → no fake 180 A shorts.
+
+const SLOTS: int = 8
+const SLOT_PX: float = 50.0
+
+const R_LED: float = 80.0      # forward ohms
+const R_SW_ON: float = 0.05
+const R_SW_OFF: float = 1.0e9
+const R_OPEN: float = 1.0e9
+const I_ON: float = 0.002      # 2 mA to light LED
+const I_LIVE: float = 0.001    # wire shows live
+
+enum Kind { BAT, R, LEDW, LEDO, SWITCH }
+
+const DEFS: Dictionary = {
+	Kind.BAT:    {"label": "BAT",  "value": 9.0},
+	Kind.R:      {"label": "R",    "value": 330.0},
+	Kind.LEDW:   {"label": "LEDW", "value": 1.8},
+	Kind.LEDO:   {"label": "LEDO", "value": 1.8},
+	Kind.SWITCH: {"label": "SW",   "value": 0.0},
+}
+
+var chips: Array = []
+var wires: Array = []
+var next_id: int = 1
+
+var chip_i: Dictionary = {}   # id -> amperes through chip
+var wire_i: Dictionary = {}   # id -> amperes (same loop current proxy)
+var ok: bool = true
+var message: String = "Place BAT + parts, wire blue→blue and red→red."
+var total_power: float = 0.0
+
+
+func clear() -> void:
+	chips.clear()
+	wires.clear()
+	next_id = 1
+	chip_i.clear()
+	wire_i.clear()
+	ok = true
+	message = "Board cleared."
+	total_power = 0.0
+
+
+func label_of(kind: int) -> String:
+	return str(DEFS[kind]["label"])
+
+
+func port_id(chip_id: int, which: int) -> String:
+	return "c%d_%d" % [chip_id, which]
+
+
+func slot_free(sr: int, sc: int, ignore_id: int = -1) -> bool:
+	if sr < 0 or sc < 0 or sr >= SLOTS or sc >= SLOTS:
+		return false
+	for c in chips:
+		if int(c.id) == ignore_id:
+			continue
+		if int(c.slot_r) == sr and int(c.slot_c) == sc:
+			return false
+	return true
+
+
+func add_chip(kind: int, slot_r: int, slot_c: int, value: float = -1.0) -> Dictionary:
+	if not slot_free(slot_r, slot_c):
+		return {}
+	var def: Dictionary = DEFS[kind]
+	var ch := {
+		"id": next_id,
+		"kind": kind,
+		"slot_r": slot_r,
+		"slot_c": slot_c,
+		"rot": 0,
+		"value": float(def["value"]) if value < 0.0 else value,
+		"closed": true,
+		"lit": false,
+	}
+	next_id += 1
+	chips.append(ch)
+	solve()
+	return ch
+
+
+func chip_has_wires(cid: int) -> bool:
+	var prefix := "c%d_" % cid
+	for w in wires:
+		if str(w.port_a).begins_with(prefix) or str(w.port_b).begins_with(prefix):
+			return true
+	return false
+
+
+func rotate_chip(cid: int, clockwise: bool) -> bool:
+	var ch: Dictionary = chip_by_id(cid)
+	if ch.is_empty() or chip_has_wires(cid):
+		return false
+	var r: int = int(ch.rot)
+	ch.rot = (r + 1) % 4 if clockwise else (r + 3) % 4
+	return true
+
+
+func remove_chip(cid: int) -> void:
+	for i in range(chips.size() - 1, -1, -1):
+		if int(chips[i].id) == cid:
+			chips.remove_at(i)
+			break
+	var prefix := "c%d_" % cid
+	for i in range(wires.size() - 1, -1, -1):
+		if str(wires[i].port_a).begins_with(prefix) or str(wires[i].port_b).begins_with(prefix):
+			wires.remove_at(i)
+	solve()
+
+
+func chip_by_id(cid: int) -> Dictionary:
+	for c in chips:
+		if int(c.id) == cid:
+			return c
+	return {}
+
+
+func add_wire(port_a: String, port_b: String) -> Dictionary:
+	if port_a == "" or port_b == "" or port_a == port_b:
+		return {}
+	for w in wires:
+		if (str(w.port_a) == port_a and str(w.port_b) == port_b) \
+		or (str(w.port_a) == port_b and str(w.port_b) == port_a):
+			return {}
+	var w2 := {"id": next_id, "port_a": port_a, "port_b": port_b}
+	next_id += 1
+	wires.append(w2)
+	solve()
+	return w2
+
+
+# --- Union-find ---
+func _find(x: String, parent: Dictionary) -> String:
+	var r: String = x
+	while str(parent.get(r, r)) != r:
+		r = str(parent[r])
+	var cur: String = x
+	while cur != r:
+		var nxt: String = str(parent.get(cur, cur))
+		parent[cur] = r
+		cur = nxt
+	return r
+
+
+func _unite(a: String, b: String, parent: Dictionary) -> void:
+	var ra := _find(a, parent)
+	var rb := _find(b, parent)
+	if ra != rb:
+		parent[rb] = ra
+
+
+func solve() -> void:
+	chip_i.clear()
+	wire_i.clear()
+	total_power = 0.0
+	for i in range(chips.size()):
+		chips[i]["lit"] = false
+		chip_i[int(chips[i].id)] = 0.0
+	for w in wires:
+		wire_i[int(w.id)] = 0.0
+
+	if chips.is_empty():
+		ok = true
+		message = "Drag chips onto the board, then wire ports."
+		return
+
+	# 1) Nets from WIRES only (components are edges, not shorts)
+	var parent: Dictionary = {}
+	for c in chips:
+		var a := port_id(int(c.id), 0)
+		var b := port_id(int(c.id), 1)
+		parent[a] = a
+		parent[b] = b
+	for w in wires:
+		var pa := str(w.port_a)
+		var pb := str(w.port_b)
+		if not parent.has(pa):
+			parent[pa] = pa
+		if not parent.has(pb):
+			parent[pb] = pb
+		_unite(pa, pb, parent)
+	for k in parent.keys():
+		_find(str(k), parent)
+
+	# 2) Find battery
+	var bat: Dictionary = {}
+	for c in chips:
+		if int(c.kind) == Kind.BAT:
+			bat = c
+			break
+	if bat.is_empty():
+		ok = false
+		message = "Add a BAT chip."
+		return
+
+	var bat_v: float = maxf(float(bat.value), 0.1)
+	var net_pos: String = _find(port_id(int(bat.id), 0), parent)
+	var net_gnd: String = _find(port_id(int(bat.id), 1), parent)
+
+	if net_pos == net_gnd:
+		ok = false
+		message = "Battery + and − are shorted by wires."
+		return
+
+	# 3) Collect all nets
+	var net_set: Dictionary = {}
+	for c in chips:
+		net_set[_find(port_id(int(c.id), 0), parent)] = true
+		net_set[_find(port_id(int(c.id), 1), parent)] = true
+
+	# 4) Fixed voltages: gnd = 0, pos = bat_v. Other nets are unknowns.
+	var unknown: Array = []
+	var idx: Dictionary = {}
+	for n in net_set.keys():
+		var ns: String = str(n)
+		if ns == net_gnd or ns == net_pos:
+			continue
+		idx[ns] = unknown.size()
+		unknown.append(ns)
+	var nu: int = unknown.size()
+
+	# Voltage lookup after solve
+	var volt: Dictionary = {}
+	volt[net_gnd] = 0.0
+	volt[net_pos] = bat_v
+
+	# Helper: resistance of a passive chip between its two nets
+	# Returns -1 if not a passive conductor (battery)
+	var edges: Array = []  # {cid, na, nb, r, kind}
+	for c in chips:
+		var k: int = int(c.kind)
+		if k == Kind.BAT:
+			continue
+		var na: String = _find(port_id(int(c.id), 0), parent)
+		var nb: String = _find(port_id(int(c.id), 1), parent)
+		var r: float = R_OPEN
+		match k:
+			Kind.R:
+				r = maxf(float(c.value), 0.1)
+			Kind.SWITCH:
+				r = R_SW_ON if bool(c.closed) else R_SW_OFF
+			Kind.LEDW, Kind.LEDO:
+				# Assume forward for matrix; fix reverse after
+				r = R_LED
+		edges.append({"cid": int(c.id), "na": na, "nb": nb, "r": r, "kind": k})
+
+	# 5) Build conductance matrix for unknown nets only
+	# Stamp each edge; when a node is fixed, move to RHS
+	var G: Array = []
+	var rhs: Array = []
+	for i in range(nu):
+		var row: Array = []
+		for j in range(nu):
+			row.append(0.0)
+		G.append(row)
+		rhs.append(0.0)
+
+	for e in edges:
+		var na: String = str(e.na)
+		var nb: String = str(e.nb)
+		var g: float = 1.0 / maxf(float(e.r), 1e-9)
+		if na == nb:
+			continue
+		# stamp 4 cases for fixed/unknown endpoints
+		var a_u: bool = idx.has(na)
+		var b_u: bool = idx.has(nb)
+		var va_f: float = float(volt.get(na, 0.0))  # used if fixed
+		var vb_f: float = float(volt.get(nb, 0.0))
+
+		if a_u and b_u:
+			var ia: int = int(idx[na])
+			var ib: int = int(idx[nb])
+			G[ia][ia] = float(G[ia][ia]) + g
+			G[ib][ib] = float(G[ib][ib]) + g
+			G[ia][ib] = float(G[ia][ib]) - g
+			G[ib][ia] = float(G[ib][ia]) - g
+		elif a_u and not b_u:
+			var ia2: int = int(idx[na])
+			G[ia2][ia2] = float(G[ia2][ia2]) + g
+			rhs[ia2] = float(rhs[ia2]) + g * vb_f
+		elif b_u and not a_u:
+			var ib2: int = int(idx[nb])
+			G[ib2][ib2] = float(G[ib2][ib2]) + g
+			rhs[ib2] = float(rhs[ib2]) + g * va_f
+		# both fixed: no unknown stamp
+
+	if nu > 0:
+		var sol: Array = _gauss(G, rhs)
+		if sol.is_empty():
+			ok = false
+			message = "Cannot solve — open circuit or bad wiring."
+			return
+		for i in range(nu):
+			volt[str(unknown[i])] = float(sol[i])
+	# if nu == 0, only bat nets exist (direct BAT||load on same two nets)
+
+	# 6) Currents through each chip
+	var i_max: float = 0.0
+	for e in edges:
+		var na: String = str(e.na)
+		var nb: String = str(e.nb)
+		var va: float = float(volt.get(na, 0.0))
+		var vb: float = float(volt.get(nb, 0.0))
+		var dv: float = va - vb  # port0 net minus port1 net
+		var k: int = int(e.kind)
+		var cid: int = int(e.cid)
+		var i: float = 0.0
+
+		if k == Kind.LEDW or k == Kind.LEDO:
+			# Forward: current out of anode (port0) into cathode (port1) when va > vb
+			if dv > 0.0:
+				i = dv / R_LED
+			else:
+				i = 0.0  # reverse blocking
+			# Write lit onto chip
+			for ci in range(chips.size()):
+				if int(chips[ci].id) == cid:
+					chips[ci]["lit"] = i >= I_ON
+					break
+		elif k == Kind.SWITCH:
+			i = dv / float(e.r) if bool(chip_by_id(cid).get("closed", true)) else 0.0
+		else:
+			i = dv / maxf(float(e.r), 0.1)
+
+		chip_i[cid] = i
+		i_max = maxf(i_max, absf(i))
+
+	# Battery current ≈ sum of currents leaving + net through loads
+	var i_bat: float = 0.0
+	for e in edges:
+		var na: String = str(e.na)
+		var nb: String = str(e.nb)
+		var cid: int = int(e.cid)
+		var i: float = float(chip_i.get(cid, 0.0))
+		# current from na to nb is i (for passive i = (va-vb)/R)
+		if na == net_pos:
+			i_bat += i
+		elif nb == net_pos:
+			i_bat -= i
+	chip_i[int(bat.id)] = i_bat
+	total_power = absf(bat_v * i_bat)
+	i_max = maxf(i_max, absf(i_bat))
+
+	# Wires: live if circuit carries current
+	for w in wires:
+		wire_i[int(w.id)] = i_max
+
+	ok = true
+	var lit_n: int = 0
+	for c in chips:
+		if bool(c.get("lit", false)):
+			lit_n += 1
+
+	if i_max < I_LIVE:
+		message = "No current — need a closed path from BAT + (blue) to BAT − (red)."
+	else:
+		message = "Current flowing · %d LED on · Imax=%.3f A" % [lit_n, i_max]
+
+
+func _gauss(G: Array, rhs: Array) -> Array:
+	var n: int = rhs.size()
+	if n == 0:
+		return []
+	var A: Array = []
+	for i in range(n):
+		var row: Array = []
+		for j in range(n):
+			row.append(float(G[i][j]))
+		row.append(float(rhs[i]))
+		A.append(row)
+	for col in range(n):
+		var piv: int = col
+		var best: float = absf(float(A[col][col]))
+		for r in range(col + 1, n):
+			var v: float = absf(float(A[r][col]))
+			if v > best:
+				best = v
+				piv = r
+		if best < 1e-14:
+			return []
+		if piv != col:
+			var tmp = A[col]
+			A[col] = A[piv]
+			A[piv] = tmp
+		var div: float = float(A[col][col])
+		for j in range(col, n + 1):
+			A[col][j] = float(A[col][j]) / div
+		for r in range(n):
+			if r == col:
+				continue
+			var f: float = float(A[r][col])
+			if absf(f) < 1e-18:
+				continue
+			for j in range(col, n + 1):
+				A[r][j] = float(A[r][j]) - f * float(A[col][j])
+	var x: Array = []
+	for i in range(n):
+		x.append(float(A[i][n]))
+	return x

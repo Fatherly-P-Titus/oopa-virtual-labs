@@ -1,0 +1,11 @@
+OOPA Instructor & Examination System — M01–M06 COMPLETE
+Integrated with OOPA Virtual Labs (Godot 4 Compatibility)
+
+Lifecycle: Login → Roster → Exam → Student attempt → Grade → CSV export
+Storage: user://oopa/ (local)
+Credentials: individual (seed instructors.json)
+Exam scope: all available labs (hub-filtered)
+Grading: hybrid
+
+Smoke: OopaLifecycleSmoke.run()
+Guide: data/instructor_system/OPERATOR_GUIDE.md

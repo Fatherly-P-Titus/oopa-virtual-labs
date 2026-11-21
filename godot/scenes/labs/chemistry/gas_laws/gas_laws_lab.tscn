@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/chemistry/gas_laws/gas_laws_lab.gd" id="2"]
+
+[node name="GasLawsLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Gas Laws"
+lab_eyebrow = "CHEMISTRY  /  GAS LAWS"
+lab_lead = "Explore Boyle, Charles, Gay-Lussac and Avogadro. Change V, T or n and watch pressure respond."
+field_id = "chemistry"
+page_id = "gas_laws"
+back_label = "← Chemistry"

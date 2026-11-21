@@ -1,0 +1,186 @@
+{
+  "fields": [
+    {
+      "id": "chemistry",
+      "title": "Chemistry",
+      "subtitle": "Matter, reactions, equilibrium and energy",
+      "labs": [
+        {
+          "id": "gas_laws",
+          "title": "Gas Laws",
+          "blurb": "Ideal gas PV = nRT: Boyle, Charles, Gay-Lussac, Avogadro \u2014 chamber, graph, data table.",
+          "scene": "res://scenes/labs/chemistry/gas_laws/gas_laws_lab.tscn",
+          "status": "available"
+        },
+        {
+          "id": "titration",
+          "title": "Acid\u2013Base Titration",
+          "blurb": "Charge-balance pH curves, indicators and equivalence point.",
+          "scene": "res://scenes/labs/chemistry/titration/titration_lab.tscn",
+          "status": "available"
+        },
+        {
+          "id": "reaction_rates",
+          "title": "Reaction Rates",
+          "blurb": "Zero, first and second order kinetics with Arrhenius temperature dependence.",
+          "scene": "res://scenes/labs/chemistry/reaction_rates/reaction_rates_lab.tscn",
+          "status": "available"
+        },
+        {
+          "id": "buffers",
+          "title": "Acid\u2013Base & Buffers",
+          "blurb": "Weak acids, Henderson\u2013Hasselbalch buffers and capacity.",
+          "scene": "res://scenes/labs/chemistry/buffers/buffers_lab.tscn",
+          "status": "available"
+        },
+        {
+          "id": "chemical_equilibrium",
+          "title": "Chemical Equilibrium",
+          "blurb": "Kc solvers, ICE tables and Le Chatelier shifts.",
+          "scene": "res://scenes/labs/chemistry/chemical_equilibrium/equilibrium_lab.tscn",
+          "status": "available"
+        },
+        {
+          "id": "chemical_reactions",
+          "title": "Chemical Reactions",
+          "blurb": "Reaction types, balanced equations, limiting reactant \u2014 curated catalogue + known-pair builder.",
+          "scene": "res://scenes/labs/chemistry/chemical_reactions/chemical_reactions_lab.tscn",
+          "status": "available"
+        }
+      ]
+    },
+    {
+      "id": "biology",
+      "title": "Biology",
+      "subtitle": "Cells, populations and ecosystems",
+      "labs": [
+        {
+          "id": "single_cell",
+          "title": "Single-Celled Organisms",
+          "status": "available",
+          "scene": "res://scenes/labs/biology/single_cell/single_cell_lab.tscn",
+          "blurb": "Agent-based prokaryotes: media, metabolism, chemotaxis, fission."
+        },
+        {
+          "id": "predator_prey",
+          "title": "Predator\u2013Prey",
+          "blurb": "Lotka\u2013Volterra cycles, food limit and extinction \u2014 time series and phase portrait.",
+          "scene": "res://scenes/labs/biology/predator_prey/predator_prey_lab.tscn",
+          "status": "available"
+        },
+        {
+          "id": "ecosystems",
+          "title": "Ecosystems",
+          "blurb": "Nutrient\u2013producer\u2013herbivore\u2013carnivore web with recycling and trophic pyramid.",
+          "scene": "res://scenes/labs/biology/ecosystems/ecosystems_lab.tscn",
+          "status": "available"
+        },
+        {
+          "id": "evolution",
+          "title": "Evolution",
+          "status": "available",
+          "scene": "res://scenes/labs/biology/evolution/evolution_lab.tscn",
+          "blurb": "Selection, mutation and drift on a continuous trait; tracking a moving optimum."
+        },
+        {
+          "id": "ecology",
+          "title": "Ecology",
+          "status": "available",
+          "scene": "res://scenes/labs/biology/ecology/ecology_lab.tscn",
+          "blurb": "Two-species competition, niche overlap, coexistence vs competitive exclusion."
+        }
+      ]
+    },
+    {
+      "id": "physics",
+      "title": "Physics",
+      "subtitle": "Motion and forces",
+      "labs": [
+        {
+          "id": "particle_motion",
+          "title": "Particle Motion",
+          "blurb": "Position, velocity and acceleration vectors \u2014 constant v, constant a, or F = ma.",
+          "scene": "res://scenes/labs/physics/particle_motion/particle_lab.tscn",
+          "status": "available"
+        },
+        {
+          "id": "projectile_motion",
+          "title": "Projectile Motion",
+          "blurb": "Launch trajectories with drag, wind, bounce \u2014 vs ideal parabola.",
+          "scene": "res://scenes/labs/physics/projectile_motion/projectile_lab.tscn",
+          "status": "available"
+        },
+        {
+          "id": "pendulum_springs",
+          "title": "Pendulum & Springs",
+          "blurb": "Simple pendulum or mass\u2013spring \u2014 SHM, energy exchange, damping.",
+          "scene": "res://scenes/labs/physics/pendulum_springs/pendulum_lab.tscn",
+          "status": "available"
+        },
+        {
+          "id": "collisions",
+          "title": "Collision Motion",
+          "blurb": "1D and 2D two-body collisions \u2014 elastic, inelastic, momentum and energy.",
+          "scene": "res://scenes/labs/physics/collisions/collision_lab.tscn",
+          "status": "available"
+        },
+        {
+          "id": "wave_interference",
+          "title": "Wave Interference",
+          "blurb": "Two coherent sources \u2014 constructive and destructive interference fringes.",
+          "scene": "res://scenes/labs/physics/wave_interference/wave_lab.tscn",
+          "status": "available"
+        }
+      ]
+    },
+    {
+      "id": "engineering",
+      "title": "Engineering",
+      "subtitle": "Circuits, structures and machines",
+      "labs": [
+        {
+          "id": "circuit_builder",
+          "title": "Circuit Builder",
+          "blurb": "Breadboard DC circuits \u2014 battery, R, switch, diode, LED, meters.",
+          "scene": "res://scenes/labs/engineering/circuit_builder/circuit_lab.tscn",
+          "status": "available"
+        },
+        {
+          "id": "logic_gate_builder",
+          "title": "Logic Gate Builder",
+          "blurb": "Build digital logic circuits with seven Boolean gates, live signal propagation and truth tables.",
+          "scene": "res://labs/engineering/logic_gate_builder/scenes/logic_gate_builder_lab.tscn",
+          "status": "available"
+        },
+        {
+          "id": "fluid_dynamics",
+          "title": "Fluid Dynamics",
+          "blurb": "Pipe/venturi: continuity, Bernoulli, friction head loss, Reynolds number.",
+          "scene": "res://scenes/labs/engineering/fluid_dynamics/fluid_dynamics_lab.tscn",
+          "status": "available"
+        },
+        {
+          "id": "heat_transfer",
+          "title": "Heat Transfer",
+          "blurb": "Steady 1D multilayer wall: conduction, convection films, heat flux q = \u0394T/R.",
+          "scene": "res://scenes/labs/engineering/heat_transfer/heat_transfer_lab.tscn",
+          "status": "available"
+        },
+        {
+          "id": "robot_arm",
+          "title": "Robot Arm",
+          "blurb": "Planar 2R arm: forward & inverse kinematics, workspace, elbow up/down.",
+          "scene": "res://scenes/labs/engineering/robot_arm/robot_arm_lab.tscn",
+          "status": "available"
+        },
+        {
+          "id": "simple_machines",
+          "title": "Simple Machines",
+          "blurb": "Lever, incline, pulley, wheel-and-axle \u2014 ideal vs actual mechanical advantage.",
+          "scene": "res://scenes/labs/engineering/simple_machines/simple_machines_lab.tscn",
+          "status": "available"
+        }
+      ]
+    }
+  ]
+}

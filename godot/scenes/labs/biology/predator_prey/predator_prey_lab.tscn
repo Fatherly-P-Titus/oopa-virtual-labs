@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/biology/predator_prey/predator_prey_lab.gd" id="2"]
+
+[node name="PredatorPreyLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Predator–Prey"
+lab_eyebrow = "BIOLOGY  /  PREDATOR–PREY"
+lab_lead = "Lotka–Volterra cycles. Change growth, predation and carrying capacity — watch time series and the phase portrait."
+field_id = "biology"
+page_id = "predator_prey"
+back_label = "← Biology"

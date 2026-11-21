@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/engineering/simple_machines/simple_machines_lab.gd" id="2"]
+
+[node name="SimpleMachinesLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Simple Machines"
+lab_eyebrow = "ENGINEERING  /  SIMPLE MACHINES"
+lab_lead = "Mechanical advantage: levers, ramps, pulleys, and wheel-and-axle. Ideal vs real effort."
+field_id = "engineering"
+page_id = "simple_machines"
+back_label = "← Engineering"

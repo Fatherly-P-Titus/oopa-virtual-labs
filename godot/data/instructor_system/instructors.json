@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "instructors": [
+    {
+      "staff_id": "AdminStaff/001",
+      "passcode": "12346",
+      "role": "admin",
+      "hubs": [
+        "chemistry",
+        "biology",
+        "physics",
+        "engineering"
+      ],
+      "display_name": "Overall Administrator",
+      "active": true
+    },
+    {
+      "staff_id": "ChemStaff/001",
+      "passcode": "Chem#2026",
+      "role": "instructor",
+      "hubs": [
+        "chemistry"
+      ],
+      "display_name": "Chemistry Instructor",
+      "active": true
+    },
+    {
+      "staff_id": "BioStaff/001",
+      "passcode": "Bio#2026",
+      "role": "instructor",
+      "hubs": [
+        "biology"
+      ],
+      "display_name": "Biology Instructor",
+      "active": true
+    },
+    {
+      "staff_id": "PhysStaff/001",
+      "passcode": "Phys#2026",
+      "role": "instructor",
+      "hubs": [
+        "physics"
+      ],
+      "display_name": "Physics Instructor",
+      "active": true
+    },
+    {
+      "staff_id": "EngStaff/001",
+      "passcode": "Eng#2026",
+      "role": "instructor",
+      "hubs": [
+        "engineering"
+      ],
+      "display_name": "Engineering Instructor",
+      "active": true
+    }
+  ]
+}

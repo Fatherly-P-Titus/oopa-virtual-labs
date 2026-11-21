@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/chemistry/chemical_reactions/chemical_reactions_lab.gd" id="2"]
+
+[node name="ChemicalReactionsLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Chemical Reactions"
+lab_eyebrow = "CHEMISTRY  /  CHEMICAL REACTIONS"
+lab_lead = "Pick a known reaction, set reactant moles, and see the type, balanced equation, limiting reagent, and products."
+field_id = "chemistry"
+page_id = "chemical_reactions"
+back_label = "← Chemistry"

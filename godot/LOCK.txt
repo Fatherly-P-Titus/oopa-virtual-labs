@@ -1,0 +1,45 @@
+OOPA Virtual Labs — Godot 4 (Compatibility) — LOCKED BASELINE
+Date: 2026-10-19
+
+Included:
+- Splash with oopa_splash.png (runtime texture load)
+- Inter fonts (Regular / SemiBold / Bold)
+- Fire-brick theme (#b22222)
+- Main Menu: eyebrow, "Main Menu", fire-brick field cards
+- Field hub
+- Gas Laws lab (model + scene, status available)
+- Autoloads: AppState, JennyService, SceneRouter
+- icon.png from splash art
+
+Next (not locked): more labs, lab_chrome, Jenny panel UI
+
+## Locked 2026-10-24 — Heat Transfer
+- Available: Engineering → Heat Transfer
+- Model: heat_transfer_model.gd (1D multilayer wall, q=ΔT/R)
+- Scene: scenes/labs/engineering/heat_transfer/
+
+## Locked 2026-10-24 — Simple Machines
+- Available under Engineering
+- Lever / incline / pulley / wheel-axle
+
+## Locked 2026-10-24 — Robot Arm
+- Planar 2R FK/IK, workspace, click target
+- Engineering lab available
+
+## In progress 2026-10-25 — Single-Cell (BioCell port)
+Phase 1 DONE: scripts/models/biology/single_cell_model.gd
+- Media food/waste grid, diffusion, sample gradients
+- 4 types (coccus/bacillus/spirillum/vibrio) + genome mutation
+- step(): metabolize, chemotaxis move, binary fission, death
+- Stats hooks for later charts
+Phases 2–6 not started (lab scene, heatmap UI, charts, camera, presets)
+
+## In progress — Single-Cell Phase 2 DONE
+- scenes/labs/biology/single_cell/single_cell_lab.tscn
+- Play/Pause/Step/Reset, T/pH/viscosity/O2, draw cells by type
+- Manifest: biology/single_cell available
+
+## Single-Cell Phase 6 DONE (2026-10-25)
+- Presets: Aqueous, Hot Spring, Agar Plate (data/biology/*.json + apply_preset_id)
+- Jenny page: single_cell
+- Lab Phases 1–6 complete for Single-Celled Organisms

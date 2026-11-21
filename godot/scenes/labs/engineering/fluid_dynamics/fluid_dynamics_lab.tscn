@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/engineering/fluid_dynamics/fluid_dynamics_lab.gd" id="2"]
+
+[node name="FluidDynamicsLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Fluid Dynamics"
+lab_eyebrow = "ENGINEERING  /  FLUID DYNAMICS"
+lab_lead = "Continuity and Bernoulli along a pipe. Narrow the throat — speed rises, pressure falls."
+field_id = "engineering"
+page_id = "fluid_dynamics"
+back_label = "← Engineering"

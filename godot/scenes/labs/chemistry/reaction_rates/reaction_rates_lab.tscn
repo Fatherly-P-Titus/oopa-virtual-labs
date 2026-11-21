@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/chemistry/reaction_rates/reaction_rates_lab.gd" id="2"]
+
+[node name="ReactionRatesLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Reaction Rates"
+lab_eyebrow = "CHEMISTRY  /  REACTION RATES"
+lab_lead = "Zero-, first- and second-order kinetics. Watch [A] vs time and half-life."
+field_id = "chemistry"
+page_id = "reaction_rates"
+back_label = "<- Chemistry"

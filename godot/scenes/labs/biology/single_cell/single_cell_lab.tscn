@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/biology/single_cell/single_cell_lab.gd" id="2"]
+
+[node name="SingleCellLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Single-Celled Organisms"
+lab_eyebrow = "BIOLOGY  /  SINGLE-CELL"
+lab_lead = "Agent cells in a media bath. Play the sim, change temperature, pH and oxygen, watch populations respond."
+field_id = "biology"
+page_id = "single_cell"
+back_label = "← Biology"
