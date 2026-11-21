@@ -1,6 +1,45 @@
 extends Object
 class_name OopaColors
-## Brand tokens — 1:1 with web :root in lab-shell.css / main-menu.css
+## Central design tokens for the Godot application. Keep legacy aliases below
+## while screens migrate to the semantic palette.
+
+const MIDNIGHT_NAVY := Color("#101827")
+const DEEP_SLATE := Color("#19263a")
+const GRAPHITE_BLUE := Color("#26364d")
+const COOL_MIST := Color("#e9eef5")
+const CLEAN_WHITE := Color("#ffffff")
+const SCIENTIFIC_TEAL := Color("#16b8a6")
+const INSTRUMENT_BLUE := Color("#3b82f6")
+const SIGNAL_AMBER := Color("#f2a84a")
+const STATUS_SUCCESS := Color("#16856f")
+const STATUS_ERROR := Color("#c44545")
+const STATUS_INFO := INSTRUMENT_BLUE
+
+const SPACE_1 := 4
+const SPACE_2 := 8
+const SPACE_3 := 12
+const SPACE_4 := 16
+const SPACE_5 := 24
+const SPACE_6 := 32
+const SPACE_7 := 48
+const RADIUS_SM := 6
+const RADIUS_MD := 10
+const RADIUS_LG := 14
+const RADIUS_XL := 20
+const BORDER_WIDTH := 1
+const PAGE_MARGIN := 32
+const SIDEBAR_WIDTH := 320
+const HEADER_HEIGHT := 64
+
+const TYPE_DISPLAY := 36
+const TYPE_PAGE := 28
+const TYPE_SECTION := 20
+const TYPE_BODY := 14
+const TYPE_SECONDARY := 12
+const TYPE_LABEL := 11
+const TYPE_READOUT := 24
+
+## Legacy brand tokens retained for existing scenes and scripts.
 
 const RED := Color("#b22222")           ## --red
 const RED_BRIGHT := Color("#e12b2b")    ## --red-bright

@@ -1,0 +1,23 @@
+[gd_scene format=3]
+
+[node name="MetricCard" type="PanelContainer"]
+theme_type_variation = &"MetricCard"
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="Content"]
+layout_mode = 2
+theme_type_variation = &"StatLabel"
+text = "METRIC"
+
+[node name="Value" type="Label" parent="Content"]
+layout_mode = 2
+theme_type_variation = &"StatValue"
+text = "0.00"
+
+[node name="Unit" type="Label" parent="Content"]
+layout_mode = 2
+theme_type_variation = &"Muted"
+text = "unit"

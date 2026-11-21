@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[node name="StatusBanner" type="PanelContainer"]
+theme_type_variation = &"StatusInfo"
+
+[node name="Content" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Indicator" type="ColorRect" parent="Content"]
+custom_minimum_size = Vector2(4, 24)
+layout_mode = 2
+color = Color(0.086, 0.722, 0.651, 1)
+
+[node name="Message" type="Label" parent="Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Status message"
+autowrap_mode = 3
