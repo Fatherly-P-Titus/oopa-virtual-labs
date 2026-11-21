@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scenes/hub/field_hub.gd" id="1"]
 [ext_resource type="FontFile" path="res://assets/fonts/Inter-SemiBold.ttf" id="font_semi"]
+[ext_resource type="Theme" path="res://themes/oopa_theme.tres" id="2"]
+[ext_resource type="Script" path="res://scenes/common/science_motif.gd" id="3"]
 
 [node name="FieldHub" type="Control"]
 layout_mode = 3
@@ -11,6 +13,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
+theme = ExtResource("2")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -19,7 +22,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.980392, 0.976471, 0.972549, 1)
+color = Color(0.062745, 0.094118, 0.152941, 1)
 
 [node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -28,14 +31,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 48
-theme_override_constants/margin_top = 28
-theme_override_constants/margin_right = 48
-theme_override_constants/margin_bottom = 40
+theme_override_constants/margin_left = 36
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 36
+theme_override_constants/margin_bottom = 28
 
 [node name="VBox" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12
 
 [node name="Back" type="Button" parent="Margin/VBox"]
 layout_mode = 2
@@ -44,7 +47,7 @@ text = "←  Main Menu"
 
 [node name="Eyebrow" type="Label" parent="Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.698039, 0.133333, 0.133333, 1)
+theme_override_colors/font_color = Color(0.086, 0.722, 0.651, 1)
 theme_override_fonts/font = ExtResource("font_semi")
 theme_override_font_sizes/font_size = 14
 text = "OOPA VIRTUAL LABS  ·  LABORATORY"
@@ -52,19 +55,32 @@ uppercase = true
 
 [node name="Title" type="Label" parent="Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.105882, 0.105882, 0.105882, 1)
-theme_override_font_sizes/font_size = 44
+theme_override_colors/font_color = Color(0.965, 0.976, 0.99, 1)
+theme_override_font_sizes/font_size = 32
 text = "Chemistry"
 
 [node name="Subtitle" type="Label" parent="Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 1)
-theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.72, 0.78, 0.85, 1)
+theme_override_font_sizes/font_size = 14
 text = "Matter, reactions, equilibrium and energy"
 
 [node name="Spacer" type="Control" parent="Margin/VBox"]
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
+
+[node name="DisciplineMotif" type="Control" parent="Margin/VBox"]
+custom_minimum_size = Vector2(0, 124)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.0
+script = ExtResource("3")
+
+[node name="CatalogueHeading" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+theme_type_variation = &"Eyebrow"
+theme_override_colors/font_color = Color(0.72, 0.78, 0.85, 1)
+text = "LABORATORY CATALOGUE"
 
 [node name="Scroll" type="ScrollContainer" parent="Margin/VBox"]
 layout_mode = 2
@@ -74,8 +90,8 @@ horizontal_scroll_mode = 0
 [node name="Grid" type="GridContainer" parent="Margin/VBox/Scroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/h_separation = 18
-theme_override_constants/v_separation = 18
+theme_override_constants/h_separation = 14
+theme_override_constants/v_separation = 14
 columns = 2
 
 [connection signal="pressed" from="Margin/VBox/Back" to="." method="_on_back_pressed"]

@@ -1,22 +1,28 @@
 extends Control
-## Main menu — field cards from labs_manifest.json
+## Main dashboard. Discipline and lab counts are always read from the manifest.
 
 @onready var _grid: GridContainer = $Margin/VBox/Scroll/Grid
 @onready var _subtitle: Label = $Margin/VBox/Subtitle
 
-const FIREBRICK := Color("#b22222")
-const FIREBRICK_HOVER := Color("#9a1c1c")
-const TITLE_ON_CARD := Color(1, 1, 1, 1)
-const MUTED_ON_CARD := Color(1, 1, 1, 0.88)
-
-var _manifest: Dictionary = {}
+const PALETTES := {
+	"engineering": {"accent": Color("#16b8a6"), "tint": Color("#142e35"), "index": "01"},
+	"physics": {"accent": Color("#3b82f6"), "tint": Color("#182b49"), "index": "02"},
+	"chemistry": {"accent": Color("#f2a84a"), "tint": Color("#352b22"), "index": "03"},
+	"biology": {"accent": Color("#67c49a"), "tint": Color("#1e352e"), "index": "04"},
+}
 
 func _ready() -> void:
+	resized.connect(_update_grid_columns)
+	_update_grid_columns()
 	JennyService.set_page("main_menu")
 	_ensure_jenny()
 	_load_manifest()
 	_build_cards()
 	_add_platform_actions()
+
+func _update_grid_columns() -> void:
+	if is_instance_valid(_grid):
+		_grid.columns = 1 if size.x < 840.0 else 2
 
 func _ensure_jenny() -> void:
 	if has_node("JennyPanel"):
@@ -28,128 +34,147 @@ func _ensure_jenny() -> void:
 		j.page_id = "main_menu"
 		add_child(j)
 
-
 func _load_manifest() -> void:
 	var path := "res://data/config/labs_manifest.json"
 	if not FileAccess.file_exists(path):
-		_subtitle.text = "Missing labs_manifest.json"
+		_subtitle.text = "The laboratory catalogue is unavailable."
 		return
 	var f := FileAccess.open(path, FileAccess.READ)
+	if f == null:
+		return
 	var parsed: Variant = JSON.parse_string(f.get_as_text())
 	if typeof(parsed) == TYPE_DICTIONARY:
 		_manifest = parsed
 
-func _build_cards() -> void:
-	for c in _grid.get_children():
-		c.queue_free()
-	for field in _manifest.get("fields", []):
-		_grid.add_child(_make_field_card(field))
+var _manifest: Dictionary = {}
 
-func _make_field_card(field: Dictionary) -> PanelContainer:
-	var title := str(field.get("title", "?"))
-	var subtitle := str(field.get("subtitle", ""))
+func _build_cards() -> void:
+	for child in _grid.get_children():
+		child.queue_free()
+	var fields: Array = _manifest.get("fields", [])
+	for field in fields:
+		if field is Dictionary:
+			_grid.add_child(_make_field_card(field))
+	if fields.is_empty():
+		_subtitle.text = "No laboratory fields are currently listed."
+
+func _make_field_card(field: Dictionary) -> Button:
+	var field_id := str(field.get("id", ""))
+	var palette: Dictionary = PALETTES.get(field_id, {"accent": Color("#16b8a6"), "tint": Color("#19263a"), "index": "—"})
 	var labs: Array = field.get("labs", [])
 	var available := 0
 	for lab in labs:
-		if str(lab.get("status", "")) == "available":
+		if lab is Dictionary and str(lab.get("status", "")) == "available":
 			available += 1
-	var count_line := "%d project%s" % [labs.size(), "" if labs.size() == 1 else "s"]
-	if available > 0:
-		count_line += " · %d available" % available
-	else:
-		count_line += " · coming soon"
 
-	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(280, 132)
-	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	panel.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	var card := Button.new()
+	card.custom_minimum_size = Vector2(320, 176)
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	card.focus_mode = Control.FOCUS_ALL
+	card.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	card.add_theme_stylebox_override("normal", _card_style(Color("#19263a"), palette.accent, false))
+	card.add_theme_stylebox_override("hover", _card_style(Color("#26364d"), palette.accent, true))
+	card.add_theme_stylebox_override("pressed", _card_style(Color("#101827"), palette.accent, true))
+	card.add_theme_stylebox_override("focus", _card_style(Color("#19263a"), palette.accent, true))
+	card.add_theme_stylebox_override("disabled", _card_style(Color("#19263a"), Color("#607080"), false))
+	card.add_theme_color_override("font_color", Color.WHITE)
+	card.add_theme_color_override("font_hover_color", Color.WHITE)
+	card.add_theme_color_override("font_pressed_color", Color.WHITE)
+	card.text = ""
 
-	var style_n := StyleBoxFlat.new()
-	style_n.bg_color = FIREBRICK
-	style_n.set_corner_radius_all(12)
-	style_n.content_margin_left = 20
-	style_n.content_margin_right = 20
-	style_n.content_margin_top = 18
-	style_n.content_margin_bottom = 18
+	var column := VBoxContainer.new()
+	column.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	column.offset_left = 22
+	column.offset_top = 18
+	column.offset_right = -20
+	column.offset_bottom = -18
+	column.add_theme_constant_override("separation", 8)
+	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(column)
 
-	var style_h := style_n.duplicate()
-	style_h.bg_color = FIREBRICK_HOVER
-	style_h.set_border_width_all(2)
-	style_h.border_color = Color(1, 1, 1, 0.4)
-	style_h.content_margin_left = 18
-	style_h.content_margin_right = 18
-	style_h.content_margin_top = 16
-	style_h.content_margin_bottom = 16
+	var top := HBoxContainer.new()
+	top.add_theme_constant_override("separation", 8)
+	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	column.add_child(top)
+	var discipline_index := Label.new()
+	discipline_index.text = str(palette.index)
+	discipline_index.add_theme_color_override("font_color", palette.accent)
+	discipline_index.add_theme_font_size_override("font_size", 12)
+	discipline_index.add_theme_font_override("font", load("res://assets/fonts/Inter-Bold.ttf"))
+	top.add_child(discipline_index)
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	top.add_child(spacer)
+	var arrow := Label.new()
+	arrow.text = "OPEN  ↗"
+	arrow.add_theme_color_override("font_color", Color("#aebdcb"))
+	arrow.add_theme_font_size_override("font_size", 10)
+	top.add_child(arrow)
 
-	panel.add_theme_stylebox_override("panel", style_n)
+	var title := Label.new()
+	title.text = str(field.get("title", "Discipline"))
+	title.add_theme_color_override("font_color", Color.WHITE)
+	title.add_theme_font_size_override("font_size", 24)
+	title.add_theme_font_override("font", load("res://assets/fonts/Inter-Bold.ttf"))
+	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	column.add_child(title)
 
-	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", 6)
-	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	panel.add_child(col)
+	var description := Label.new()
+	description.text = str(field.get("subtitle", "Explore the discipline's laboratory catalogue."))
+	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	description.add_theme_color_override("font_color", Color("#c3cfdb"))
+	description.add_theme_font_size_override("font_size", 13)
+	description.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	column.add_child(description)
 
-	var title_l := Label.new()
-	title_l.text = title
-	title_l.add_theme_font_size_override("font_size", 22)
-	title_l.add_theme_color_override("font_color", TITLE_ON_CARD)
-	if ResourceLoader.exists("res://assets/fonts/Inter-Bold.ttf"):
-		title_l.add_theme_font_override("font", load("res://assets/fonts/Inter-Bold.ttf"))
-	title_l.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	col.add_child(title_l)
+	var footer := HBoxContainer.new()
+	footer.add_theme_constant_override("separation", 8)
+	footer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	column.add_child(footer)
+	var accent_rule := ColorRect.new()
+	accent_rule.custom_minimum_size = Vector2(18, 3)
+	accent_rule.color = palette.accent
+	accent_rule.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	footer.add_child(accent_rule)
+	var count := Label.new()
+	count.text = "%d laboratories  ·  %d available" % [labs.size(), available]
+	count.add_theme_color_override("font_color", Color("#e3eaf1"))
+	count.add_theme_font_size_override("font_size", 11)
+	count.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	footer.add_child(count)
 
-	var sub_l := Label.new()
-	sub_l.text = subtitle
-	sub_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	sub_l.add_theme_font_size_override("font_size", 13)
-	sub_l.add_theme_color_override("font_color", MUTED_ON_CARD)
-	sub_l.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	col.add_child(sub_l)
+	card.pressed.connect(func() -> void: SceneRouter.go_field(field_id))
+	return card
 
-	var count_l := Label.new()
-	count_l.text = count_line
-	count_l.add_theme_font_size_override("font_size", 12)
-	count_l.add_theme_color_override("font_color", Color(1, 1, 1, 0.72))
-	count_l.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	col.add_child(count_l)
-
-	var id := str(field.get("id", ""))
-	panel.gui_input.connect(func(event: InputEvent) -> void:
-		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-			_on_field_pressed(id)
-	)
-	panel.mouse_entered.connect(func() -> void:
-		panel.add_theme_stylebox_override("panel", style_h)
-	)
-	panel.mouse_exited.connect(func() -> void:
-		panel.add_theme_stylebox_override("panel", style_n)
-	)
-	return panel
-
-func _on_field_pressed(field_id: String) -> void:
-	SceneRouter.go_field(field_id)
-
-
+func _card_style(fill: Color, accent: Color, active: bool) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = fill
+	style.border_width_left = 3
+	style.border_color = accent
+	style.set_corner_radius_all(14)
+	style.content_margin_left = 22 if not active else 23
+	style.content_margin_right = 20 if not active else 19
+	style.content_margin_top = 18 if not active else 17
+	style.content_margin_bottom = 18 if not active else 17
+	return style
 
 func _add_platform_actions() -> void:
 	var vbox: VBoxContainer = $Margin/VBox
-	if vbox == null:
-		return
 	if vbox.has_node("PlatformActions"):
 		return
 	var row := HBoxContainer.new()
 	row.name = "PlatformActions"
-	row.add_theme_constant_override("separation", 10)
-	var bi := Button.new()
-	bi.text = "Instructor Login"
-	bi.pressed.connect(func(): SceneRouter.go_instructor_login())
-	row.add_child(bi)
-	var bs := Button.new()
-	bs.text = "Student Exam"
-	bs.theme_type_variation = &"GhostButton"
-	bs.pressed.connect(func(): SceneRouter.go_student_exam_entry())
-	row.add_child(bs)
-	# Place after subtitle if possible
-	var insert_at: int = mini(3, vbox.get_child_count())
+	row.add_theme_constant_override("separation", 12)
+	var instructor := Button.new()
+	instructor.text = "Instructor access"
+	instructor.theme_type_variation = &"PrimaryButton"
+	instructor.pressed.connect(func() -> void: SceneRouter.go_instructor_login())
+	row.add_child(instructor)
+	var student := Button.new()
+	student.text = "Student examination"
+	student.theme_type_variation = &"SecondaryButton"
+	student.pressed.connect(func() -> void: SceneRouter.go_student_exam_entry())
+	row.add_child(student)
 	vbox.add_child(row)
-	vbox.move_child(row, insert_at)
+	vbox.move_child(row, mini(4, vbox.get_child_count() - 1))

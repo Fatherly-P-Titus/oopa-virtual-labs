@@ -17,6 +17,8 @@ var _done: bool = false
 func _ready() -> void:
 	_progress.max_value = hold_seconds
 	_progress.value = 0.0
+	# Startup is not a staged loading process; keep the timed progress bar hidden.
+	_progress.visible = false
 	_status.text = "EXPLORE  ·  EXPERIMENT  ·  DISCOVER"
 	# Defer one frame so TextureRect has final size
 	call_deferred("_apply_splash_texture")
@@ -40,7 +42,7 @@ func _apply_splash_texture() -> void:
 
 	_bg.texture = tex
 	_bg.visible = true
-	_bg.modulate = Color.WHITE
+	_bg.modulate = Color(0.82, 0.91, 1.0, 0.18)
 	# Keep white letterbox only if aspect leaves gaps; image should cover
 	_fill.color = Color.WHITE
 	print("Splash: texture OK %dx%d" % [tex.get_width(), tex.get_height()])
