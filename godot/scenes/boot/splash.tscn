@@ -40,7 +40,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.062745, 0.094118, 0.152941, 0.86)
+color = Color(0.062745, 0.094118, 0.152941, 0.55)
 
 [node name="Topbar" type="HBoxContainer" parent="."]
 anchors_preset = 10

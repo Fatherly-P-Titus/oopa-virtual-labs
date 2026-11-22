@@ -42,7 +42,7 @@ func _apply_splash_texture() -> void:
 
 	_bg.texture = tex
 	_bg.visible = true
-	_bg.modulate = Color(0.82, 0.91, 1.0, 0.18)
+	_bg.modulate = Color(0.82, 0.91, 1.0, 1.0)
 	# Keep white letterbox only if aspect leaves gaps; image should cover
 	_fill.color = Color.WHITE
 	print("Splash: texture OK %dx%d" % [tex.get_width(), tex.get_height()])
