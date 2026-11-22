@@ -30,7 +30,11 @@ var _r_re: Label
 
 var _result: Dictionary = {}
 var _updating: bool = false
-var _flow_t: float = 0.0
+var _flow_positions: Array[float] = []
+
+const FLOW_PARTICLE_COUNT: int = 14
+const FLOW_MIN_SPEED: float = 0.00001
+const FLOW_MAX_FRAME_DELTA: float = 0.1
 
 
 func _ready() -> void:
@@ -46,14 +50,47 @@ func _ready() -> void:
 	model.apply_preset("venturi")
 	_sync_sliders_from_model()
 	_solve_and_refresh()
+	for i in range(FLOW_PARTICLE_COUNT):
+		_flow_positions.append(float(i) / float(FLOW_PARTICLE_COUNT))
 	set_process(true)
 	set_process_unhandled_input(true)
 
 
 func _process(delta: float) -> void:
-	_flow_t += delta
+	_advance_flow_particles(delta)
 	if _stage:
 		_stage.queue_redraw()
+
+
+func _advance_flow_particles(delta: float) -> void:
+	var pipe_length: float = float(model.length)
+	if delta <= 0.0 or pipe_length <= FLOW_MIN_SPEED or _flow_positions.is_empty():
+		return
+
+	var v1: float = maxf(float(_result.get("v1", 0.0)), 0.0)
+	var v2: float = maxf(float(_result.get("v2", 0.0)), 0.0)
+	if v1 <= FLOW_MIN_SPEED and v2 <= FLOW_MIN_SPEED:
+		return
+
+	# A long frame should not make the flow markers jump across the pipe.
+	var step_delta: float = minf(delta, FLOW_MAX_FRAME_DELTA)
+	for i in range(_flow_positions.size()):
+		var position: float = _flow_positions[i]
+		var speed: float = _flow_speed_at(position, v1, v2)
+		if speed > FLOW_MIN_SPEED:
+			_flow_positions[i] = fposmod(position + speed * step_delta / pipe_length, 1.0)
+
+
+func _flow_speed_at(position: float, v1: float, v2: float) -> float:
+	if position < 0.35:
+		return v1
+	if position > 0.65:
+		return v2
+
+	# Smoothstep the displayed transition so marker speed has no abrupt jump.
+	var t: float = clampf((position - 0.35) / 0.30, 0.0, 1.0)
+	var eased_t: float = t * t * (3.0 - 2.0 * t)
+	return lerpf(v1, v2, eased_t)
 
 
 func _build_stage() -> void:
@@ -345,31 +382,27 @@ func _draw_stage() -> void:
 	c.draw_polyline(bot, Color("#90caf9"), 2.0, true)
 
 	# Flow particles along centerline
-	var n_part := 14
-	for i in range(n_part):
-		var u: float = fmod(_flow_t * 0.25 + float(i) / float(n_part), 1.0)
+	for i in range(_flow_positions.size()):
+		var u: float = _flow_positions[i]
 		var x: float
 		var y: float
 		var r: float
-		var spd: float
+		var spd: float = _flow_speed_at(u, v1, v2)
 		if u < 0.35:
 			var t1: float = u / 0.35
 			x = lerpf(x0, x1, t1)
 			y = y1
 			r = r1
-			spd = v1
 		elif u < 0.65:
 			var t2: float = (u - 0.35) / 0.30
 			x = lerpf(x1, x2, t2)
 			y = lerpf(y1, y2, t2)
 			r = lerpf(r1, r2, t2)
-			spd = lerpf(v1, v2, t2)
 		else:
 			var t3: float = (u - 0.65) / 0.35
 			x = lerpf(x2, x3, t3)
 			y = y2
 			r = r2
-			spd = v2
 		var pr: float = clampf(3.0 + spd * 0.4, 3.0, 8.0)
 		c.draw_circle(Vector2(x, y), pr, Color("#4fc3f7", 0.85))
 
