@@ -1,0 +1,127 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://scenes/equipment/pendulum/pendulum_apparatus_3d.gd" id="1"]
+
+[sub_resource type="Environment" id="Environment"]
+background_mode = 1
+background_color = Color(0.035, 0.065, 0.095, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.36, 0.48, 0.58, 1)
+ambient_light_energy = 0.8
+
+[sub_resource type="StandardMaterial3D" id="FrameMaterial"]
+albedo_color = Color(0.19, 0.28, 0.36, 1)
+metallic = 0.72
+roughness = 0.31
+
+[sub_resource type="StandardMaterial3D" id="RodMaterial"]
+albedo_color = Color(0.68, 0.76, 0.81, 1)
+metallic = 0.82
+roughness = 0.24
+
+[sub_resource type="StandardMaterial3D" id="BobMaterial"]
+albedo_color = Color(0.86, 0.31, 0.25, 1)
+metallic = 0.38
+roughness = 0.28
+
+[sub_resource type="StandardMaterial3D" id="GroundMaterial"]
+albedo_color = Color(0.055, 0.09, 0.13, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="BaseMesh"]
+top_radius = 0.42
+bottom_radius = 0.46
+height = 0.12
+radial_segments = 32
+
+[sub_resource type="CylinderMesh" id="PostMesh"]
+top_radius = 0.055
+bottom_radius = 0.075
+height = 2.5
+radial_segments = 16
+
+[sub_resource type="BoxMesh" id="CrossbarMesh"]
+size = Vector3(0.82, 0.09, 0.12)
+
+[sub_resource type="CylinderMesh" id="RodMesh"]
+top_radius = 0.025
+bottom_radius = 0.035
+height = 1.5
+radial_segments = 12
+
+[sub_resource type="SphereMesh" id="BobMesh"]
+radius = 0.19
+height = 0.38
+radial_segments = 24
+rings = 12
+
+[sub_resource type="SphereMesh" id="PivotMesh"]
+radius = 0.095
+height = 0.19
+radial_segments = 20
+rings = 10
+
+[sub_resource type="PlaneMesh" id="GroundMesh"]
+size = Vector2(8, 8)
+
+[node name="PendulumApparatus3D" type="Node3D"]
+script = ExtResource("1")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.75, -0.55, 0.0)
+light_color = Color(0.78, 0.88, 1, 1)
+light_energy = 1.15
+shadow_enabled = false
+
+[node name="FillLight" type="OmniLight3D" parent="."]
+position = Vector3(-2.2, 2.6, 1.7)
+light_color = Color(0.18, 0.73, 0.68, 1)
+light_energy = 0.65
+omni_range = 6.0
+shadow_enabled = false
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.07, 0)
+mesh = SubResource("GroundMesh")
+surface_material_override/0 = SubResource("GroundMaterial")
+
+[node name="StandBase" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.06, 0)
+mesh = SubResource("BaseMesh")
+surface_material_override/0 = SubResource("FrameMaterial")
+
+[node name="StandPost" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1.31, 0)
+mesh = SubResource("PostMesh")
+surface_material_override/0 = SubResource("FrameMaterial")
+
+[node name="Crossbar" type="MeshInstance3D" parent="."]
+position = Vector3(0, 2.56, 0)
+mesh = SubResource("CrossbarMesh")
+surface_material_override/0 = SubResource("FrameMaterial")
+
+[node name="PendulumPivot" type="Node3D" parent="."]
+position = Vector3(0, 2.52, 0)
+
+[node name="PivotPin" type="MeshInstance3D" parent="PendulumPivot"]
+mesh = SubResource("PivotMesh")
+surface_material_override/0 = SubResource("RodMaterial")
+
+[node name="Rod" type="MeshInstance3D" parent="PendulumPivot"]
+position = Vector3(0, -0.75, 0)
+mesh = SubResource("RodMesh")
+surface_material_override/0 = SubResource("RodMaterial")
+
+[node name="Bob" type="MeshInstance3D" parent="PendulumPivot"]
+position = Vector3(0, -1.5, 0)
+mesh = SubResource("BobMesh")
+surface_material_override/0 = SubResource("BobMaterial")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(3.15, 2.1, 5.3)
+current = true
+fov = 39.0
+

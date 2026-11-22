@@ -371,15 +371,44 @@ func _draw_stage() -> void:
 		top.append(Vector2(x, y - r))
 		bot.append(Vector2(x, y + r))
 
-	# Fill pipe body
+	# Drop shadow and inset channel give the pipe a restrained layered 2.5D profile.
 	var poly := PackedVector2Array()
+	for p in top:
+		poly.append(p + Vector2(0.0, 5.0))
+	for i in range(bot.size() - 1, -1, -1):
+		poly.append(bot[i] + Vector2(0.0, 5.0))
+	c.draw_colored_polygon(poly, Color(0.0, 0.0, 0.0, 0.28))
+
+	poly.clear()
 	for p in top:
 		poly.append(p)
 	for i in range(bot.size() - 1, -1, -1):
 		poly.append(bot[i])
 	c.draw_colored_polygon(poly, Color("#1e3a5f"))
-	c.draw_polyline(top, Color("#90caf9"), 2.0, true)
-	c.draw_polyline(bot, Color("#90caf9"), 2.0, true)
+
+	var inner_top := PackedVector2Array()
+	var inner_bot := PackedVector2Array()
+	for i in range(top.size()):
+		var centre_y: float = (top[i].y + bot[i].y) * 0.5
+		var half_height: float = (bot[i].y - top[i].y) * 0.29
+		inner_top.append(Vector2(top[i].x, centre_y - half_height))
+		inner_bot.append(Vector2(bot[i].x, centre_y + half_height))
+	poly.clear()
+	for p in inner_top:
+		poly.append(p)
+	for i in range(inner_bot.size() - 1, -1, -1):
+		poly.append(inner_bot[i])
+	c.draw_colored_polygon(poly, Color("#0d2235"))
+	c.draw_polyline(top, Color(0.66, 0.84, 0.95, 0.9), 2.5, true)
+	c.draw_polyline(bot, Color("#0a2235"), 3.0, true)
+	c.draw_polyline(inner_top, Color(0.48, 0.72, 0.88, 0.62), 1.0, true)
+	c.draw_polyline(inner_bot, Color(0.04, 0.15, 0.25, 0.9), 1.0, true)
+
+	# Raised collars identify the inlet and outlet without implying extra flow stations.
+	c.draw_line(Vector2(x0, y1 - r1), Vector2(x0, y1 + r1), Color("#b9d8e8"), 3.0)
+	c.draw_line(Vector2(x3, y2 - r2), Vector2(x3, y2 + r2), Color("#b9d8e8"), 3.0)
+	c.draw_line(Vector2(x0 + 4.0, y1 - r1 * 0.8), Vector2(x0 + 4.0, y1 + r1 * 0.8), Color(0.62, 0.83, 0.95, 0.5), 1.0)
+	c.draw_line(Vector2(x3 + 4.0, y2 - r2 * 0.8), Vector2(x3 + 4.0, y2 + r2 * 0.8), Color(0.62, 0.83, 0.95, 0.5), 1.0)
 
 	# Flow particles along centerline
 	for i in range(_flow_positions.size()):

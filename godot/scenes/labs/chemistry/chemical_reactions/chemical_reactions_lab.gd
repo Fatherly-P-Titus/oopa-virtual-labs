@@ -335,12 +335,41 @@ func _draw_stage() -> void:
 
 
 func _draw_flask(c: Control, center: Vector2, fill: Color, label: String) -> void:
-	var w := 70.0
-	var h := 90.0
-	var rect := Rect2(center.x - w * 0.5, center.y - h * 0.3, w, h)
-	c.draw_rect(rect, fill)
-	c.draw_rect(rect, Color("#cfd8dc"), false, 2.0)
-	c.draw_string(ThemeDB.fallback_font, Vector2(center.x - 30, center.y + h * 0.75), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#b0bec5"))
+	var neck_top: float = center.y - 53.0
+	var neck_bottom: float = center.y - 24.0
+	var flask_bottom: float = center.y + 34.0
+	var neck_half: float = 10.0
+	var body_half: float = 34.0
+	var outline := PackedVector2Array([
+		Vector2(center.x - neck_half, neck_top),
+		Vector2(center.x + neck_half, neck_top),
+		Vector2(center.x + neck_half, neck_bottom),
+		Vector2(center.x + body_half, flask_bottom),
+		Vector2(center.x - body_half, flask_bottom),
+		Vector2(center.x - neck_half, neck_bottom),
+	])
+	var liquid_top: float = center.y + 5.0
+	var liquid_half: float = lerpf(neck_half, body_half, (liquid_top - neck_bottom) / (flask_bottom - neck_bottom))
+	var liquid := PackedVector2Array([
+		Vector2(center.x - neck_half, neck_bottom),
+		Vector2(center.x + neck_half, neck_bottom),
+		Vector2(center.x + liquid_half, liquid_top),
+		Vector2(center.x + body_half - 2.0, flask_bottom - 2.0),
+		Vector2(center.x - body_half + 2.0, flask_bottom - 2.0),
+		Vector2(center.x - liquid_half, liquid_top),
+	])
+	c.draw_colored_polygon(PackedVector2Array([
+		Vector2(center.x - neck_half - 4.0, neck_top + 4.0),
+		Vector2(center.x + neck_half + 4.0, neck_top + 4.0),
+		Vector2(center.x + body_half + 5.0, flask_bottom + 5.0),
+		Vector2(center.x - body_half - 5.0, flask_bottom + 5.0),
+	]), Color(0.0, 0.0, 0.0, 0.28))
+	c.draw_colored_polygon(outline, Color(0.7, 0.86, 0.92, 0.08))
+	c.draw_colored_polygon(liquid, fill)
+	c.draw_line(Vector2(center.x - liquid_half + 2.0, liquid_top), Vector2(center.x + liquid_half - 2.0, liquid_top), Color(0.78, 0.92, 1.0, 0.7), 1.5)
+	c.draw_polyline(PackedVector2Array([outline[0], outline[1], outline[2], outline[3], outline[4], outline[5], outline[0]]), Color("#c7dbe3"), 2.2, true)
+	c.draw_line(Vector2(center.x - neck_half + 2.0, neck_top + 5.0), Vector2(center.x - neck_half + 2.0, neck_bottom - 2.0), Color(0.88, 0.96, 1.0, 0.7), 1.5)
+	c.draw_string(ThemeDB.fallback_font, Vector2(center.x - 30, flask_bottom + 26.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#b0bec5"))
 
 
 

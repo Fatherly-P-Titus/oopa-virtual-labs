@@ -702,16 +702,23 @@ func _draw_stage() -> void:
 	_ox = (w - BOARD) * 0.5
 	_oy = (h - BOARD) * 0.5
 
-	# Board card
-	c.draw_rect(Rect2(_ox - 6.0, _oy - 6.0, BOARD + 12.0, BOARD + 12.0), Color("#b22222"), false, 3.0)
-	c.draw_rect(Rect2(_ox, _oy, BOARD, BOARD), Color("#1a1a1a"), true)
+	# Layered, matte board substrate; the slot guides remain visual coordinates only.
+	c.draw_rect(Rect2(_ox - 9.0, _oy - 7.0, BOARD + 18.0, BOARD + 18.0), Color(0.0, 0.0, 0.0, 0.35), true)
+	c.draw_rect(Rect2(_ox - 6.0, _oy - 6.0, BOARD + 12.0, BOARD + 12.0), Color("#263941"), true)
+	c.draw_rect(Rect2(_ox - 6.0, _oy - 6.0, BOARD + 12.0, BOARD + 12.0), Color("#607781"), false, 1.5)
+	c.draw_rect(Rect2(_ox, _oy, BOARD, BOARD), Color("#17252b"), true)
+	c.draw_line(Vector2(_ox + 2.0, _oy + 2.0), Vector2(_ox + BOARD - 2.0, _oy + 2.0), Color(0.72, 0.86, 0.89, 0.24), 2.0)
+	c.draw_line(Vector2(_ox + 2.0, _oy + BOARD - 2.0), Vector2(_ox + BOARD - 2.0, _oy + BOARD - 2.0), Color(0.0, 0.0, 0.0, 0.38), 2.0)
+	for screw in [Vector2(_ox + 8.0, _oy + 8.0), Vector2(_ox + BOARD - 8.0, _oy + 8.0), Vector2(_ox + 8.0, _oy + BOARD - 8.0), Vector2(_ox + BOARD - 8.0, _oy + BOARD - 8.0)]:
+		c.draw_circle(screw, 3.0, Color("#71838a"))
+		c.draw_line(screw + Vector2(-1.5, 0.0), screw + Vector2(1.5, 0.0), Color("#26343a"), 1.0)
 
 	# Slot guides
 	for i in range(CircuitModel.SLOTS + 1):
 		var x: float = _ox + float(i) * CircuitModel.SLOT_PX
 		var y: float = _oy + float(i) * CircuitModel.SLOT_PX
-		c.draw_line(Vector2(x, _oy), Vector2(x, _oy + BOARD), Color(1, 1, 1, 0.04), 1.0)
-		c.draw_line(Vector2(_ox, y), Vector2(_ox + BOARD, y), Color(1, 1, 1, 0.04), 1.0)
+		c.draw_line(Vector2(x, _oy), Vector2(x, _oy + BOARD), Color(0.67, 0.82, 0.84, 0.075), 1.0)
+		c.draw_line(Vector2(_ox, y), Vector2(_ox + BOARD, y), Color(0.67, 0.82, 0.84, 0.075), 1.0)
 
 	# Wires under chips (slight offset when a port has multiple wires so they stay visible)
 	for wdict in model.wires:

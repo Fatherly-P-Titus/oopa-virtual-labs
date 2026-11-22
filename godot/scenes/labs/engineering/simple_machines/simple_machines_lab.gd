@@ -380,15 +380,21 @@ func _draw_lever(c: Control, sz: Vector2) -> void:
 			load_pt = fulcrum + Vector2(-dl * scale, 0)
 			effort_pt = fulcrum + Vector2(de * scale, 0)
 
-	# Beam
-	c.draw_line(load_pt + Vector2(0, -6), effort_pt + Vector2(0, -6), Color("#cfd8dc"), 8.0)
+	# Beveled beam profile; force positions still follow the existing lever geometry.
+	c.draw_line(load_pt + Vector2(0, -2), effort_pt + Vector2(0, -2), Color(0.0, 0.0, 0.0, 0.3), 13.0)
+	c.draw_line(load_pt + Vector2(0, -7), effort_pt + Vector2(0, -7), Color("#607d8b"), 11.0)
+	c.draw_line(load_pt + Vector2(0, -9), effort_pt + Vector2(0, -9), Color("#dce7eb"), 4.0)
 	# Fulcrum triangle
 	var tri := PackedVector2Array([fulcrum + Vector2(0, 4), fulcrum + Vector2(-14, 28), fulcrum + Vector2(14, 28)])
+	c.draw_colored_polygon(PackedVector2Array([tri[0] + Vector2(3, 3), tri[1] + Vector2(3, 3), tri[2] + Vector2(3, 3)]), Color(0.0, 0.0, 0.0, 0.25))
 	c.draw_colored_polygon(tri, Color("#b22222"))
+	c.draw_line(tri[1] + Vector2(3, -1), tri[0] + Vector2(0, 2), Color("#ef9a9a"), 2.0)
 	c.draw_string(ThemeDB.fallback_font, fulcrum + Vector2(-20, 46), "Fulcrum", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#ef9a9a"))
 
 	# Load box
+	c.draw_rect(Rect2(load_pt + Vector2(-13, -37), Vector2(32, 28)), Color(0.0, 0.0, 0.0, 0.25), true)
 	c.draw_rect(Rect2(load_pt + Vector2(-16, -40), Vector2(32, 28)), Color("#ef6c00"))
+	c.draw_line(load_pt + Vector2(-14, -38), load_pt + Vector2(14, -38), Color("#ffcc80"), 2.0)
 	c.draw_string(ThemeDB.fallback_font, load_pt + Vector2(-18, -48), "LOAD", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#ffcc80"))
 	c.draw_string(ThemeDB.fallback_font, load_pt + Vector2(-20, 20), "%.0f N" % model.load_w, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#ffe0b2"))
 	c.draw_line(load_pt, load_pt + Vector2(0, -12), Color("#ffb74d"), 2.0)
@@ -412,7 +418,9 @@ func _draw_incline(c: Control, sz: Vector2) -> void:
 	rise = minf(rise, sz.y * 0.55)
 	run = rise / maxf(tan(ang), 0.01)
 	var top := base + Vector2(run, -rise)
-	c.draw_line(base, top, Color("#90a4ae"), 6.0)
+	c.draw_line(base + Vector2(3, 4), top + Vector2(3, 4), Color(0.0, 0.0, 0.0, 0.3), 12.0)
+	c.draw_line(base, top, Color("#546e7a"), 10.0)
+	c.draw_line(base + Vector2(0, -2), top + Vector2(0, -2), Color("#cfd8dc"), 4.0)
 	c.draw_line(base, base + Vector2(run, 0), Color("#546e7a"), 2.0)
 	# Ramp fill
 	var poly := PackedVector2Array([base, top, base + Vector2(run, 0)])
@@ -420,7 +428,9 @@ func _draw_incline(c: Control, sz: Vector2) -> void:
 	# Load on ramp
 	var u: float = 0.55 + 0.08 * sin(_anim_t * 2.0)
 	var pos: Vector2 = base.lerp(top, u)
+	c.draw_rect(Rect2(pos + Vector2(-11, -25), Vector2(28, 24)), Color(0.0, 0.0, 0.0, 0.25), true)
 	c.draw_rect(Rect2(pos + Vector2(-14, -28), Vector2(28, 24)), Color("#ef6c00"))
+	c.draw_line(pos + Vector2(-12, -26), pos + Vector2(12, -26), Color("#ffcc80"), 2.0)
 	c.draw_string(ThemeDB.fallback_font, pos + Vector2(-18, -36), "LOAD", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#ffcc80"))
 	# Effort along slope
 	var dir: Vector2 = (top - base).normalized()
@@ -441,16 +451,22 @@ func _draw_pulley(c: Control, sz: Vector2) -> void:
 	var sheave_r := 22.0
 	c.draw_circle(Vector2(cx, top_y + 10), sheave_r, Color("#455a64"))
 	c.draw_circle(Vector2(cx, top_y + 10), sheave_r, Color("#cfd8dc"), false, 2.0)
+	c.draw_circle(Vector2(cx, top_y + 10), sheave_r - 5.0, Color("#78909c"), false, 1.0)
+	c.draw_circle(Vector2(cx, top_y + 10), 5.0, Color("#263238"))
 	if n >= 2:
 		c.draw_circle(Vector2(cx, top_y + 70), sheave_r * 0.9, Color("#546e7a"))
 		c.draw_circle(Vector2(cx, top_y + 70), sheave_r * 0.9, Color("#cfd8dc"), false, 2.0)
+		c.draw_circle(Vector2(cx, top_y + 70), sheave_r * 0.9 - 5.0, Color("#90a4ae"), false, 1.0)
+		c.draw_circle(Vector2(cx, top_y + 70), 5.0, Color("#263238"))
 	# Strands
 	for i in range(mini(n, 6)):
 		var ox: float = -18.0 + float(i) * 8.0
 		c.draw_line(Vector2(cx + ox, top_y + 10), Vector2(cx + ox, top_y + 130), Color("#ffe082"), 2.0)
 	# Load
 	var ly: float = top_y + 150 + 6.0 * sin(_anim_t * 2.5)
+	c.draw_rect(Rect2(cx - 19, ly + 3.0, 44, 36), Color(0.0, 0.0, 0.0, 0.25), true)
 	c.draw_rect(Rect2(cx - 22, ly, 44, 36), Color("#ef6c00"))
+	c.draw_line(Vector2(cx - 20.0, ly + 2.0), Vector2(cx + 20.0, ly + 2.0), Color("#ffcc80"), 2.0)
 	c.draw_string(ThemeDB.fallback_font, Vector2(cx - 20, ly + 52), "%.0f N" % model.load_w, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#ffe0b2"))
 	# Effort free end
 	c.draw_line(Vector2(cx + 36, top_y + 10), Vector2(cx + 70, top_y + 100), Color("#66bb6a"), 3.0)
@@ -465,8 +481,11 @@ func _draw_wheel(c: Control, sz: Vector2) -> void:
 	# Wheel
 	c.draw_circle(center, R, Color("#37474f"))
 	c.draw_circle(center, R, Color("#90caf9"), false, 3.0)
+	c.draw_circle(center, R - 6.0, Color("#78909c"), false, 1.0)
+	c.draw_arc(center + Vector2(-2.0, -2.0), R - 4.0, PI * 1.1, PI * 1.85, 32, Color(0.82, 0.91, 0.96, 0.65), 2.0, true)
 	c.draw_circle(center, r, Color("#b22222"))
 	c.draw_circle(center, r, Color("#ef9a9a"), false, 2.0)
+	c.draw_circle(center, maxf(r - 4.0, 2.0), Color("#263238"), false, 1.0)
 	# Spokes spin
 	for i in range(6):
 		var a: float = _anim_t * 1.2 + float(i) * PI / 3.0

@@ -1,9 +1,13 @@
 extends LabShell
 ## Pendulum / spring with phase plot, drive, presets, planet g.
 
+const PENDULUM_3D_SCENE: PackedScene = preload("res://scenes/equipment/pendulum/pendulum_apparatus_3d.tscn")
+
 var model: PendulumSpringsModel = PendulumSpringsModel.new()
 
 var _stage: Control
+var _pendulum_3d_container: SubViewportContainer
+var _pendulum_3d_view: PendulumApparatus3D
 var _mode_row: HBoxContainer
 var _slider_len: HSlider
 var _slider_theta: HSlider
@@ -80,6 +84,27 @@ func _build_stage() -> void:
 	_stage.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_to_stage(_stage)
 	_stage.draw.connect(Callable(self, "_draw_stage"))
+
+	_pendulum_3d_container = SubViewportContainer.new()
+	_pendulum_3d_container.name = "Pendulum3DViewport"
+	_pendulum_3d_container.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_pendulum_3d_container.anchor_right = 0.64
+	_pendulum_3d_container.offset_left = 8.0
+	_pendulum_3d_container.offset_top = 8.0
+	_pendulum_3d_container.offset_right = -4.0
+	_pendulum_3d_container.offset_bottom = -8.0
+	_pendulum_3d_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_pendulum_3d_container.stretch = true
+	_stage.add_child(_pendulum_3d_container)
+
+	var viewport := SubViewport.new()
+	viewport.name = "Pendulum3DSubViewport"
+	viewport.size = Vector2i(640, 480)
+	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	_pendulum_3d_container.add_child(viewport)
+	_pendulum_3d_view = PENDULUM_3D_SCENE.instantiate() as PendulumApparatus3D
+	viewport.add_child(_pendulum_3d_view)
+	_pendulum_3d_container.visible = false
 
 
 func _build_sidebar() -> void:
@@ -474,6 +499,11 @@ func _refresh_live() -> void:
 	if model.mode == PendulumSpringsModel.Mode.SPRING and model.drive_on:
 		extra = " · drive ωd=%.2f" % model.drive_omega
 	set_status("%s · t=%.2f · T≈%.3f%s" % [name, model.t, model.period(), extra])
+	if _pendulum_3d_container != null:
+		var show_3d: bool = model.mode == PendulumSpringsModel.Mode.PENDULUM
+		_pendulum_3d_container.visible = show_3d
+		if show_3d and _pendulum_3d_view != null:
+			_pendulum_3d_view.set_model_state(model.length, model.theta)
 	if _stage:
 		_stage.queue_redraw()
 
@@ -507,7 +537,8 @@ func _draw_stage() -> void:
 	c.draw_rect(Rect2(bar_x + 20.0, bar_top, 16.0, bar_h), Color("#37474f"), false, 1.0)
 
 	if model.mode == PendulumSpringsModel.Mode.PENDULUM:
-		_draw_pendulum(c, main_w, h)
+		if _pendulum_3d_container == null:
+			_draw_pendulum(c, main_w, h)
 	else:
 		_draw_spring(c, main_w, h)
 

@@ -378,6 +378,8 @@ func _draw_stage() -> void:
 	var side_w := 70.0
 	var wall_w := sz.x - margin * 2.0 - side_w * 2.0
 	var wall_x := margin + side_w
+	# Soft edge shadow makes the wall read as a physical section rather than a flat chart.
+	c.draw_rect(Rect2(wall_x + 5.0, wall_y + 6.0, wall_w, wall_h), Color(0.0, 0.0, 0.0, 0.28), true)
 
 	# Hot side air
 	var hot_col := _temp_color(model.t_hot)
@@ -405,6 +407,8 @@ func _draw_stage() -> void:
 		var w: float = wall_w * frac
 		var col: Color = ly.get("color", Color("#888888"))
 		c.draw_rect(Rect2(x0, wall_y, w, wall_h), col.darkened(0.15))
+		c.draw_rect(Rect2(x0 + 2.0, wall_y + 2.0, maxf(w - 4.0, 0.0), 7.0), Color(1.0, 1.0, 1.0, 0.14), true)
+		c.draw_rect(Rect2(x0 + 2.0, wall_y + wall_h - 7.0, maxf(w - 4.0, 0.0), 5.0), Color(0.0, 0.0, 0.0, 0.15), true)
 		c.draw_rect(Rect2(x0, wall_y, w, wall_h), Color("#212121"), false, 2.0)
 		# label
 		var name: String = str(ly.get("name", "?"))
@@ -418,6 +422,7 @@ func _draw_stage() -> void:
 		x0 += w
 
 	# Outer wall border
+	c.draw_line(Vector2(wall_x + 1.0, wall_y + 1.0), Vector2(wall_x + wall_w - 1.0, wall_y + 1.0), Color(1.0, 0.82, 0.68, 0.62), 2.0)
 	c.draw_rect(Rect2(wall_x, wall_y, wall_w, wall_h), Color("#b22222"), false, 2.5)
 
 	# Heat flux arrow

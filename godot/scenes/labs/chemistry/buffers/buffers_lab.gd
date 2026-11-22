@@ -322,13 +322,23 @@ func _draw_stage() -> void:
 	var bw: float = minf(120.0, w * 0.22)
 	var bh: float = h * 0.38
 	var top: float = by - bh
-	# Glass
-	c.draw_rect(Rect2(bx - bw * 0.5, top, bw, bh), Color("#263238"), false, 2.5)
-	c.draw_line(Vector2(bx - bw * 0.5, top), Vector2(bx + bw * 0.5, top), Color("#263238"), 2.5)
+	# Bench shadow, thick glass rim and side reflections.
+	var shadow_points := PackedVector2Array()
+	for i in range(32):
+		var angle: float = TAU * float(i) / 32.0
+		shadow_points.append(Vector2(bx + cos(angle) * bw * 0.62, by + 2.0 + sin(angle) * 7.0))
+	c.draw_colored_polygon(shadow_points, Color(0.0, 0.0, 0.0, 0.32))
+	c.draw_rect(Rect2(bx - bw * 0.5, top, bw, bh), Color(0.6, 0.82, 0.92, 0.07), true)
+	c.draw_rect(Rect2(bx - bw * 0.5, top, bw, bh), Color("#8aa8b5"), false, 2.5)
+	c.draw_line(Vector2(bx - bw * 0.5 - 2.0, top), Vector2(bx + bw * 0.5 + 2.0, top), Color("#d1e3eb"), 3.0)
+	c.draw_line(Vector2(bx - bw * 0.5 + 8.0, top + 5.0), Vector2(bx - bw * 0.5 + 8.0, by - 4.0), Color(0.8, 0.92, 1.0, 0.55), 2.0)
+	c.draw_line(Vector2(bx + bw * 0.5 - 7.0, top + 8.0), Vector2(bx + bw * 0.5 - 7.0, by - 5.0), Color(0.8, 0.92, 1.0, 0.2), 1.0)
 	# Liquid ~70%
 	var liq_h: float = bh * 0.7
 	var liq_col: Color = _ph_liquid_color(ph)
 	c.draw_rect(Rect2(bx - bw * 0.5 + 3, by - liq_h, bw - 6, liq_h), liq_col, true)
+	c.draw_line(Vector2(bx - bw * 0.5 + 5.0, by - liq_h), Vector2(bx + bw * 0.5 - 5.0, by - liq_h), Color(0.86, 0.96, 1.0, 0.72), 1.5)
+	c.draw_rect(Rect2(bx - bw * 0.5 + 3, by - liq_h, bw - 6, liq_h), Color("#8aa8b5"), false, 1.0)
 	c.draw_string(ThemeDB.fallback_font, Vector2(bx - 36, by + 18), model.acid_formula(), HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#b0bec5"))
 	c.draw_string(ThemeDB.fallback_font, Vector2(bx - 40, top - 16), "pH %.2f" % ph, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color.WHITE)
 

@@ -371,6 +371,13 @@ func _snapshot(force_evaluate: bool = false) -> Dictionary:
 func _draw_board() -> void:
     if board == null: return
     board.draw_rect(Rect2(Vector2.ZERO, board.size), BOARD_BG)
+    # Recessed substrate and mounting details add board depth without changing hit areas.
+    board.draw_rect(Rect2(Vector2(5, 5), board.size - Vector2(10, 10)), Color("#20262e"), false, 2.0)
+    board.draw_line(Vector2(8, 8), Vector2(board.size.x - 8, 8), Color(0.72, 0.82, 0.9, 0.22), 1.0)
+    for corner in [Vector2(14, 14), Vector2(board.size.x - 14, 14), Vector2(14, board.size.y - 14), Vector2(board.size.x - 14, board.size.y - 14)]:
+        board.draw_circle(corner + Vector2(1, 1), 3.5, Color(0.0, 0.0, 0.0, 0.35))
+        board.draw_circle(corner, 3.0, Color("#65717d"))
+        board.draw_line(corner + Vector2(-1.5, 0), corner + Vector2(1.5, 0), Color("#c6d0d8"), 1.0)
     for x in range(20, int(board.size.x), 24):
         for y in range(18, int(board.size.y), 24): board.draw_circle(Vector2(x,y), 1.0, Color("#2b3038"))
     var values := _snapshot()
@@ -391,9 +398,11 @@ func _draw_board() -> void:
         var active := bool(values.get(id, false)); var fill := Color("#273b39") if active else Color("#252a33")
         if kind == "INPUT": fill = Color("#285b46") if bool(n.value) else Color("#30343c")
         if kind == "OUTPUT": fill = Color("#236a4b") if active else Color("#30343c")
+        board.draw_rect(Rect2(pos + Vector2(4, 5), Vector2(NODE_W, NODE_H)), Color(0.0, 0.0, 0.0, 0.32), true)
         board.draw_rect(rect, fill, true)
         var outline := Color("#ffcb68") if id == wire_source_id else (Color("#e9eeee") if id == selected_id else Color("#4c5664"))
         board.draw_rect(rect, outline, false, 3.0 if id == wire_source_id else 2.0)
+        board.draw_line(pos + Vector2(3, 2), pos + Vector2(NODE_W - 3, 2), Color(0.88, 0.96, 1.0, 0.24), 1.0)
         board.draw_string(ThemeDB.fallback_font, pos + Vector2(12, 23), _node_caption(n), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color.WHITE)
         var sub := "INPUT " + ("1" if bool(n.value) else "0") if kind == "INPUT" else ("OUTPUT " + ("1" if active else "0") if kind == "OUTPUT" else str(GATE_DEFS[kind].expr))
         board.draw_string(ThemeDB.fallback_font, pos + Vector2(12, 48), sub, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#c7d0d7"))

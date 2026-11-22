@@ -462,8 +462,12 @@ func _draw_chamber() -> void:
 	var gas_h: float = clampf(_vd * UPL, 36.0, max_gas)
 	var top_y: float = base_y - gas_h
 
+	var chamber_rect := Rect2(cyl_x, top_y, cyl_w, gas_h)
+	c.draw_rect(Rect2(chamber_rect.position + Vector2(5.0, 6.0), chamber_rect.size), Color(0.0, 0.0, 0.0, 0.28), true)
 	c.draw_rect(Rect2(cyl_x - 3.0, top_y - 6.0, cyl_w + 6.0, gas_h + 12.0), Color("#455a64"), false, 3.0)
-	c.draw_rect(Rect2(cyl_x, top_y, cyl_w, gas_h), Color("#0d1b2a"), true)
+	c.draw_rect(chamber_rect, Color("#0d1b2a"), true)
+	c.draw_rect(Rect2(cyl_x + 3.0, top_y + 3.0, 7.0, gas_h - 6.0), Color(0.63, 0.82, 0.92, 0.18), true)
+	c.draw_rect(Rect2(cyl_x + cyl_w - 10.0, top_y + 3.0, 6.0, gas_h - 6.0), Color(0.63, 0.82, 0.92, 0.08), true)
 
 	var pr: float = 5.0
 	var pcol := Color("#90caf9")
@@ -472,8 +476,10 @@ func _draw_chamber() -> void:
 		var py: float = top_y + 6.0 + float(p.y) * (gas_h - 12.0)
 		c.draw_circle(Vector2(px, py), pr, pcol)
 
-	c.draw_rect(Rect2(cyl_x - 8.0, top_y - 14.0, cyl_w + 16.0, 14.0), Color("#cfd8dc"), true)
-	c.draw_rect(Rect2(cyl_x - 8.0, top_y - 14.0, cyl_w + 16.0, 14.0), Color("#90a4ae"), false, 1.5)
+	c.draw_rect(Rect2(cyl_x - 8.0, top_y - 16.0, cyl_w + 16.0, 16.0), Color("#607d8b"), true)
+	c.draw_rect(Rect2(cyl_x - 8.0, top_y - 16.0, cyl_w + 16.0, 11.0), Color("#cfd8dc"), true)
+	c.draw_line(Vector2(cyl_x - 6.0, top_y - 14.0), Vector2(cyl_x + cyl_w + 6.0, top_y - 14.0), Color.WHITE, 1.5)
+	c.draw_rect(Rect2(cyl_x - 8.0, top_y - 16.0, cyl_w + 16.0, 16.0), Color("#90a4ae"), false, 1.5)
 	c.draw_line(
 		Vector2(cyl_x + cyl_w * 0.5, top_y - 14.0),
 		Vector2(cyl_x + cyl_w * 0.5, top_y - 36.0),
@@ -485,6 +491,11 @@ func _draw_chamber() -> void:
 	var gr: float = minf(56.0, w * 0.09)
 	c.draw_circle(Vector2(gx, gy), gr, Color("#37474f"), false, 3.0)
 	c.draw_circle(Vector2(gx, gy), gr - 6.0, Color("#263238"), true)
+	for tick in range(9):
+		var tick_angle: float = -PI * 0.75 + float(tick) / 8.0 * PI * 1.5
+		var tick_outer := Vector2(gx, gy) + Vector2(cos(tick_angle), sin(tick_angle)) * (gr - 8.0)
+		var tick_inner := Vector2(gx, gy) + Vector2(cos(tick_angle), sin(tick_angle)) * (gr - 14.0)
+		c.draw_line(tick_inner, tick_outer, Color("#b0bec5"), 1.0)
 	var ang: float = -PI * 0.75 + clampf(_pd / 400.0, 0.0, 1.0) * (PI * 1.5)
 	c.draw_line(
 		Vector2(gx, gy),

@@ -436,6 +436,8 @@ func _draw_apparatus() -> void:
 	# Glass tube
 	c.draw_rect(Rect2(cx - bur_w * 0.5, bur_top, bur_w, bur_body_h), Color("#e3f2fd"), true)
 	c.draw_rect(Rect2(cx - bur_w * 0.5, bur_top, bur_w, bur_body_h), Color("#1565c0"), false, 2.0)
+	c.draw_line(Vector2(cx - bur_w * 0.5 + 4.0, bur_top + 4.0), Vector2(cx - bur_w * 0.5 + 4.0, bur_top + bur_body_h - 3.0), Color(1.0, 1.0, 1.0, 0.8), 2.0)
+	c.draw_line(Vector2(cx + bur_w * 0.5 - 3.0, bur_top + 5.0), Vector2(cx + bur_w * 0.5 - 3.0, bur_top + bur_body_h - 4.0), Color(0.25, 0.46, 0.62, 0.36), 1.0)
 	# Volume graduations
 	for i in 6:
 		var gy: float = bur_top + 12.0 + float(i) * (bur_body_h - 24.0) / 5.0
@@ -470,6 +472,7 @@ func _draw_apparatus() -> void:
 
 	# Neck
 	c.draw_rect(Rect2(cx - neck_w * 0.5, neck_top, neck_w, body_top - neck_top), Color("#cfd8dc"), false, 2.0)
+	c.draw_line(Vector2(cx - neck_w * 0.5 + 3.0, neck_top + 3.0), Vector2(cx - neck_w * 0.5 + 3.0, body_top - 2.0), Color(1.0, 1.0, 1.0, 0.7), 1.5)
 	# Body outline (trapezoid / cone)
 	var body_pts := PackedVector2Array([
 		Vector2(cx - neck_w * 0.5, body_top),
@@ -490,6 +493,7 @@ func _draw_apparatus() -> void:
 		Vector2(cx - body_half_w, flask_bottom),
 	])
 	c.draw_colored_polygon(liquid_pts, col)
+	c.draw_line(Vector2(cx - half_at_liq + 4.0, liquid_top + 1.0), Vector2(cx + half_at_liq - 4.0, liquid_top + 1.0), Color(1.0, 1.0, 1.0, 0.55), 1.2)
 
 	# Full flask outline as one closed path — equal stroke on all sides
 	var stroke := Color("#1b1b1b")
