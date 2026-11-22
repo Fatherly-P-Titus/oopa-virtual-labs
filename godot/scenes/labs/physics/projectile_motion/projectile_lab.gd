@@ -282,11 +282,20 @@ func _build_sidebar() -> void:
 
 
 func _add_section(sb: VBoxContainer, title: String) -> void:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+	var marker := ColorRect.new()
+	marker.custom_minimum_size = Vector2(3, 16)
+	marker.color = Color("#3B82F6")
+	marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(marker)
 	var l := Label.new()
 	l.text = title
 	l.theme_type_variation = &"PanelTitle"
 	l.uppercase = true
-	sb.add_child(l)
+	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(l)
+	sb.add_child(row)
 
 
 func _make_slider(mn: float, mx: float, step: float, cb: Callable) -> HSlider:
@@ -299,7 +308,10 @@ func _make_slider(mn: float, mx: float, step: float, cb: Callable) -> HSlider:
 
 
 func _stat_row(sb: VBoxContainer, key: String) -> Label:
+	var card := PanelContainer.new()
+	card.theme_type_variation = &"MetricCard"
 	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
 	var k := Label.new()
 	k.text = key
 	k.theme_type_variation = &"StatLabel"
@@ -310,7 +322,8 @@ func _stat_row(sb: VBoxContainer, key: String) -> Label:
 	v.add_theme_font_size_override("font_size", 14)
 	v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	row.add_child(v)
-	sb.add_child(row)
+	card.add_child(row)
+	sb.add_child(card)
 	return v
 
 

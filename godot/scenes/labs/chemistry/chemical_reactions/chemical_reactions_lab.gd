@@ -176,22 +176,37 @@ func _build_sidebar() -> void:
 
 
 func _stat(sb: VBoxContainer, title: String) -> Label:
+	var card := PanelContainer.new()
+	card.theme_type_variation = &"MetricCard"
+	var content := VBoxContainer.new()
+	content.add_theme_constant_override("separation", 3)
 	var c := Label.new()
 	c.text = title
 	c.add_theme_font_size_override("font_size", 11)
-	sb.add_child(c)
+	content.add_child(c)
 	var v := Label.new()
 	v.theme_type_variation = &"StatValue"
 	v.text = "—"
-	sb.add_child(v)
+	content.add_child(v)
+	card.add_child(content)
+	sb.add_child(card)
 	return v
 
 
 func _add_section(sb: VBoxContainer, title: String) -> void:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+	var marker := ColorRect.new()
+	marker.custom_minimum_size = Vector2(3, 16)
+	marker.color = Color("#16B8A6")
+	marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(marker)
 	var l := Label.new()
 	l.text = title
 	l.theme_type_variation = &"Eyebrow"
-	sb.add_child(l)
+	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(l)
+	sb.add_child(row)
 
 
 func _on_select(id: String) -> void:

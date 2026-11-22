@@ -142,8 +142,17 @@ func _build_sidebar() -> void:
 
 	_o_tick = Label.new()
 	_o_pop = Label.new()
-	sb.add_child(_o_tick)
-	sb.add_child(_o_pop)
+	var observation_card := PanelContainer.new()
+	observation_card.theme_type_variation = &"MetricCard"
+	var observation_stack := VBoxContainer.new()
+	observation_stack.add_theme_constant_override("separation", 4)
+	_o_tick.add_theme_color_override("font_color", Color("#66758A"))
+	_o_pop.add_theme_font_size_override("font_size", 18)
+	_o_pop.add_theme_color_override("font_color", Color("#101827"))
+	observation_stack.add_child(_o_tick)
+	observation_stack.add_child(_o_pop)
+	observation_card.add_child(observation_stack)
+	sb.add_child(observation_card)
 
 	_add_section(sb, "CAMERA")
 	_o_zoom = Label.new()
@@ -265,10 +274,19 @@ func _slider(parent: Control, mn: float, mx: float, val: float, step: float, cb:
 
 
 func _add_section(sb: VBoxContainer, title: String) -> void:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+	var marker := ColorRect.new()
+	marker.custom_minimum_size = Vector2(3, 16)
+	marker.color = Color("#67C49A")
+	marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(marker)
 	var l := Label.new()
 	l.text = title
 	l.theme_type_variation = &"Eyebrow"
-	sb.add_child(l)
+	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(l)
+	sb.add_child(row)
 
 
 func _sync_sliders() -> void:

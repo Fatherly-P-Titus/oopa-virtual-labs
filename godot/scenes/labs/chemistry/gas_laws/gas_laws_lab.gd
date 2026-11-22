@@ -189,11 +189,20 @@ func _build_sidebar() -> void:
 
 
 func _add_section(sb: VBoxContainer, title: String) -> void:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+	var marker := ColorRect.new()
+	marker.custom_minimum_size = Vector2(3, 16)
+	marker.color = Color("#F2A84A")
+	marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(marker)
 	var l := Label.new()
 	l.text = title
 	l.theme_type_variation = &"PanelTitle"
 	l.uppercase = true
-	sb.add_child(l)
+	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(l)
+	sb.add_child(row)
 
 
 func _make_slider(mn: float, mx: float, step: float, cb: Callable) -> HSlider:
@@ -206,7 +215,10 @@ func _make_slider(mn: float, mx: float, step: float, cb: Callable) -> HSlider:
 
 
 func _stat_row(sb: VBoxContainer, key: String) -> Label:
+	var card := PanelContainer.new()
+	card.theme_type_variation = &"MetricCard"
 	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
 	var k := Label.new()
 	k.text = key
 	k.theme_type_variation = &"StatLabel"
@@ -217,7 +229,8 @@ func _stat_row(sb: VBoxContainer, key: String) -> Label:
 	v.add_theme_font_size_override("font_size", 14)
 	v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	row.add_child(v)
-	sb.add_child(row)
+	card.add_child(row)
+	sb.add_child(card)
 	return v
 
 
@@ -332,7 +345,7 @@ func _refresh_ui() -> void:
 
 	_r_p.text = "%.1f kPa" % model.p
 	_r_patm.text = "%.3f atm" % model.p_atm()
-	_r_const.text = "%s = %.3g %s" % [model.const_label(), model.law_constant(), model.const_unit()]
+	_r_const.text = "%s = %s %s" % [model.const_label(), _format_significant(model.law_constant(), 3), model.const_unit()]
 
 	for i in _law_row.get_child_count():
 		var b: Button = _law_row.get_child(i) as Button
@@ -614,3 +627,29 @@ func _nudge_free(dir: int) -> void:
 			model.set_control("n", model.n + dir * 0.05)
 	_sync_particles(false)
 	_refresh_ui()
+
+
+func _format_significant(value: float, digits: int) -> String:
+	if not is_finite(value):
+		return str(value)
+	if value == 0.0:
+		return "0"
+	var exponent := floori(log(absf(value)) / log(10.0))
+	if exponent >= digits or exponent < -4:
+		return _format_scientific(value, digits - 1)
+	var rounded := String.num(value, maxi(0, digits - 1 - exponent)).to_float()
+	var rounded_exponent := floori(log(absf(rounded)) / log(10.0)) if rounded != 0.0 else exponent
+	if rounded_exponent >= digits or rounded_exponent < -4:
+		return _format_scientific(value, digits - 1)
+	return String.num(value, maxi(0, digits - 1 - rounded_exponent))
+
+
+func _format_scientific(value: float, decimals: int) -> String:
+	var exponent := floori(log(absf(value)) / log(10.0))
+	var mantissa := value / pow(10.0, float(exponent))
+	var rounded := String.num(mantissa, decimals).to_float()
+	if absf(rounded) >= 10.0:
+		mantissa /= 10.0
+		exponent += 1
+	var exponent_sign := "+" if exponent >= 0 else "-"
+	return "%se%s%s" % [String.num(mantissa, decimals), exponent_sign, str(absi(exponent)).pad_zeros(2)]

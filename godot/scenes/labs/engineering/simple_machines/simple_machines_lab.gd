@@ -181,21 +181,38 @@ func _slider(parent: Control, mn: float, mx: float, val: float, step: float, cb:
 
 
 func _add_section(parent: Control, title: String) -> void:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+	var marker := ColorRect.new()
+	marker.custom_minimum_size = Vector2(3, 16)
+	marker.color = Color("#F2A84A")
+	marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(marker)
 	var l := Label.new()
 	l.text = title
 	l.theme_type_variation = &"Eyebrow"
-	parent.add_child(l)
+	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(l)
+	parent.add_child(row)
 
 
 func _stat(sb: VBoxContainer, title: String) -> Label:
+	var card := PanelContainer.new()
+	card.theme_type_variation = &"MetricCard"
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
 	var c := Label.new()
 	c.text = title
-	c.add_theme_font_size_override("font_size", 11)
-	sb.add_child(c)
+	c.theme_type_variation = &"StatLabel"
+	c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(c)
 	var v := Label.new()
 	v.theme_type_variation = &"StatValue"
 	v.text = "—"
-	sb.add_child(v)
+	v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	row.add_child(v)
+	card.add_child(row)
+	sb.add_child(card)
 	return v
 
 

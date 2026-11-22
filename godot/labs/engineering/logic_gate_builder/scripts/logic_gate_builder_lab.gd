@@ -1,4 +1,4 @@
-extends Control
+extends LabShell
 ## Interactive digital logic laboratory. All signals use Boolean values (0/1).
 
 const GATE_DEFS := {
@@ -38,42 +38,33 @@ const DRAG_THRESHOLD := 5.0
 
 func _ready() -> void:
     simulation_running = false
+    lab_title = "Logic Gate Builder"
+    lab_eyebrow = "ENGINEERING  /  DIGITAL LOGIC"
+    lab_lead = "Build Boolean circuits with live signal propagation and truth-table verification."
+    field_id = "engineering"
+    page_id = "logic_gate_builder"
+    back_label = "← Engineering"
+    super._ready()
     _build_ui()
     _seed_demo()
     _refresh()
     _update_simulation_controls()
 
 func _build_ui() -> void:
-    set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-    var bg := ColorRect.new()
-    bg.color = Color("#f5f3f1")
-    bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-    add_child(bg)
-    var outer := VBoxContainer.new()
-    outer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-    outer.add_theme_constant_override("separation", 0)
-    add_child(outer)
-    var header := PanelContainer.new()
-    var hs := StyleBoxFlat.new(); hs.bg_color = Color("#ffffff"); hs.content_margin_left = 22; hs.content_margin_right = 22; hs.content_margin_top = 12; hs.content_margin_bottom = 12
-    header.add_theme_stylebox_override("panel", hs)
-    outer.add_child(header)
-    var hrow := HBoxContainer.new(); header.add_child(hrow)
-    var title_box := VBoxContainer.new(); title_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL; hrow.add_child(title_box)
-    var title := Label.new(); title.text = "LOGIC GATE BUILDER"; title.add_theme_font_size_override("font_size", 25); title.add_theme_color_override("font_color", Color("#1b1b1b")); title_box.add_child(title)
-    var subtitle := Label.new(); subtitle.text = "Digital logic · Boolean signals · Interactive circuit experiments"; subtitle.add_theme_color_override("font_color", Color("#686868")); title_box.add_child(subtitle)
-    simulation_button = _button("▶ Play Simulation", true); simulation_button.custom_minimum_size.x = 160; simulation_button.pressed.connect(_toggle_simulation); hrow.add_child(simulation_button)
-    var reset_btn := _button("Reset Circuit"); reset_btn.pressed.connect(_reset_circuit); hrow.add_child(reset_btn)
-    var body := HBoxContainer.new(); body.size_flags_vertical = Control.SIZE_EXPAND_FILL; body.add_theme_constant_override("separation", 0); outer.add_child(body)
-    var sidebar := PanelContainer.new(); sidebar.custom_minimum_size.x = 238
-    var ss := StyleBoxFlat.new(); ss.bg_color = Color("#ffffff"); ss.content_margin_left = 14; ss.content_margin_right = 14; ss.content_margin_top = 14; ss.content_margin_bottom = 14; sidebar.add_theme_stylebox_override("panel", ss); body.add_child(sidebar)
-    var side := VBoxContainer.new(); side.add_theme_constant_override("separation", 7); sidebar.add_child(side)
+    var side := get_sidebar()
+    if side == null:
+        push_error("Logic Gate Builder: shared workspace sidebar is missing")
+        return
+    side.add_theme_constant_override("separation", 10)
     _section_label(side, "ADD COMPONENT")
     _add_component_button(side, "Input Switch", "INPUT")
-    for gate in ["AND", "OR", "NOT", "NAND", "NOR", "XOR", "XNOR"]: _add_component_button(side, gate + " Gate", gate)
+    for gate in ["AND", "OR", "NOT", "NAND", "NOR", "XOR", "XNOR"]:
+        _add_component_button(side, gate + " Gate", gate)
     _add_component_button(side, "Output Indicator", "OUTPUT")
     var sep := HSeparator.new(); side.add_child(sep)
-    _section_label(side, "EDIT & SIMULATE")
+    _section_label(side, "CIRCUIT CONTROLS")
     sidebar_simulation_button = _button("▶ Play Simulation", true); sidebar_simulation_button.pressed.connect(_toggle_simulation); side.add_child(sidebar_simulation_button)
+    var reset_btn := _button("Reset Circuit"); reset_btn.pressed.connect(_reset_circuit); side.add_child(reset_btn)
     var wire_btn := _button("Wire: OFF"); wire_btn.pressed.connect(func(): wire_mode = not wire_mode; wire_source_id = -1; wire_btn.text = "Wire: ON" if wire_mode else "Wire: OFF"; _set_status("Wire mode: click a source output, then a destination input." if wire_mode else "Wire mode disabled.")); side.add_child(wire_btn)
     var delete_btn := _button("Delete Selected"); delete_btn.pressed.connect(_delete_selected); side.add_child(delete_btn)
     var move_row := HBoxContainer.new(); side.add_child(move_row)
@@ -81,22 +72,52 @@ func _build_ui() -> void:
         var move_btn := _button(pair[0]); move_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL; var delta: Vector2 = pair[1]; move_btn.pressed.connect(func(): _move_selected(delta)); move_row.add_child(move_btn)
     var truth_btn := _button("Generate Truth Table", true); truth_btn.pressed.connect(_show_truth_table); side.add_child(truth_btn)
     var challenge_btn := _button("Half-Adder Challenge"); challenge_btn.pressed.connect(_half_adder_challenge); side.add_child(challenge_btn)
-    var instructions := Label.new(); instructions.text = "HOW TO USE\n1. Add components; drag their bodies to arrange them.\n2. Click an input switch to toggle 0/1.\n3. Enable Wire mode: click green Y output, then yellow A/B input.\n4. Invalid feedback cycles are rejected.\n5. Play/Pause simulation; generate a truth table anytime."; instructions.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; instructions.add_theme_font_size_override("font_size", 12); instructions.add_theme_color_override("font_color", Color("#666666")); side.add_child(instructions)
-    var work := VBoxContainer.new(); work.size_flags_horizontal = Control.SIZE_EXPAND_FILL; work.size_flags_vertical = Control.SIZE_EXPAND_FILL; work.add_theme_constant_override("separation", 0); body.add_child(work)
-    status_label = Label.new(); status_label.text = "Ready"; status_label.custom_minimum_size.y = 30; status_label.add_theme_color_override("font_color", Color("#5a2424")); status_label.add_theme_stylebox_override("normal", StyleBoxEmpty.new()); status_label.add_theme_constant_override("margin_left", 12); work.add_child(status_label)
-    board = Control.new(); board.name = "LogicCanvas"; board.size_flags_horizontal = Control.SIZE_EXPAND_FILL; board.size_flags_vertical = Control.SIZE_EXPAND_FILL; board.custom_minimum_size = Vector2(600, 460); board.mouse_filter = Control.MOUSE_FILTER_STOP; board.draw.connect(_draw_board); board.gui_input.connect(_on_board_input); work.add_child(board)
-    var footer := PanelContainer.new(); var fs := StyleBoxFlat.new(); fs.bg_color = Color("#ffffff"); fs.content_margin_left = 12; fs.content_margin_right = 12; fs.content_margin_top = 8; fs.content_margin_bottom = 8; footer.add_theme_stylebox_override("panel", fs); work.add_child(footer)
-    challenge_label = Label.new(); challenge_label.text = "Challenge: Build any circuit and verify its truth table."; challenge_label.add_theme_color_override("font_color", Color("#333333")); footer.add_child(challenge_label)
+    var instructions := Label.new(); instructions.text = "HOW TO USE\n1. Add components and drag them to arrange.\n2. Click an input switch to toggle 0/1.\n3. In Wire mode, click a green Y output, then a yellow A/B input.\n4. Feedback cycles are rejected.\n5. Start simulation or generate a truth table."; instructions.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; instructions.add_theme_font_size_override("font_size", 12); instructions.theme_type_variation = &"Muted"; side.add_child(instructions)
+
+    var stage := get_stage()
+    if stage == null:
+        push_error("Logic Gate Builder: shared workspace stage is missing")
+        return
+    board = Control.new()
+    board.name = "LogicCanvas"
+    board.custom_minimum_size = Vector2(600, 420)
+    board.mouse_filter = Control.MOUSE_FILTER_STOP
+    board.draw.connect(_draw_board)
+    board.gui_input.connect(_on_board_input)
+    add_to_stage(board)
+
+    var extra := get_extra()
+    if extra:
+        var footer := PanelContainer.new()
+        footer.theme_type_variation = &"ScientificCard"
+        challenge_label = Label.new()
+        challenge_label.text = "Challenge: Build any circuit and verify its truth table."
+        challenge_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+        footer.add_child(challenge_label)
+        extra.add_child(footer)
 
 func _button(text_value: String, primary: bool = false) -> Button:
-    var b := Button.new(); b.text = text_value; b.custom_minimum_size.y = 30
-    var normal := StyleBoxFlat.new(); normal.bg_color = FIREBRICK if primary else Color("#f4f1ef"); normal.set_corner_radius_all(6); normal.content_margin_left = 8; normal.content_margin_right = 8; normal.content_margin_top = 5; normal.content_margin_bottom = 5
-    var hover := normal.duplicate(); hover.bg_color = Color("#8f1b1b") if primary else Color("#e7dfdb")
-    b.add_theme_stylebox_override("normal", normal); b.add_theme_stylebox_override("hover", hover); b.add_theme_stylebox_override("pressed", hover)
-    b.add_theme_color_override("font_color", Color.WHITE if primary else Color("#262626")); return b
+    var b := Button.new()
+    b.text = text_value
+    b.custom_minimum_size.y = 36
+    b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    b.theme_type_variation = &"PrimaryButton" if primary else &"SecondaryButton"
+    return b
 
 func _section_label(parent: VBoxContainer, value: String) -> void:
-    var l := Label.new(); l.text = value; l.add_theme_font_size_override("font_size", 12); l.add_theme_color_override("font_color", FIREBRICK); parent.add_child(l)
+    var row := HBoxContainer.new()
+    row.add_theme_constant_override("separation", 8)
+    var marker := ColorRect.new()
+    marker.custom_minimum_size = Vector2(3, 16)
+    marker.color = Color("#16B8A6")
+    marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    row.add_child(marker)
+    var label := Label.new()
+    label.text = value
+    label.theme_type_variation = &"PanelTitle"
+    label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+    row.add_child(label)
+    parent.add_child(row)
 
 func _add_component_button(parent: VBoxContainer, label: String, kind: String) -> void:
     var b := _button("+ " + label); b.pressed.connect(func(): _add_node(kind)); parent.add_child(b)
@@ -396,19 +417,20 @@ func _node_caption(n: Dictionary) -> String:
 
 func _refresh() -> void:
     if board != null: board.queue_redraw()
-    if status_label != null:
-        var values := _snapshot(); var output_count := 0; var active_outputs := 0
-        for n in nodes:
-            if str(n.kind) == "OUTPUT":
-                output_count += 1
-                if bool(values.get(int(n.id), false)):
-                    active_outputs += 1
-        var run_state := "RUNNING" if simulation_running else "STOPPED — press Play to evaluate"
-        status_label.text = "%s   |   Components: %d   Connections: %d   Outputs HIGH: %d/%d" % [run_state, nodes.size(), wires.size(), active_outputs, output_count]
+    var values := _snapshot()
+    var output_count := 0
+    var active_outputs := 0
+    for n in nodes:
+        if str(n.kind) == "OUTPUT":
+            output_count += 1
+            if bool(values.get(int(n.id), false)):
+                active_outputs += 1
+    var run_state := "RUNNING" if simulation_running else "STOPPED — press Play to evaluate"
+    set_status("%s   |   Components: %d   Connections: %d   Outputs HIGH: %d/%d" % [run_state, nodes.size(), wires.size(), active_outputs, output_count])
     _update_simulation_controls()
 
 func _set_status(message: String) -> void:
-    if status_label != null: status_label.text = message
+    set_status(message)
 
 func _toggle_simulation() -> void:
     simulation_running = not simulation_running
