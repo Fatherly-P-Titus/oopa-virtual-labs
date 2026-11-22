@@ -34,7 +34,12 @@ func auto_score_attempt(exam: Dictionary, attempt: Dictionary) -> Dictionary:
 		var payload: Dictionary = item.get("payload", {})
 		match typ:
 			"mcq":
-				var correct: String = str(payload.get("correct_index", payload.get("correct", "")))
+				var correct_value: Variant = payload.get("correct_index", payload.get("correct", ""))
+				var correct: String = str(correct_value)
+				if payload.has("correct_index") and typeof(correct_value) in [TYPE_INT, TYPE_FLOAT]:
+					var correct_index_number := float(correct_value)
+					if is_equal_approx(correct_index_number, roundf(correct_index_number)):
+						correct = str(int(roundf(correct_index_number)))
 				if resp != "" and resp == correct:
 					pts = mx
 					note = "correct"

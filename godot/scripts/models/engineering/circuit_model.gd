@@ -527,7 +527,7 @@ func solve(delta: float = 0.0) -> void:
 					var dt := maxf(delta, 0.0001)
 					conductance = 1.0 / (R_INDUCTOR_COIL + inductance / dt)
 					var old_i := float(inductor_current.get(int(edge.cid), 0.0))
-					equivalent_current = -old_i * (inductance / dt) * conductance
+					equivalent_current = old_i * (inductance / dt) * conductance
 				else:
 					# At DC the inductor approaches a short, limited by winding resistance.
 					conductance = 1.0 / R_INDUCTOR_COIL
