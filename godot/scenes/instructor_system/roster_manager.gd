@@ -1,190 +1,147 @@
 extends Control
-## Create, import CSV, edit, delete student whitelists.
+## Instructor roster workspace; storage, IDs, validation and CSV handling remain in services.
 
 var _hub: OptionButton
 var _label: LineEdit
 var _csv: TextEdit
 var _msg: Label
 var _list: VBoxContainer
-var _active: Dictionary = {}
 var _table: VBoxContainer
+var _active: Dictionary = {}
 
 
 func _ready() -> void:
 	if not AppState.is_instructor_logged_in():
 		SceneRouter.go_instructor_login()
 		return
-	set_anchors_preset(Control.PRESET_FULL_RECT)
-	_build()
-	_reload()
-
-
-func _build() -> void:
-	var bg := ColorRect.new()
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	bg.color = Color("#faf9f8")
-	add_child(bg)
-	var margin := MarginContainer.new()
-	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 40)
-	margin.add_theme_constant_override("margin_right", 40)
-	margin.add_theme_constant_override("margin_top", 32)
-	margin.add_theme_constant_override("margin_bottom", 32)
-	add_child(margin)
-	var root_v := VBoxContainer.new()
-	root_v.add_theme_constant_override("separation", 10)
-	margin.add_child(root_v)
-
-	var eye := Label.new()
-	eye.text = "STUDENT REGISTRATION"
-	eye.add_theme_color_override("font_color", Color("#b22222"))
-	root_v.add_child(eye)
-	var title := Label.new()
-	title.text = "Whitelist (exam eligibility)"
-	title.add_theme_font_size_override("font_size", 24)
-	root_v.add_child(title)
-
-	var form := HBoxContainer.new()
-	form.add_theme_constant_override("separation", 12)
-	root_v.add_child(form)
-	var left := VBoxContainer.new()
+	var content := OopaAdminUI.page(self)
+	var heading := HBoxContainer.new()
+	content.add_child(heading)
+	var intro := OopaAdminUI.heading(heading, "Academic records", "Student rosters", "Manage eligibility lists for your authorised hubs.")
+	intro.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var back := OopaAdminUI.button("Back to overview", "TertiaryButton")
+	back.pressed.connect(func(): SceneRouter.go_instructor_dashboard())
+	heading.add_child(back)
+	var split := HBoxContainer.new()
+	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	split.add_theme_constant_override("separation", 16)
+	content.add_child(split)
+	var left := OopaAdminUI.panel(split)
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	left.add_theme_constant_override("separation", 6)
-	form.add_child(left)
-
-	left.add_child(_lbl("Hub"))
+	left.size_flags_stretch_ratio = 1.0
+	var left_body := VBoxContainer.new()
+	left_body.add_theme_constant_override("separation", 10)
+	left.add_child(left_body)
+	left_body.add_child(OopaAdminUI.label("Create or import a roster", 17))
+	left_body.add_child(OopaAdminUI.label("CSV columns: S/N, Student Name, Matric Number", 11, OopaAdminUI.MUTED))
 	_hub = OptionButton.new()
-	for h in OopaAuthService.new().allowed_hubs(AppState.instructor_session):
-		_hub.add_item(h)
-		_hub.set_item_metadata(_hub.item_count - 1, h)
-	left.add_child(_hub)
-
-	left.add_child(_lbl("List label"))
+	for hub_id in OopaAuthService.new().allowed_hubs(AppState.instructor_session):
+		_hub.add_item(hub_id.capitalize())
+		_hub.set_item_metadata(_hub.item_count - 1, hub_id)
+	left_body.add_child(_hub)
 	_label = LineEdit.new()
-	_label.placeholder_text = "e.g. CHEM101 2026 Cohort"
-	left.add_child(_label)
-
-	left.add_child(_lbl("Paste CSV (S/N, Student Name, Matric Number)"))
+	_label.placeholder_text = "Roster name"
+	left_body.add_child(_label)
 	_csv = TextEdit.new()
-	_csv.custom_minimum_size = Vector2(0, 140)
-	_csv.placeholder_text = "S/N,Student Name,Matric Number\n1,Ada Okafor,CHEM/2024/001"
-	left.add_child(_csv)
-
-	_msg = Label.new()
+	_csv.custom_minimum_size = Vector2(0, 150)
+	_csv.placeholder_text = "1,Ada Okafor,CHEM/2026/001"
+	left_body.add_child(_csv)
+	var import_btn := OopaAdminUI.button("Import CSV", "PrimaryButton")
+	import_btn.pressed.connect(_on_import)
+	left_body.add_child(import_btn)
+	var empty_btn := OopaAdminUI.button("Create empty roster", "SecondaryButton")
+	empty_btn.pressed.connect(_on_empty)
+	left_body.add_child(empty_btn)
+	_msg = OopaAdminUI.label("", 11, OopaAdminUI.MUTED)
 	_msg.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_msg.add_theme_color_override("font_color", Color("#b22222"))
-	left.add_child(_msg)
-
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 8)
-	left.add_child(row)
-	var bimp := Button.new()
-	bimp.text = "Import CSV → new list"
-	bimp.pressed.connect(_on_import)
-	row.add_child(bimp)
-	var bempty := Button.new()
-	bempty.text = "Create empty list"
-	bempty.theme_type_variation = &"GhostButton"
-	bempty.pressed.connect(_on_empty)
-	row.add_child(bempty)
-	var bback := Button.new()
-	bback.text = "Dashboard"
-	bback.theme_type_variation = &"GhostButton"
-	bback.pressed.connect(func(): SceneRouter.go_instructor_dashboard())
-	row.add_child(bback)
-	var bexam := Button.new()
-	bexam.text = "Exam editor"
-	bexam.theme_type_variation = &"GhostButton"
-	bexam.pressed.connect(func(): get_tree().change_scene_to_file("res://scenes/instructor_system/exam_editor.tscn"))
-	row.add_child(bexam)
-
-	# Existing lists
-	var lt := Label.new()
-	lt.text = "Saved lists"
-	lt.add_theme_font_size_override("font_size", 16)
-	root_v.add_child(lt)
-	var scroll := ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(0, 120)
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	root_v.add_child(scroll)
+	left_body.add_child(_msg)
+	var right := OopaAdminUI.panel(split)
+	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	right.size_flags_stretch_ratio = 1.25
+	var right_body := VBoxContainer.new()
+	right_body.add_theme_constant_override("separation", 10)
+	right.add_child(right_body)
+	right_body.add_child(OopaAdminUI.label("Saved rosters", 17))
+	var list_scroll := ScrollContainer.new()
+	list_scroll.custom_minimum_size = Vector2(0, 145)
+	list_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	right_body.add_child(list_scroll)
 	_list = VBoxContainer.new()
 	_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(_list)
-
-	var et := Label.new()
-	et.text = "Selected list editor"
-	et.add_theme_font_size_override("font_size", 16)
-	root_v.add_child(et)
+	list_scroll.add_child(_list)
+	var rule := HSeparator.new()
+	right_body.add_child(rule)
 	_table = VBoxContainer.new()
-	_table.add_theme_constant_override("separation", 4)
-	root_v.add_child(_table)
-
-
-func _lbl(t: String) -> Label:
-	var l := Label.new()
-	l.text = t
-	l.add_theme_font_size_override("font_size", 12)
-	return l
+	_table.add_theme_constant_override("separation", 7)
+	var edit_scroll := ScrollContainer.new()
+	edit_scroll.custom_minimum_size = Vector2(0, 185)
+	edit_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	edit_scroll.add_child(_table)
+	right_body.add_child(edit_scroll)
+	_reload()
+	_render_table()
 
 
 func _on_import() -> void:
 	if _hub.item_count == 0:
-		_msg.text = "No hub."
+		_set_message("No authorised hub is available.", "error")
 		return
-	var hub: String = str(_hub.get_item_metadata(_hub.selected))
-	var res: Dictionary = OopaRosterService.new().import_csv_text(
-		AppState.instructor_session, hub, _label.text, _csv.text
-	)
-	if not bool(res.get("ok", false)):
-		_msg.text = str(res.get("message", "Import failed"))
+	var hub_id := str(_hub.get_item_metadata(_hub.selected))
+	var result: Dictionary = OopaRosterService.new().import_csv_text(AppState.instructor_session, hub_id, _label.text, _csv.text)
+	if not bool(result.get("ok", false)):
+		_set_message(str(result.get("message", "Import failed.")), "error")
 		return
-	_msg.add_theme_color_override("font_color", Color("#2e7d32"))
-	_msg.text = "Imported %s" % str(res.get("roster", {}).get("roster_id", ""))
+	_active = result.get("roster", {}).duplicate(true)
+	_set_message("Roster imported and saved.", "success")
+	_csv.clear()
 	_reload()
+	_render_table()
 
 
 func _on_empty() -> void:
 	if _hub.item_count == 0:
+		_set_message("No authorised hub is available.", "error")
 		return
-	var hub: String = str(_hub.get_item_metadata(_hub.selected))
-	var res: Dictionary = OopaRosterService.new().create_roster(
-		AppState.instructor_session, hub, _label.text, [], "manual"
-	)
-	if not bool(res.get("ok", false)):
-		_msg.text = str(res.get("message", "Failed"))
+	var result: Dictionary = OopaRosterService.new().create_roster(AppState.instructor_session, str(_hub.get_item_metadata(_hub.selected)), _label.text, [], "manual")
+	if not bool(result.get("ok", false)):
+		_set_message(str(result.get("message", "Could not create roster.")), "error")
 		return
-	_msg.text = "Created empty list"
+	_active = result.get("roster", {}).duplicate(true)
+	_set_message("Empty roster created.", "success")
 	_reload()
-	_select_roster(res.get("roster", {}))
+	_render_table()
 
 
 func _reload() -> void:
-	for c in _list.get_children():
-		c.queue_free()
-	for r in OopaRosterService.new().list_for_session(AppState.instructor_session):
+	for child in _list.get_children():
+		child.queue_free()
+	var rosters := OopaRosterService.new().list_for_session(AppState.instructor_session)
+	if rosters.is_empty():
+		_list.add_child(OopaAdminUI.label("No rosters available in your hub scope.", 12, OopaAdminUI.MUTED))
+		return
+	for roster in rosters:
 		var row := HBoxContainer.new()
-		var l := Label.new()
-		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		l.text = "%s · %s · %d students" % [
-			str(r.get("label", "")), str(r.get("roster_id", "")), (r.get("students", []) as Array).size()
-		]
-		row.add_child(l)
-		var b := Button.new()
-		b.text = "Edit"
-		var roster: Dictionary = r
-		b.pressed.connect(func(): _select_roster(roster))
-		row.add_child(b)
-		var bd := Button.new()
-		bd.text = "Delete"
-		bd.theme_type_variation = &"GhostButton"
-		bd.pressed.connect(func(): _delete_roster(str(roster.get("roster_id", ""))))
-		row.add_child(bd)
+		row.add_theme_constant_override("separation", 6)
 		_list.add_child(row)
+		var info := OopaAdminUI.label("%s  ·  %d students" % [str(roster.get("label", "Roster")), (roster.get("students", []) as Array).size()], 12)
+		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(info)
+		var edit := OopaAdminUI.button("Open", "TertiaryButton")
+		var record: Dictionary = roster
+		edit.pressed.connect(func(): _select_roster(record))
+		row.add_child(edit)
+		var delete := OopaAdminUI.button("Delete", "DestructiveButton")
+		delete.pressed.connect(func(): _delete_roster(str(record.get("roster_id", ""))))
+		row.add_child(delete)
 
 
-func _delete_roster(rid: String) -> void:
-	OopaRosterService.new().delete_roster(AppState.instructor_session, rid)
+func _delete_roster(roster_id: String) -> void:
+	var result: Dictionary = OopaRosterService.new().delete_roster(AppState.instructor_session, roster_id)
+	if not bool(result.get("ok", false)):
+		_set_message(str(result.get("message", "Delete failed.")), "error")
+		return
 	_active = {}
+	_set_message("Roster deleted.", "success")
 	_reload()
 	_render_table()
 
@@ -195,76 +152,72 @@ func _select_roster(roster: Dictionary) -> void:
 
 
 func _render_table() -> void:
-	for c in _table.get_children():
-		c.queue_free()
+	for child in _table.get_children():
+		child.queue_free()
 	if _active.is_empty():
-		var e := Label.new()
-		e.text = "Select a list to edit."
-		_table.add_child(e)
+		_table.add_child(OopaAdminUI.label("Choose a roster to edit its student list.", 12, OopaAdminUI.MUTED))
 		return
-	var hdr := Label.new()
-	hdr.text = "Editing %s" % str(_active.get("roster_id", ""))
-	_table.add_child(hdr)
-	for s in _active.get("students", []):
+	_table.add_child(OopaAdminUI.label("%s  ·  %d students" % [str(_active.get("label", "Roster")), (_active.get("students", []) as Array).size()], 14))
+	var students: Array = _active.get("students", [])
+	for student in students:
 		var row := HBoxContainer.new()
-		var l := Label.new()
-		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		l.text = "%s · %s · %s" % [str(s.get("sn", "")), str(s.get("name", "")), str(s.get("matric", ""))]
-		row.add_child(l)
-		var bm := Button.new()
-		bm.text = "Remove"
-		bm.theme_type_variation = &"GhostButton"
-		var matric: String = str(s.get("matric", ""))
-		bm.pressed.connect(func(): _remove_student(matric))
-		row.add_child(bm)
 		_table.add_child(row)
+		var identity := OopaAdminUI.label("%s  ·  %s" % [str(student.get("name", "")), str(student.get("matric", ""))], 12)
+		identity.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(identity)
+		var remove := OopaAdminUI.button("Remove", "TertiaryButton")
+		var matric := str(student.get("matric", ""))
+		remove.pressed.connect(func(): _remove_student(matric))
+		row.add_child(remove)
 	var add_row := HBoxContainer.new()
-	var name_e := LineEdit.new()
-	name_e.placeholder_text = "Name"
-	name_e.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	add_row.add_child(name_e)
-	var mat_e := LineEdit.new()
-	mat_e.placeholder_text = "Matric"
-	mat_e.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	add_row.add_child(mat_e)
-	var ba := Button.new()
-	ba.text = "Add student"
-	ba.pressed.connect(func(): _add_student(name_e.text, mat_e.text))
-	add_row.add_child(ba)
+	var name_input := LineEdit.new()
+	name_input.placeholder_text = "Student name"
+	name_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	add_row.add_child(name_input)
+	var matric_input := LineEdit.new()
+	matric_input.placeholder_text = "Matric number"
+	matric_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	add_row.add_child(matric_input)
+	var add := OopaAdminUI.button("Add", "SecondaryButton")
+	add.pressed.connect(func(): _add_student(name_input.text, matric_input.text))
+	add_row.add_child(add)
 	_table.add_child(add_row)
-	var bs := Button.new()
-	bs.text = "Save list"
-	bs.pressed.connect(_save_active)
-	_table.add_child(bs)
+	var save := OopaAdminUI.button("Save roster", "PrimaryButton")
+	save.pressed.connect(_save_active)
+	_table.add_child(save)
 
 
 func _remove_student(matric: String) -> void:
-	var m: String = OopaIds.normalize_matric(matric)
+	var normalized := OopaIds.normalize_matric(matric)
 	var kept: Array = []
-	for s in _active.get("students", []):
-		if OopaIds.normalize_matric(str(s.get("matric", ""))) != m:
-			kept.append(s)
+	for student in _active.get("students", []):
+		if OopaIds.normalize_matric(str(student.get("matric", ""))) != normalized:
+			kept.append(student)
 	_active["students"] = kept
 	_render_table()
 
 
-func _add_student(name: String, matric: String) -> void:
-	if name.strip_edges().is_empty() or matric.strip_edges().is_empty():
-		_msg.text = "Name and matric required"
+func _add_student(student_name: String, matric: String) -> void:
+	if student_name.strip_edges().is_empty() or matric.strip_edges().is_empty():
+		_set_message("Enter both a name and matric number.", "error")
 		return
 	var students: Array = _active.get("students", [])
-	var sn: int = students.size() + 1
-	students.append(OopaSchemas.student_row(sn, name, matric))
+	students.append(OopaSchemas.student_row(students.size() + 1, student_name, matric))
 	_active["students"] = students
 	_render_table()
 
 
 func _save_active() -> void:
-	var res: Dictionary = OopaRosterService.new().save_roster(AppState.instructor_session, _active)
-	if not bool(res.get("ok", false)):
-		_msg.text = str(res.get("message", "Save failed"))
+	var result: Dictionary = OopaRosterService.new().save_roster(AppState.instructor_session, _active)
+	if not bool(result.get("ok", false)):
+		_set_message(str(result.get("message", "Save failed.")), "error")
 		return
-	_active = res.get("roster", _active)
-	_msg.add_theme_color_override("font_color", Color("#2e7d32"))
-	_msg.text = "List saved (JSON + CSV mirror)"
+	_active = result.get("roster", _active)
+	_set_message("Roster saved. JSON data and CSV mirror updated.", "success")
 	_reload()
+	_render_table()
+
+
+func _set_message(text: String, kind: String) -> void:
+	_msg.text = text
+	_msg.add_theme_color_override("font_color", OopaAdminUI.RED if kind == "error" else OopaAdminUI.TEAL)
