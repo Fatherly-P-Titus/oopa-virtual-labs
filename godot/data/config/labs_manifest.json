@@ -160,6 +160,13 @@
           "status": "available"
         },
         {
+          "id": "heat_exchanger",
+          "title": "Heat Exchanger Design & Simulation",
+          "blurb": "M11 foundation preview for shell-and-tube and double-pipe exchanger design and simulation.",
+          "scene": "res://scenes/labs/engineering/heat_exchanger/heat_exchanger_lab.tscn",
+          "status": "available"
+        },
+        {
           "id": "heat_transfer",
           "title": "Heat Transfer",
           "blurb": "Steady 1D multilayer wall: conduction, convection films, heat flux q = \u0394T/R.",

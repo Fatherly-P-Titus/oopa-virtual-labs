@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/common/lab_shell.tscn" id="1"]
+[ext_resource type="Script" path="res://scenes/labs/engineering/heat_exchanger/heat_exchanger_lab.gd" id="2"]
+
+[node name="HeatExchangerLab" instance=ExtResource("1")]
+script = ExtResource("2")
+lab_title = "Heat Exchanger Design & Simulation"
+lab_eyebrow = "ENGINEERING  /  THERMAL SYSTEMS"
+lab_lead = "Investigate shell-and-tube and double-pipe heat exchangers through model-driven operation and engineering analysis."
+field_id = "engineering"
+page_id = "heat_exchanger"
+back_label = "← Engineering"
