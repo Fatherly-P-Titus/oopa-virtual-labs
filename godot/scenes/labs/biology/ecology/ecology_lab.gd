@@ -341,8 +341,14 @@ func _draw_time() -> void:
 	c.draw_rect(Rect2(Vector2.ZERO, sz), Color("#101418"))
 	var pad := 36.0
 	var plot := Rect2(pad, 22.0, sz.x - pad * 2.0, sz.y - 50.0)
-	c.draw_rect(plot, Color("#1a1e24"))
-	c.draw_string(ThemeDB.fallback_font, Vector2(pad, 16.0), "Time series — A (teal) · B (violet)", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#b0bec5"))
+	c.draw_rect(plot, Color("#171c23"))
+	for grid_i in range(1, 5):
+		var gy: float = plot.position.y + plot.size.y * float(grid_i) / 5.0
+		var gx: float = plot.position.x + plot.size.x * float(grid_i) / 5.0
+		c.draw_line(Vector2(plot.position.x, gy), Vector2(plot.end.x, gy), Color("#a6a0c1", 0.14), 1.0)
+		c.draw_line(Vector2(gx, plot.position.y), Vector2(gx, plot.end.y), Color("#a6a0c1", 0.10), 1.0)
+	c.draw_rect(plot, Color("#a6a0c1", 0.32), false, 1.0)
+	c.draw_string(ThemeDB.fallback_font, Vector2(pad, 16.0), "Population history — A (teal) · B (violet)", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#b0bec5"))
 
 	var hx: Array = model.hist_x
 	var hy: Array = model.hist_y
@@ -363,8 +369,10 @@ func _draw_time() -> void:
 		var xp: float = plot.position.x + u * plot.size.x
 		px.append(Vector2(xp, plot.position.y + (1.0 - float(hx[i]) / vmax) * plot.size.y))
 		py.append(Vector2(xp, plot.position.y + (1.0 - float(hy[i]) / vmax) * plot.size.y))
-	c.draw_polyline(px, Color("#26a69a"), 2.0, true)
-	c.draw_polyline(py, Color("#7e57c2"), 2.0, true)
+	c.draw_polyline(px, Color("#26a69a"), 2.4, true)
+	c.draw_polyline(py, Color("#7e57c2"), 2.4, true)
+	c.draw_circle(px[px.size() - 1], 4.0, Color("#80cbc4"))
+	c.draw_circle(py[py.size() - 1], 4.0, Color("#b39ddb"))
 
 
 func _draw_phase() -> void:
@@ -377,7 +385,13 @@ func _draw_phase() -> void:
 	c.draw_rect(Rect2(Vector2.ZERO, sz), Color("#121418"))
 	var pad := 36.0
 	var plot := Rect2(pad, 18.0, sz.x - pad * 2.0, sz.y - 40.0)
-	c.draw_rect(plot, Color("#1a1e24"))
+	c.draw_rect(plot, Color("#171c23"))
+	for grid_i in range(1, 5):
+		var gx: float = plot.position.x + plot.size.x * float(grid_i) / 5.0
+		var gy: float = plot.position.y + plot.size.y * float(grid_i) / 5.0
+		c.draw_line(Vector2(gx, plot.position.y), Vector2(gx, plot.end.y), Color("#a6a0c1", 0.13), 1.0)
+		c.draw_line(Vector2(plot.position.x, gy), Vector2(plot.end.x, gy), Color("#a6a0c1", 0.13), 1.0)
+	c.draw_rect(plot, Color("#a6a0c1", 0.32), false, 1.0)
 	c.draw_string(ThemeDB.fallback_font, Vector2(pad, 12.0), "Phase plane — x (A) vs y (B)", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#b0bec5"))
 
 	var hx: Array = model.hist_x

@@ -324,7 +324,10 @@ func _draw_pyramid() -> void:
 		var w: float = max_w * frac
 		var y: float = top + float(i) * row_h
 		var rect := Rect2(cx - w * 0.5, y + 6.0, w, row_h - 12.0)
-		c.draw_rect(rect, L["color"])
+		var level_color: Color = L["color"]
+		c.draw_rect(rect, level_color)
+		c.draw_line(rect.position + Vector2(2.0, 2.0), Vector2(rect.end.x - 2.0, rect.position.y + 2.0), level_color.lightened(0.22), 2.0)
+		c.draw_line(Vector2(rect.position.x + 2.0, rect.end.y - 2.0), Vector2(rect.end.x - 2.0, rect.end.y - 2.0), level_color.darkened(0.28), 2.0)
 		c.draw_rect(rect, Color(0, 0, 0, 0.35), false, 2.0)
 		c.draw_string(ThemeDB.fallback_font, Vector2(cx - w * 0.5 + 8.0, y + row_h * 0.55), "%s  %.1f" % [str(L["name"]), float(L["v"])], HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#ffffff"))
 

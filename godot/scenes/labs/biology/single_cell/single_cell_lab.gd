@@ -403,10 +403,18 @@ func _draw_stage() -> void:
 	var oy: float = float(xform["oy"])
 	var cell_px: float = SingleCellModel.GRID_RES * scale
 
-	c.draw_rect(Rect2(ox, oy, SingleCellModel.WORLD_W * scale, SingleCellModel.WORLD_H * scale), Color("#0e0e0e"))
+	var field_rect := Rect2(ox, oy, SingleCellModel.WORLD_W * scale, SingleCellModel.WORLD_H * scale)
+	c.draw_rect(field_rect, Color("#102126"))
+	c.draw_rect(field_rect, Color("#48c7d1", 0.26), false, 4.0)
+	c.draw_rect(field_rect.grow(-5.0), Color("#c7f4f5", 0.10), false, 1.0)
+	# Microscope-stage ticks preserve the model's rectangular world and scale.
+	for tick_i in range(1, 5):
+		var tick_x: float = ox + field_rect.size.x * float(tick_i) / 5.0
+		c.draw_line(Vector2(tick_x, oy), Vector2(tick_x, oy + 7.0), Color("#a5d6d8", 0.45), 1.0)
+
 	# Edge padding band (cells stay inside)
 	var pad: float = SingleCellModel.EDGE_PAD * scale
-	c.draw_rect(Rect2(ox, oy, SingleCellModel.WORLD_W * scale, SingleCellModel.WORLD_H * scale), Color("#b22222", 0.12), false, 1.0)
+	c.draw_rect(field_rect, Color("#48c7d1", 0.18), false, 1.0)
 	c.draw_rect(Rect2(ox + pad, oy + pad, SingleCellModel.WORLD_W * scale - pad * 2.0, SingleCellModel.WORLD_H * scale - pad * 2.0), Color("#ffffff", 0.06), false, 1.0)
 
 	# Waste still grid-based (subtle)
@@ -432,7 +440,7 @@ func _draw_stage() -> void:
 			c.draw_circle(pc, pr, Color(0.2, 0.85, 0.35, alpha))
 			c.draw_circle(pc, pr, Color(0.4, 1.0, 0.5, 0.35), false, 1.5)
 
-	c.draw_rect(Rect2(ox, oy, SingleCellModel.WORLD_W * scale, SingleCellModel.WORLD_H * scale), Color("#b22222", 0.35), false, 1.5)
+	c.draw_rect(field_rect, Color("#48c7d1", 0.55), false, 1.5)
 
 	for cell in model.cells:
 		var x: float = ox + float(cell["x"]) * scale
@@ -450,6 +458,13 @@ func _draw_stage() -> void:
 		var pc: Dictionary = _find_cell(_possess_id)
 		if not pc.is_empty():
 			_center_on(float(pc["x"]), float(pc["y"]), sz)
+
+	var scale_len: float = minf(100.0, SingleCellModel.WORLD_W * 0.2) * scale
+	var scale_y: float = oy + field_rect.size.y - 10.0
+	c.draw_line(Vector2(ox + 12.0, scale_y), Vector2(ox + 12.0 + scale_len, scale_y), Color("#d7f7f7", 0.85), 2.0)
+	c.draw_line(Vector2(ox + 12.0, scale_y - 3.0), Vector2(ox + 12.0, scale_y + 3.0), Color("#d7f7f7", 0.85), 1.0)
+	c.draw_line(Vector2(ox + 12.0 + scale_len, scale_y - 3.0), Vector2(ox + 12.0 + scale_len, scale_y + 3.0), Color("#d7f7f7", 0.85), 1.0)
+	c.draw_string(ThemeDB.fallback_font, Vector2(ox + 12.0, scale_y - 5.0), "100 world units", HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("#d7f7f7"))
 
 	c.draw_string(ThemeDB.fallback_font, Vector2(8.0, 16.0), "zoom %.1f× · %d cells · click cell to possess" % [_zoom, model.cell_count()], HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#90a4ae"))
 

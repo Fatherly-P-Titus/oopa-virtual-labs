@@ -407,20 +407,34 @@ func _draw_stage() -> void:
 			t2.append(Vector2(ox + p.x * scale, oy + p.y * scale))
 		c.draw_polyline(t2, Color(1.0, 0.6, 0.2, 0.35), 1.5, true)
 
-	# Bodies
+	# Specular highlights add volume while body centres/radii remain model-derived.
 	var c1 := Vector2(ox + model.x1 * scale, oy + model.y1 * scale)
 	var c2 := Vector2(ox + model.x2 * scale, oy + model.y2 * scale)
 	var rr1: float = model.r1 * scale
 	var rr2: float = model.r2 * scale
-	c.draw_circle(c1, rr1, Color("#42a5f5"))
+	c.draw_circle(c1 + Vector2(2.0, 4.0), rr1, Color(0.0, 0.0, 0.0, 0.28))
+	c.draw_circle(c2 + Vector2(2.0, 4.0), rr2, Color(0.0, 0.0, 0.0, 0.28))
+	c.draw_circle(c1, rr1, Color("#1976d2"))
+	c.draw_circle(c1 - Vector2(rr1 * 0.28, rr1 * 0.30), rr1 * 0.30, Color("#bbdefb", 0.48))
 	c.draw_circle(c1, rr1, Color("#90caf9"), false, 2.0)
-	c.draw_circle(c2, rr2, Color("#ff8a65"))
+	c.draw_circle(c2, rr2, Color("#e64a19"))
+	c.draw_circle(c2 - Vector2(rr2 * 0.28, rr2 * 0.30), rr2 * 0.30, Color("#ffe0b2", 0.48))
 	c.draw_circle(c2, rr2, Color("#ffccbc"), false, 2.0)
 
-	# Velocity vectors
+	# Arrowheads preserve the actual signed model velocities.
 	var vs: float = 0.35 * scale
-	c.draw_line(c1, c1 + Vector2(model.vx1, model.vy1) * vs, Color("#90caf9"), 2.0)
-	c.draw_line(c2, c2 + Vector2(model.vx2, model.vy2) * vs, Color("#ffccbc"), 2.0)
+	var d1 := Vector2(model.vx1, model.vy1) * vs
+	var d2 := Vector2(model.vx2, model.vy2) * vs
+	c.draw_line(c1, c1 + d1, Color("#90caf9"), 2.0)
+	c.draw_line(c2, c2 + d2, Color("#ffccbc"), 2.0)
+	if d1.length() > 5.0:
+		var dir1 := d1.normalized()
+		c.draw_line(c1 + d1, c1 + d1 - dir1 * 8.0 + dir1.orthogonal() * 4.0, Color("#90caf9"), 2.0)
+		c.draw_line(c1 + d1, c1 + d1 - dir1 * 8.0 - dir1.orthogonal() * 4.0, Color("#90caf9"), 2.0)
+	if d2.length() > 5.0:
+		var dir2 := d2.normalized()
+		c.draw_line(c2 + d2, c2 + d2 - dir2 * 8.0 + dir2.orthogonal() * 4.0, Color("#ffccbc"), 2.0)
+		c.draw_line(c2 + d2, c2 + d2 - dir2 * 8.0 - dir2.orthogonal() * 4.0, Color("#ffccbc"), 2.0)
 
 	c.draw_string(ThemeDB.fallback_font, Vector2(c1.x - 6.0, c1.y + 4.0), "1", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.WHITE)
 	c.draw_string(ThemeDB.fallback_font, Vector2(c2.x - 6.0, c2.y + 4.0), "2", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.WHITE)

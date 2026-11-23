@@ -362,6 +362,11 @@ func _draw_stage() -> void:
 	var base_y: float = h * 0.82
 	var max_h: float = h * 0.48
 
+	# Concentration guides share the live scale used by both bar sets.
+	for grid_i in range(1, 5):
+		var grid_y: float = base_y - max_h * float(grid_i) / 4.0
+		c.draw_line(Vector2(16.0, grid_y), Vector2(w - 16.0, grid_y), Color("#78909c", 0.16), 1.0)
+
 	for i in n:
 		var s: String = str(species[i])
 		var gx: float = 20.0 + float(i) * (group_w + gap)

@@ -343,8 +343,14 @@ func _draw_time() -> void:
 	c.draw_rect(Rect2(Vector2.ZERO, sz), Color("#121418"))
 	var pad := 36.0
 	var plot := Rect2(pad, 20.0, sz.x - pad * 2.0, sz.y - 48.0)
-	c.draw_rect(plot, Color("#1a1e24"))
-	c.draw_string(ThemeDB.fallback_font, Vector2(pad, 14.0), "Time series — prey (green) · predators (orange)", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#b0bec5"))
+	c.draw_rect(plot, Color("#151d20"))
+	for grid_i in range(1, 5):
+		var gy: float = plot.position.y + plot.size.y * float(grid_i) / 5.0
+		var gx: float = plot.position.x + plot.size.x * float(grid_i) / 5.0
+		c.draw_line(Vector2(plot.position.x, gy), Vector2(plot.end.x, gy), Color("#8aa19a", 0.15), 1.0)
+		c.draw_line(Vector2(gx, plot.position.y), Vector2(gx, plot.end.y), Color("#8aa19a", 0.10), 1.0)
+	c.draw_rect(plot, Color("#8aa19a", 0.35), false, 1.0)
+	c.draw_string(ThemeDB.fallback_font, Vector2(pad, 14.0), "Population history · prey (green) · predators (orange)", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#b0bec5"))
 
 	var hx: Array = model.hist_x
 	var hy: Array = model.hist_y
@@ -366,8 +372,10 @@ func _draw_time() -> void:
 		var xpix: float = plot.position.x + u * plot.size.x
 		px.append(Vector2(xpix, plot.position.y + (1.0 - float(hx[i]) / vmax) * plot.size.y))
 		py.append(Vector2(xpix, plot.position.y + (1.0 - float(hy[i]) / vmax) * plot.size.y))
-	c.draw_polyline(px, Color("#66bb6a"), 2.0, true)
-	c.draw_polyline(py, Color("#ff9800"), 2.0, true)
+	c.draw_polyline(px, Color("#66bb6a"), 2.4, true)
+	c.draw_polyline(py, Color("#ff9800"), 2.4, true)
+	c.draw_circle(px[px.size() - 1], 4.0, Color("#a5d6a7"))
+	c.draw_circle(py[py.size() - 1], 4.0, Color("#ffcc80"))
 	c.draw_string(ThemeDB.fallback_font, Vector2(plot.position.x, plot.end.y + 16.0), "t=%.1f → %.1f yr" % [t0, t1], HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#90a4ae"))
 
 
@@ -381,7 +389,13 @@ func _draw_phase() -> void:
 	c.draw_rect(Rect2(Vector2.ZERO, sz), Color("#121418"))
 	var pad := 36.0
 	var plot := Rect2(pad, 18.0, sz.x - pad * 2.0, sz.y - 40.0)
-	c.draw_rect(plot, Color("#1a1e24"))
+	c.draw_rect(plot, Color("#151d20"))
+	for grid_i in range(1, 5):
+		var gx: float = plot.position.x + plot.size.x * float(grid_i) / 5.0
+		var gy: float = plot.position.y + plot.size.y * float(grid_i) / 5.0
+		c.draw_line(Vector2(gx, plot.position.y), Vector2(gx, plot.end.y), Color("#8aa19a", 0.13), 1.0)
+		c.draw_line(Vector2(plot.position.x, gy), Vector2(plot.end.x, gy), Color("#8aa19a", 0.13), 1.0)
+	c.draw_rect(plot, Color("#8aa19a", 0.35), false, 1.0)
 	c.draw_string(ThemeDB.fallback_font, Vector2(pad, 12.0), "Phase portrait — x (prey) vs y (predators)", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#b0bec5"))
 
 	var hx: Array = model.hist_x

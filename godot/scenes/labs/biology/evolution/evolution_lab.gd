@@ -312,8 +312,16 @@ func _draw_stage() -> void:
 	c.draw_string(ThemeDB.fallback_font, Vector2(x1 - 20.0, axis_y + 18.0), "1", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#90a4ae"))
 	c.draw_string(ThemeDB.fallback_font, Vector2(x0, 22.0), "Trait distribution · gen %d" % model.generation, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#b0bec5"))
 
-	# Optimum marker
+	# Selection window is model-linked: the translucent band spans ± one selection σ.
 	var ox: float = x0 + model.optimum * (x1 - x0)
+	var sigma_px: float = model.selection_sigma * (x1 - x0)
+	var band_left: float = maxf(x0, ox - sigma_px)
+	var band_right: float = minf(x1, ox + sigma_px)
+	if band_right > band_left:
+		c.draw_rect(Rect2(band_left, axis_y - 90.0, band_right - band_left, 90.0), Color("#ffeb3b", 0.07))
+	for guide_i in range(1, 5):
+		var guide_x: float = x0 + (x1 - x0) * float(guide_i) / 5.0
+		c.draw_line(Vector2(guide_x, axis_y - 88.0), Vector2(guide_x, axis_y + 2.0), Color("#90a4ae", 0.12), 1.0)
 	c.draw_line(Vector2(ox, axis_y - 90.0), Vector2(ox, axis_y + 8.0), Color("#ffeb3b"), 2.0)
 	c.draw_string(ThemeDB.fallback_font, Vector2(ox - 10.0, axis_y - 96.0), "z*", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#fff59d"))
 

@@ -452,6 +452,12 @@ func _draw_plot() -> void:
 	var tmax: float = _plot_t_max()
 	var amax: float = maxf(model.a0, 0.1)
 
+	# Fine instrument grid keeps the concentration trace readable without changing its scale.
+	for grid_i in range(1, 5):
+		var grid_y: float = pad_t + ph * float(grid_i) / 5.0
+		c.draw_line(Vector2(pad_l, grid_y), Vector2(pad_l + pw, grid_y), Color("#78909c", 0.16), 1.0)
+		var grid_x: float = pad_l + pw * float(grid_i) / 5.0
+		c.draw_line(Vector2(grid_x, pad_t), Vector2(grid_x, pad_t + ph), Color("#78909c", 0.12), 1.0)
 	c.draw_line(Vector2(pad_l, pad_t), Vector2(pad_l, pad_t + ph), Color("#546e7a"), 1.0)
 	c.draw_line(Vector2(pad_l, pad_t + ph), Vector2(pad_l + pw, pad_t + ph), Color("#546e7a"), 1.0)
 	c.draw_string(ThemeDB.fallback_font, Vector2(pad_l, 16), "[A] vs t", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#b0bec5"))

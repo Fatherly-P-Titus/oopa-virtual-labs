@@ -493,8 +493,14 @@ func _draw_stage() -> void:
 	for s in range(1, max_s + 1):
 		var sp: Vector2 = model.source_pos(s)
 		var sc: Vector2 = Vector2(_ox + sp.x * _scale, _oy + sp.y * _scale)
-		c.draw_circle(sc, 7.0, Color("#ffeb3b"))
-		c.draw_circle(sc, 7.0, Color.WHITE, false, 1.5)
+		# Coherent wavefront guides use the configured wavelength and source position.
+		for front_i in range(1, 3):
+			var front_r: float = model.wavelength * _scale * float(front_i)
+			if front_r < minf(_bw, _bh) * 0.48:
+				c.draw_arc(sc, front_r, 0.0, TAU, 48, Color("#ffeb3b", 0.16), 1.2, true)
+		c.draw_circle(sc, 9.0, Color("#5d4d16"))
+		c.draw_circle(sc, 6.0, Color("#ffeb3b"))
+		c.draw_circle(sc, 6.0, Color.WHITE, false, 1.5)
 		c.draw_string(ThemeDB.fallback_font, Vector2(sc.x - 4.0, sc.y - 12.0), "S%d" % s, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#ffeb3b"))
 
 	# Probe

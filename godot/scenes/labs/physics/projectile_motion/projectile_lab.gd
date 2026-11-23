@@ -717,6 +717,16 @@ func _draw_stage() -> void:
 		var gy: float = _ground_y - _plot_h * float(j) / 3.0
 		c.draw_line(Vector2(pad_l, gy), Vector2(pad_l + _plot_w, gy), Color("#1b2838"), 1.0)
 
+	# Launcher cue follows the model launch height and angle.
+	var launch_point := Vector2(_origin.x, _origin.y - (model.h0 / _world_h) * _plot_h)
+	var launch_angle: float = deg_to_rad(model.angle_deg)
+	var barrel_tip := launch_point + Vector2(cos(launch_angle), -sin(launch_angle)) * 34.0
+	c.draw_line(Vector2(launch_point.x - 10.0, _origin.y + 2.0), Vector2(launch_point.x + 26.0, _origin.y + 2.0), Color("#455a64"), 7.0)
+	c.draw_line(Vector2(launch_point.x + 2.0, _origin.y), launch_point, Color("#607d8b"), 5.0)
+	c.draw_line(launch_point, barrel_tip, Color("#90a4ae"), 8.0)
+	c.draw_line(launch_point, barrel_tip, Color("#cfd8dc"), 3.0)
+	c.draw_circle(launch_point, 5.0, Color("#ffb74d"))
+	c.draw_string(ThemeDB.fallback_font, launch_point + Vector2(7.0, -10.0), "θ %.0f°" % model.angle_deg, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#ffcc80"))
 	c.draw_string(ThemeDB.fallback_font, Vector2(pad_l, 16.0), "Trajectory (m) — click to place hoop", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#b0bec5"))
 
 	if _ghost_path.size() >= 2:

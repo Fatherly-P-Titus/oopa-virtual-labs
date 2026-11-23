@@ -516,9 +516,12 @@ func _draw_stage() -> void:
 	_box_scale = side / ParticleModel.BOX
 	_hist_y0 = top_h + 4.0
 
-	# Box
-	c.draw_rect(Rect2(_box_ox, _box_oy, side, side), Color("#1a1a1a"), true)
-	c.draw_rect(Rect2(_box_ox, _box_oy, side, side), Color("#b22222"), false, 3.0)
+	# Bevelled simulation-cell rim; interior coordinates remain the model's box.
+	c.draw_rect(Rect2(_box_ox - 5.0, _box_oy - 5.0, side + 10.0, side + 10.0), Color("#26343b"), true)
+	c.draw_rect(Rect2(_box_ox - 5.0, _box_oy - 5.0, side + 10.0, side + 10.0), Color("#607d8b", 0.72), false, 2.0)
+	c.draw_rect(Rect2(_box_ox, _box_oy, side, side), Color("#101a20"), true)
+	c.draw_line(Vector2(_box_ox, _box_oy), Vector2(_box_ox + side, _box_oy), Color("#b0bec5", 0.48), 1.0)
+	c.draw_rect(Rect2(_box_ox, _box_oy, side, side), Color("#546e7a"), false, 2.0)
 
 	# Trails
 	if model.show_trails:
