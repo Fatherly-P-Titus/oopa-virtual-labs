@@ -1,29 +1,30 @@
-# Implementation notes
+# Logic Gate Builder implementation notes
 
-The Logic Gate Builder uses the same Godot 4 project conventions as OOPA Virtual Labs, but its standalone project has its own `project.godot` and `res://` root. The parent OOPA application opens the integrated lab scene at `labs/engineering/logic_gate_builder/scenes/logic_gate_builder_lab.tscn`.
+## Integration route and boundaries
 
-Signal rules: all logic is Boolean; disconnected input ports read LOW; combinational cycles return LOW at the recursive edge to prevent infinite recursion. Gate expressions are shown on each gate card.
+The Engineering hub launches `res://labs/engineering/logic_gate_builder/scenes/logic_gate_builder_lab.tscn`. That scene inherits the existing `LabShell`. The digital Boolean lab is distinct from the analog Circuit Builder at `res://scenes/labs/engineering/circuit_builder/circuit_lab.tscn`; the analog model and route are preserved.
 
+## Production architecture
 
-## Manual simulation control refinement
-The circuit now starts in a STOPPED state. Students may set input switches and build connections before pressing **Play Simulation**. The same control toggles to **Pause Simulation** while running. Paused mode suppresses downstream live signal propagation; truth-table generation forces independent evaluations and remains available while paused. Reset returns to the stopped starter circuit.
+- `res://scripts/models/engineering/logic_circuit_model.gd` owns component data, graph topology, validation, Boolean evaluation, cycle checks, expressions, and truth-table generation.
+- `res://labs/engineering/logic_gate_builder/scripts/logic_gate_canvas.gd` renders the grid, gate packages/symbols, terminals and wires; it translates pointer gestures into controller signals.
+- `res://labs/engineering/logic_gate_builder/scripts/logic_gate_builder_lab.gd` integrates the model and canvas with LabShell, component library, inspector, output readouts, controls, and truth-table view.
+- `res://tests/logic_circuit_model_test.gd` exercises the production model, not a duplicate implementation.
 
-### Manual-start behavior checks
-- Initial state is STOPPED; no gate outputs or signal wires are active until Play is clicked.
-- Input switches remain editable while stopped so learners can prepare test vectors.
-- Play starts live combinational evaluation; the button changes to Pause Simulation.
-- Pause suppresses downstream live signal propagation while retaining input settings and wiring.
-- Truth-table generation uses forced evaluation and remains usable while the live simulation is paused.
-- Reset restores the starter AND circuit and stops the simulation.
+## Signal and connection rules
 
+The supported gates are AND, OR, NOT, NAND, NOR, XOR, and XNOR. NOT has one input; each binary gate has two. Input switches provide Boolean LOW/HIGH values. Output lamps only display evaluated values. Each destination input accepts one driver; an explicit replacement removes its prior wire. Self-links and cycles are rejected. Removing a component removes attached wires.
 
-## Manual wiring and placement refinement (2026-10-26)
+Unconnected gate inputs evaluate to UNKNOWN and are reported. UNKNOWN propagates through the relevant gate and output. Evaluation does not claim an incomplete circuit is valid for truth-table generation. Invalid dependencies/cycles produce errors. A truth table is generated only for a complete, valid circuit, enumerates up to eight independent inputs, supports multiple outputs, and restores the live switch values afterward.
 
-- Ports are labelled: green `Y` output ports and yellow `A`/`B` input ports.
-- Wiring requires choosing a source output followed by a destination input.
-- Invalid source/destination kinds, self-connections, invalid port indices, and directed feedback cycles are rejected with status messages.
-- Replacing an occupied input port is allowed but explicitly reported.
-- The selected source is highlighted while wire mode is active.
-- Components can be dragged by their body; positions are clamped to the board bounds and wires remain attached because they are drawn from live node positions.
-- Existing Play/Pause, starter circuit, reset, truth-table generation, and gate semantics are retained.
-- Runtime execution tests were not run in this environment because a Godot executable was not available. Validate in Godot 4 before release.
+## Interaction
+
+Drag a component-library entry onto the canvas to place it. Drag a component body to move it on the 32-unit grid. Drag an output terminal to a destination input terminal to connect it. Click an input switch to toggle its state. Middle-drag pans; the wheel zooms about the pointer. Select a wire and press Delete to remove it; select a component and press Delete or use the inspector action to remove it and attached wires.
+
+## Verification
+
+Run the production Boolean model suite using:
+
+`godot --headless --path . --script res://tests/logic_circuit_model_test.gd`
+
+The analog model regression at `res://tests/circuit_builder_multiwire_test.gd` remains a separate preservation check. Headless scene loading checks integration and parsing; manual Godot review is still required for visual quality and pointer interaction.

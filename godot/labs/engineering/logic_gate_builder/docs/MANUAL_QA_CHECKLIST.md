@@ -1,27 +1,35 @@
-# Logic Gate Builder Manual QA Checklist
+# Logic Gate Builder manual QA checklist
 
-Run in both the integrated OOPA project and the standalone project using Godot 4.
+Run from the integrated OOPA project in Godot 4.7.2. Automated tests do not replace visual and interaction review.
 
-## Wiring
-- [ ] Select a gate's green Y port, then connect to a gate's yellow A port.
-- [ ] Connect a second source to B; verify labels and wire endpoints align.
-- [ ] Connect to an output indicator's yellow Y input.
-- [ ] Attempt to wire an output indicator as a source; verify a clear rejection.
-- [ ] Attempt a self-connection; verify rejection.
-- [ ] Attempt a directed feedback cycle (A → B → A); verify rejection.
-- [ ] Replace an occupied input; verify the old wire is replaced and a message appears.
-- [ ] Verify the selected source gets a highlight and clears after a connection attempt.
+## Launch and visual layout
 
-## Placement and simulation
-- [ ] Drag each component type and verify wires remain attached.
-- [ ] Drag components to board edges; verify they stay within bounds.
-- [ ] Click an input switch without dragging; verify its value toggles.
-- [ ] Play and pause; verify status/button labels and live signal propagation.
-- [ ] Reset; verify the starter AND circuit returns and simulation stops.
-- [ ] Generate a truth table and verify input values are restored afterward.
-- [ ] Run the half-adder challenge and verify its instructions.
+- [ ] Open Logic Gate Builder from Engineering and confirm it remains inside the shared LabShell.
+- [ ] Confirm the library, canvas, inspector, live outputs, and truth-table panel fit without overlap at the project window size.
+- [ ] Check text, terminal labels, gate symbols, selected outlines, and signal colors at normal zoom.
 
-## Integration
-- [ ] Open Logic Gate Builder from the integrated hub.
-- [ ] Confirm integrated and standalone scripts are byte-identical.
-- [ ] Run the standalone truth-table test and the project circuit-builder regression test.
+## Construction and wiring
+
+- [ ] Drag input, gate, and output entries onto the canvas; verify grid-aligned placement.
+- [ ] Move components and confirm wires remain attached to the correct pins.
+- [ ] Pan with middle mouse and zoom with the wheel around the pointer.
+- [ ] Drag a source Y pin to gate A/B and output Y inputs; verify clear wire and terminal feedback.
+- [ ] Replace an occupied destination and verify the previous driver is removed with a status message.
+- [ ] Try self-feedback and a multi-gate directed cycle; verify rejection and no fabricated logic result.
+- [ ] Select and delete a wire; delete a component and verify attached wires are removed.
+- [ ] Toggle input switches; verify output lamps and wires reflect evaluated values.
+
+## Analysis and correctness
+
+- [ ] Check the starter AND circuit for all four input combinations.
+- [ ] Load the half-adder and verify SUM is XOR and CARRY is AND for all combinations.
+- [ ] Create an incomplete circuit and verify UNKNOWN/UNCONNECTED status and truth-table refusal.
+- [ ] Generate a truth table for a complete circuit; confirm input/output columns and row values.
+- [ ] Generate a table with multiple outputs and verify the table matches the live evaluation.
+- [ ] Confirm truth-table generation restores the current input settings.
+- [ ] Clear/reset the workspace and verify the expected empty/starter state.
+
+## Preservation
+
+- [ ] Open the separate analog Circuit Builder and confirm its existing electrical simulation still loads and behaves as before.
+- [ ] Confirm other laboratory routes and shared application navigation remain available.
