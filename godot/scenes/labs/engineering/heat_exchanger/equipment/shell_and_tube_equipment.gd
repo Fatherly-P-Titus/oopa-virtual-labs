@@ -20,7 +20,7 @@ const COMPONENTS := {
 	"shell_inlet": {"name": "Shell-side inlet nozzle", "fluid": "Shell side", "description": "Feeds the shell-side stream into the shell. Nozzle placement is illustrative and not a pressure-vessel design."},
 	"shell_outlet": {"name": "Shell-side outlet nozzle", "fluid": "Shell side", "description": "Collects shell-side fluid after it traverses the baffled tube bundle."},
 	"supports": {"name": "Saddle supports", "fluid": "Structure", "description": "Transfer equipment weight to its foundation while supporting the cylindrical shell."},
-	"instruments": {"name": "Measurement taps", "fluid": "Instrumentation", "description": "Representative temperature and pressure tap locations. Live readings are added when M11.4 connects the equipment to the validated model."}
+	"instruments": {"name": "Measurement taps", "fluid": "Instrumentation", "description": "Representative temperature and pressure tap locations. The live outlet temperatures are supplied by the validated heat-exchanger model; pressure estimates are shown in the operation panel."}
 }
 
 var cutaway_progress := 0.0
@@ -30,10 +30,22 @@ var _view_mode := "external"
 var _tween: Tween
 var _scale := 1.0
 var _origin := Vector2.ZERO
+var operating_state: Dictionary = {}
+var _elapsed := 0.0
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	custom_minimum_size = Vector2(520, 340)
+	queue_redraw()
+
+func _process(delta: float) -> void:
+	if not operating_state.is_empty() and _view_mode != "external":
+		var speed := clampf((float(operating_state.get("hot_mass_flow_kg_s", 0.2)) + float(operating_state.get("cold_mass_flow_kg_s", 0.2))) * 1.8, 0.25, 2.8)
+		_elapsed = fposmod(_elapsed + delta * speed, 1.0)
+		queue_redraw()
+
+func set_operating_state(state: Dictionary) -> void:
+	operating_state = state.duplicate(true)
 	queue_redraw()
 
 func component_ids() -> Array[String]:
@@ -83,6 +95,7 @@ func _draw() -> void:
 	_draw_nozzles_front()
 	_draw_instruments()
 	_draw_callouts()
+	_draw_selection()
 	draw_set_transform(Vector2.ZERO)
 	_draw_overlay()
 
@@ -114,13 +127,20 @@ func _draw_inner_bundle() -> void:
 	var shell_y := -exploded_progress * 92.0
 	var top := 232.0 + shell_y
 	var bottom := 372.0 + shell_y
-	if cutaway_progress > 0.01:
-		# Cooler shell-side crossflow passages: arrows are representative, not CFD.
+	if cutaway_progress > 0.01 and operating_state.has("hot_out_k") and operating_state.has("cold_out_k"):
+		# The shell-side temperature tint follows model inlet/outlet values. Arrows are
+		# representative baffled passages, not a resolved local temperature field.
 		for y in [258.0, 302.0, 346.0]:
-			_draw_arrow(Vector2(380, y + shell_y), Vector2(468, y + shell_y + 22), Color("#48a8e8"), 3.0, 0.9 * cutaway_progress)
-			_draw_arrow(Vector2(545, y + shell_y + 22), Vector2(635, y + shell_y), Color("#48a8e8"), 3.0, 0.9 * cutaway_progress)
-		_draw_arrow(Vector2(x1 + 30, 282 + shell_y), Vector2(x2 - 24, 282 + shell_y), Color("#ef795f"), 4.0, 0.85 * cutaway_progress)
-		_draw_arrow(Vector2(x2 - 24, 326 + shell_y), Vector2(x1 + 30, 326 + shell_y), Color("#ef795f"), 4.0, 0.85 * cutaway_progress)
+			_draw_arrow(Vector2(380, y + shell_y), Vector2(468, y + shell_y + 22), _stream_color(false, 0.35), 3.0, 0.9 * cutaway_progress)
+			_draw_arrow(Vector2(545, y + shell_y + 22), Vector2(635, y + shell_y), _stream_color(false, 0.7), 3.0, 0.9 * cutaway_progress)
+		_draw_arrow(Vector2(x1 + 30, 282 + shell_y), Vector2(x2 - 24, 282 + shell_y), _stream_color(true, 0.4), 4.0, 0.85 * cutaway_progress)
+		_draw_arrow(Vector2(x2 - 24, 326 + shell_y), Vector2(x1 + 30, 326 + shell_y), _stream_color(true, 0.8), 4.0, 0.85 * cutaway_progress)
+		for particle in range(4):
+			var progress := fposmod(_elapsed + float(particle) * 0.25, 1.0)
+			var px := lerpf(x1 + 40, x2 - 30, progress)
+			draw_circle(Vector2(px, 282 + shell_y), 4.0, _stream_color(true, progress))
+			var return_x := lerpf(x2 - 30, x1 + 40, fposmod(progress + 0.5, 1.0))
+			draw_circle(Vector2(return_x, 326 + shell_y), 3.5, _stream_color(true, 1.0 - progress))
 	# Tube bundle: individual, polished straight-tube paths.
 	for row in range(7):
 		var y := top + 12.0 + row * 20.0
@@ -199,17 +219,48 @@ func _draw_instruments() -> void:
 func _draw_callouts() -> void:
 	var font := get_theme_default_font()
 	var sh := _exploded_offset("shell")
-	if cutaway_progress > 0.5:
-		draw_string(font, Vector2(478, 408 + sh.y), "SHELL-SIDE CROSS-FLOW  ·  REPRESENTATIVE PASSAGE", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#75c4ed"))
-		draw_string(font, Vector2(470, 430 + sh.y), "TUBE SIDE  ·  TWO-PASS CHANNEL (SCHEMATIC)", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#f0987f"))
+	if cutaway_progress > 0.5 and operating_state.has("hot_out_k") and operating_state.has("cold_out_k"):
+		draw_string(font, Vector2(478, 408 + sh.y), "SHELL-SIDE CROSS-FLOW  ·  MODEL-TINTED REPRESENTATIVE PATH", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, _stream_color(false, 0.55))
+		draw_string(font, Vector2(470, 430 + sh.y), "TUBE SIDE  ·  TWO-PASS CHANNEL (SCHEMATIC)", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, _stream_color(true, 0.55))
+	elif cutaway_progress > 0.5:
+		draw_string(font, Vector2(478, 408 + sh.y), "INTERNAL GEOMETRY  ·  VALID MODEL INPUTS REQUIRED FOR FLOW", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#c7954b"))
 	else:
 		draw_string(font, Vector2(430, 438), "SHELL-AND-TUBE  /  1 SHELL PASS · 2 TUBE PASSES · SEGMENTAL BAFFLES", HORIZONTAL_ALIGNMENT_CENTER, -1, 11, Color("#a2b6be"))
+
+func _draw_selection() -> void:
+	var yshift := -exploded_progress * 92.0
+	var bounds := Rect2()
+	match selected_component:
+		"shell":
+			var offset := _exploded_offset("shell")
+			bounds = Rect2(240 + offset.x, 194 + offset.y, 680, 206)
+		"front_head": bounds = Rect2(147 + _exploded_offset("front_head").x, 180 + yshift, 130, 232)
+		"rear_head": bounds = Rect2(866 + _exploded_offset("rear_head").x, 180 + yshift, 132, 232)
+		"tube_bundle": bounds = Rect2(290 + exploded_progress * 115, 228 + yshift, 555, 150)
+		"tube_sheet_front": bounds = Rect2(276 + exploded_progress * 20, 224 + yshift, 34, 146)
+		"tube_sheet_rear": bounds = Rect2(826 + exploded_progress * 105, 224 + yshift, 34, 146)
+		"baffles": bounds = Rect2(395 + exploded_progress * 80, 222 + yshift, 355, 156)
+		"tube_inlet": bounds = Rect2(125, 216 + yshift, 105, 72)
+		"tube_outlet": bounds = Rect2(125, 303 + yshift, 105, 72)
+		"shell_inlet": bounds = Rect2(405, 72 - exploded_progress * 28, 80, 112)
+		"shell_outlet": bounds = Rect2(680, 72 - exploded_progress * 28, 80, 112)
+		"supports": bounds = Rect2(290, 410, 540, 65)
+		"instruments": bounds = Rect2(525, 145 + yshift, 290, 78)
+	if bounds.size != Vector2.ZERO:
+		draw_rect(bounds, Color("#f5c76d", 0.95), false, 3.0)
 
 func _draw_overlay() -> void:
 	var font := get_theme_default_font()
 	var label := "EXPLODED VIEW" if exploded_progress > 0.5 else ("CUTAWAY VIEW" if cutaway_progress > 0.5 else "EXTERNAL VIEW")
 	draw_string(font, Vector2(22, 25), label + "  ·  REPRESENTATIVE EDUCATIONAL CONFIGURATION", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#76c9bc"))
 	draw_string(font, Vector2(22, size.y - 14), "Select a component to inspect its engineering role", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#92a5ad"))
+	if operating_state.has("hot_out_k") and operating_state.has("cold_out_k"):
+		draw_string(font, Vector2(size.x - 228, 25), "HOT OUT %.1f°C  ·  COLD OUT %.1f°C" % [float(operating_state["hot_out_k"]) - 273.15, float(operating_state["cold_out_k"]) - 273.15], HORIZONTAL_ALIGNMENT_RIGHT, 210, 10, Color("#d3e0e2"))
+
+func _stream_color(hot_side: bool, fraction: float) -> Color:
+	var start := Color("#ef795f") if hot_side else Color("#48a8e8")
+	var finish := Color("#eab27c") if hot_side else Color("#b1d98b")
+	return start.lerp(finish, clampf(fraction, 0.0, 1.0))
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
