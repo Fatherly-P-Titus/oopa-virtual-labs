@@ -52,3 +52,15 @@ Do not advance into M11.2 until the owner has reviewed M11.1. Do not advance int
 3. The scene loads in Godot 4.7.2 without parser/resource errors.
 4. Existing routes and global settings remain unchanged.
 5. The scaffold clearly states that calculations and simulation are not yet implemented.
+
+## Current milestone status — M11.6 candidate
+
+- **M11.1 Foundation:** implemented and route tested.
+- **M11.2 Calculation engine:** implemented; known-value and validation regression suite passes.
+- **M11.3A Shell-and-tube:** implemented; owner reported visual review of external/cutaway/exploded/restore views as satisfactory.
+- **M11.3B Double-pipe:** implemented with external/cutaway/flow-path/restore, component inspection, and arrangement-dependent annular direction. Automated interaction checks pass; screenshot and owner visual review remain outstanding.
+- **M11.4 Operation:** implemented with model-backed controls, indicators, and representative flow/temperature cues; interaction test passes.
+- **M11.5 Analysis and education:** implemented and tested; see `M11_5_ANALYSIS_AND_EDUCATION.md`.
+- **M11.6 Integration and acceptance:** focused route, model, M11 operation/analysis, and existing Circuit Builder regressions pass. One Godot-rendered shell-and-tube external-view frame is retained at `godot/docs/evidence/M11_6_HeatExchanger_External00000000.png`; broader evidence for double-pipe and the M11.5 pages is unavailable because the Windows computer-use helper repeatedly timed out. The owner must still visually review M11.3B/M11.5 and approve overall acceptance.
+
+This status does not change the earlier M11.1/M11.2 review history. It records the current integration-candidate state after M11.5 implementation.

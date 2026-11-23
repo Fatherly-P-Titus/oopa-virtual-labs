@@ -25,4 +25,4 @@
 
 ## M11.4 scope boundary
 
-Engineering analysis graphs, saved comparison cases, guided experiment flows, variable fluid-property tables, and detailed shell-and-tube hydraulic rating remain future work under later M11 milestones or explicit model extensions.
+Variable fluid-property tables, transient operation, and detailed shell-and-tube hydraulic rating remain outside the implemented model scope. M11.5 analysis and education deliverables are recorded in `M11_5_ANALYSIS_AND_EDUCATION.md`.
